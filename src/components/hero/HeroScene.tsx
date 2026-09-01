@@ -3,6 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Stars, Cloud, Clouds } from "@react-three/drei";
 import * as THREE from "three";
+import { CameraRig } from "./CameraRig";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
 import {
@@ -76,6 +77,9 @@ export default function HeroScene({
   onReady?: () => void;
   exposeCapture?: boolean;
 }) {
+  // キャプチャ時は sceneConfig のカメラ角そのままで固定したいので追従を切る
+  const interactive = !exposeCapture;
+
   return (
     <Canvas
       camera={{
@@ -96,6 +100,7 @@ export default function HeroScene({
       }}
       className="h-full w-full"
     >
+      {interactive && <CameraRig />}
       {mode === "dark" ? (
         <NightScene animated={animated} />
       ) : (

@@ -34,3 +34,10 @@ export const NIGHT_SKY = {
 } as const;
 
 export const NIGHT_BG = "#07070f";
+
+// マウス追従で視点を振る量(ラジアン)と追従の減衰係数
+export const POINTER_LOOK = {
+  yaw: 0.45,
+  pitch: 0.2,
+  damping: 3,
+} as const;
