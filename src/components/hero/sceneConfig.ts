@@ -5,17 +5,153 @@ export const CAMERA = {
 } as const;
 
 export const DAY_SKY = {
-  top: "#3d8fd9",
-  mid: "#8ec9f0",
-  bottom: "#eef7fd",
+  top: "#0d6cc4",
+  mid: "#3f9be0",
+  bottom: "#8ec6ea",
 } as const;
 
-export const CLOUDS = [
-  { position: [-12, 18, -24] as [number, number, number], scale: 1.1, opacity: 0.75, speed: 0.08, seed: 2 },
-  { position: [11, 14, -28] as [number, number, number], scale: 1.3, opacity: 0.65, speed: 0.06, seed: 7 },
-  { position: [-4, 6, -22] as [number, number, number], scale: 1.2, opacity: 0.7, speed: 0.07, seed: 13 },
-  { position: [6, 24, -32] as [number, number, number], scale: 1, opacity: 0.6, speed: 0.05, seed: 21 },
+// 積乱雲を構成する塊ひとつ分のパラメータ。
+// Cumulonimbus.tsx がこの値から粒(ビルボード)の配置を決める。
+export type CloudMass = {
+  /** 塊の中心(ワールド座標) */
+  position: readonly [number, number, number];
+  /** 粒を撒く範囲の半径。x=太さ, y=高さ, z=奥行き */
+  bounds: readonly [number, number, number];
+  /** 粒の数 */
+  segments: number;
+  /** 粒 1 つの基本サイズ */
+  volume: number;
+  /** 裾から肩へ絞る曲線。1 未満で根元がすぼまり、1 超で上のほうまで太い */
+  taper: number;
+  /** 肩(丸い頭が始まる高さ)の位置 0..1 */
+  shoulder: number;
+  /** 肩の太さ。裾を 1 とした比 */
+  shoulderRadius: number;
+  /** もこもこした段の振幅と周期 */
+  bump: number;
+  bumpFreq: number;
+  /** 高さに応じた横ずれ(雲の傾き) */
+  lean: number;
+  /** 1 より大きいと下部に粒が密集する */
+  stack: number;
+  /** 粒の高さ方向のばらつき */
+  jitter: number;
+  /** 奥行き方向の潰し */
+  depth: number;
+  opacity: number;
+  /** 高さ方向に何段の色帯へ分割するか。これで陰影をつける */
+  bands: number;
+  /** 雲頂側(日の当たる側)の色 */
+  colorTop: string;
+  /** 雲底側(影)の色 */
+  colorBottom: string;
+  seed: number;
+  speed: number;
+  growth: number;
+  fade: number;
+};
+
+export const CUMULONIMBUS: readonly CloudMass[] = [
+  // 本体。裾が広く上へ絞れる塔。これ 1 つで入道雲のシルエットを作る
+  {
+    position: [-1, 30, -34],
+    bounds: [23, 28, 10],
+    segments: 300,
+    volume: 6.4,
+    taper: 1.15,
+    shoulder: 0.68,
+    shoulderRadius: 0.46,
+    bump: 0.06,
+    bumpFreq: 7,
+    lean: 0.05,
+    stack: 1.1,
+    jitter: 0.06,
+    depth: 0.85,
+    opacity: 1,
+    bands: 5,
+    colorTop: "#ffffff",
+    colorBottom: "#cfe0f0",
+    seed: 11,
+    speed: 0.07,
+    growth: 1.2,
+    fade: 80,
+  },
+  // 左裾。本体の根元から張り出す塊
+  {
+    position: [-15, 10, -33],
+    bounds: [13, 7, 8],
+    segments: 40,
+    volume: 6,
+    taper: 1.2,
+    shoulder: 0.45,
+    shoulderRadius: 0.7,
+    bump: 0.05,
+    bumpFreq: 5,
+    lean: -0.4,
+    stack: 1,
+    jitter: 0.1,
+    depth: 0.8,
+    opacity: 1,
+    bands: 4,
+    colorTop: "#fbfdff",
+    colorBottom: "#cadcee",
+    seed: 29,
+    speed: 0.06,
+    growth: 1,
+    fade: 80,
+  },
+  // 右裾
+  {
+    position: [15, 9, -33],
+    bounds: [14, 7, 8],
+    segments: 42,
+    volume: 6.2,
+    taper: 1.2,
+    shoulder: 0.45,
+    shoulderRadius: 0.72,
+    bump: 0.05,
+    bumpFreq: 6,
+    lean: 0.4,
+    stack: 1,
+    jitter: 0.1,
+    depth: 0.8,
+    opacity: 1,
+    bands: 4,
+    colorTop: "#fbfdff",
+    colorBottom: "#c8daed",
+    seed: 47,
+    speed: 0.06,
+    growth: 1,
+    fade: 80,
+  },
+  // 遠景の雲列。青みを混ぜて奥行きを出す
+  {
+    position: [0, 6, -60],
+    bounds: [45, 3, 6],
+    segments: 40,
+    volume: 7,
+    taper: 1.6,
+    shoulder: 0.4,
+    shoulderRadius: 0.85,
+    bump: 0.03,
+    bumpFreq: 3,
+    lean: 0,
+    stack: 0.8,
+    jitter: 0.15,
+    depth: 0.5,
+    opacity: 0.8,
+    bands: 3,
+    colorTop: "#e6f1fa",
+    colorBottom: "#c9dcee",
+    seed: 83,
+    speed: 0.04,
+    growth: 0.8,
+    fade: 120,
+  },
 ] as const;
+
+// instancedMesh の上限。全塊の segments 合計を超えないと粒が欠ける
+export const CLOUD_LIMIT = 500;
 
 export const STARS = {
   radius: 60,

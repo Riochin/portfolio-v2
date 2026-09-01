@@ -1,15 +1,17 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Stars, Cloud, Clouds } from "@react-three/drei";
+import { Stars, Clouds } from "@react-three/drei";
 import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
+import { CloudMassCloud } from "./Cumulonimbus";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
 import {
   CAMERA,
+  CLOUD_LIMIT,
+  CUMULONIMBUS,
   DAY_SKY,
-  CLOUDS,
   STARS,
   NIGHT_SKY,
   NIGHT_BG,
@@ -19,18 +21,10 @@ function DayScene({ animated }: { animated: boolean }) {
   return (
     <>
       <GradientSky top={DAY_SKY.top} mid={DAY_SKY.mid} bottom={DAY_SKY.bottom} />
-      <ambientLight intensity={1.2} />
-      <Clouds material={THREE.MeshBasicMaterial}>
-        {CLOUDS.map((cloud, i) => (
-          <Cloud
-            key={i}
-            position={[...cloud.position]}
-            scale={cloud.scale}
-            opacity={cloud.opacity}
-            speed={animated ? cloud.speed : 0}
-            seed={cloud.seed}
-            color="#ffffff"
-          />
+      {/* 粒の色をそのまま出したいので、光源に依存しない Basic マテリアルにする */}
+      <Clouds material={THREE.MeshBasicMaterial} limit={CLOUD_LIMIT}>
+        {CUMULONIMBUS.map((mass) => (
+          <CloudMassCloud key={mass.seed} mass={mass} animated={animated} />
         ))}
       </Clouds>
     </>
