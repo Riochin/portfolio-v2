@@ -48,6 +48,17 @@ export type SocialLink = {
   /** ブランド名なので日英共通。 */
   readonly label: string;
   readonly href: string;
+  /**
+   * ホバー時に載せるブランド色。CSS の `fill` に入る値なので、単色の他に
+   * `url(#...)` でアイコン自身が持つグラデーションも指せる (mixi2 がそれ)。
+   * 参照先の id はアイコンコンポーネント側で定義する。
+   */
+  readonly brand: string;
+  /**
+   * 暗い背景で brand が沈むブランド (黒がブランド色の GitHub / X) の差し替え。
+   * 省略時は brand をそのまま使う。
+   */
+  readonly brandDark?: string;
 };
 
 export const SOCIAL_LINKS = [
@@ -55,27 +66,39 @@ export const SOCIAL_LINKS = [
     key: "github",
     label: "GitHub",
     href: `https://github.com/${SITE.accounts.github}`,
+    brand: "#181717",
+    brandDark: "#ffffff",
   },
   {
     key: "mixi2",
     label: "mixi2",
     href: `https://mixi.social/@${SITE.accounts.mixi2}`,
+    brand: "url(#mixi2-brand)",
   },
-  { key: "x", label: "X", href: `https://x.com/${SITE.accounts.x}` },
+  {
+    key: "x",
+    label: "X",
+    href: `https://x.com/${SITE.accounts.x}`,
+    brand: "#000000",
+    brandDark: "#ffffff",
+  },
   {
     key: "speakerdeck",
     label: "Speaker Deck",
     href: `https://speakerdeck.com/${SITE.accounts.speakerdeck}`,
+    brand: "#009287",
   },
   {
     key: "linkedin",
     label: "LinkedIn",
     href: `https://www.linkedin.com/in/${SITE.accounts.linkedin}/`,
+    brand: "#0a66c2",
   },
   {
     key: "zenn",
     label: "Zenn",
     href: `https://zenn.dev/${SITE.accounts.zenn}`,
+    brand: "#3ea8ff",
   },
 ] as const satisfies readonly SocialLink[];
 
