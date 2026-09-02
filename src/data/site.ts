@@ -1,6 +1,12 @@
 import type { Localized } from "@/lib/i18n/types";
 
 /**
+ * X のユーザー名。名乗り (handle / handleUrl) と SNS リンクの両方がここを読む。
+ * accounts の中に書けないのは、handle が accounts より前で組み立てられるため。
+ */
+const X_USER = "riochin555";
+
+/**
  * サイト全体のアイデンティティ情報。
  *
  * ここが唯一の情報源。以前は "Riochin" / "Rio Ichikawa" がナビ・コピーライト・
@@ -15,11 +21,10 @@ export const SITE = {
   wordmark: "Riochin.dev",
   /** 表示名。ja でもローマ字表記で統一する。 */
   name: "Rio Ichikawa",
-  /**
-   * About の見出しで名前に添えるハンドル。
-   * accounts.x とは別に持つ ── こちらは「名乗り」で、リンク先は持たない。
-   */
-  handle: "@riochin555",
+  /** About の見出しで名前に添えるハンドル。表示は "@" 付き、リンク先は handleUrl。 */
+  handle: `@${X_USER}`,
+  /** handle のリンク先。名乗りをクリックしたら X の本人に飛ぶ。 */
+  handleUrl: `https://x.com/${X_USER}`,
   /** 公開する連絡先。About の連絡先セクションが mailto: にして読む。 */
   email: "118029.ichikama@gmail.com",
   description: {
@@ -31,7 +36,7 @@ export const SITE = {
   accounts: {
     github: "riochin",
     mixi2: "riochin",
-    x: "riochin",
+    x: X_USER,
     speakerdeck: "riochin",
     zenn: "riochin",
     qiita: "riochin",

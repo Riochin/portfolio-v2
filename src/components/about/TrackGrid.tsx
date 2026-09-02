@@ -10,7 +10,14 @@ const STAGGER_MS = 60;
  * タイルが 16:9 でも 16:10 でもなく正方形なのは、敷くのがアルバムアートで
  * 元が 640x640 だから。横長に切ると object-cover がジャケットの上下を削る。
  */
-export function TrackGrid({ tracks }: { tracks: readonly TopTrack[] }) {
+export function TrackGrid({
+  tracks,
+  startDelayMs = 0,
+}: {
+  tracks: readonly TopTrack[];
+  /** 1 枚目の出現ディレイ。セクション自体の出現に続けたいときに渡す。 */
+  startDelayMs?: number;
+}) {
   return (
     <ul className="grid grid-cols-2 gap-x-5 gap-y-7 sm:grid-cols-3">
       {tracks.map((track, index) => (
@@ -19,7 +26,7 @@ export function TrackGrid({ tracks }: { tracks: readonly TopTrack[] }) {
           className="group reveal-rise"
           style={
             {
-              "--reveal-delay": `${index * STAGGER_MS}ms`,
+              "--reveal-delay": `${startDelayMs + index * STAGGER_MS}ms`,
             } as React.CSSProperties
           }
         >
