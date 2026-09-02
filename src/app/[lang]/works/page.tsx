@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { WorkGrid, type WorkGridItem } from "@/components/works/WorkGrid";
-import { getAwards, getSkills, getWorks } from "@/data";
+import { getAwards, getSkills, getWorksByCategory } from "@/data";
 import { formatPeriod, formatYearMonth } from "@/lib/date";
 import { DICT } from "@/lib/i18n/dictionary";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
@@ -20,26 +20,36 @@ export default async function WorksPage() {
 
   // ロケールをここで解決してから Client Component に渡す。
   // (アクセサ層はロケール非依存なので、この境界が唯一の解決点になる)
-  const items: WorkGridItem[] = getWorks().map((work) => ({
-    slug: work.slug,
-    href: localePath(locale, `/works/${work.slug}`),
-    title: t(work.title),
-    period: formatPeriod(work.period, locale),
-    image: work.image && {
-      src: work.image.src,
-      width: work.image.width,
-      height: work.image.height,
-      alt: t(work.image.alt),
-    },
-    stack: getSkills(work.stack.slice(0, STACK_PREVIEW)).map((s) => s.label),
+  const groups = getWorksByCategory().map((group) => ({
+    category: group.category,
+    heading: t(DICT.workCategories[group.category]),
+    items: group.works.map((work): WorkGridItem => ({
+      slug: work.slug,
+      href: localePath(locale, `/works/${work.slug}`),
+      title: t(work.title),
+      period: formatPeriod(work.period, locale),
+      image: work.image && {
+        src: work.image.src,
+        width: work.image.width,
+        height: work.image.height,
+        alt: t(work.image.alt),
+      },
+      stack: getSkills(work.stack.slice(0, STACK_PREVIEW)).map((s) => s.label),
+    })),
   }));
 
   return (
     <PageShell wide>
-      <section>
-        <h2 className="sr-only">{t(DICT.pages.works)}</h2>
-        <WorkGrid items={items} />
-      </section>
+      <h1 className="sr-only">{t(DICT.pages.works)}</h1>
+
+      {groups.map((group, index) => (
+        <section key={group.category} className={index === 0 ? "" : "mt-16"}>
+          <h2 className="text-lg font-bold">{group.heading}</h2>
+          <div className="mt-6">
+            <WorkGrid items={group.items} />
+          </div>
+        </section>
+      ))}
 
       <section className="mt-20">
         <h2 className="text-lg font-bold">{t(DICT.works.awards)}</h2>

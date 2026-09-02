@@ -2,7 +2,13 @@ import { WORKS, type WorkSlug } from "./works";
 import { EXPERIENCES, type ExperienceSlug } from "./experience";
 import { SKILLS, type Skill, type SkillSlug } from "./skills";
 import { comparePeriodDesc } from "@/lib/date";
-import type { Award, AwardEntry, Experience, Work } from "./types";
+import type {
+  Award,
+  AwardEntry,
+  Experience,
+  Work,
+  WorkCategory,
+} from "./types";
 
 /**
  * アクセサ層。並び替えとフィルタはここだけに置く。
@@ -52,6 +58,30 @@ export function getWorkSlugs(): WorkSlug[] {
 
 export function getWorkBySlug(slug: string): Work | undefined {
   return ALL_WORKS.find((work) => work.slug === slug);
+}
+
+/** 一覧に出す順。個人制作を先に置く。 */
+const WORK_CATEGORY_ORDER: readonly WorkCategory[] = ["personal", "hackathon"];
+
+export type WorkCategoryGroup = {
+  readonly category: WorkCategory;
+  readonly works: readonly Work[];
+};
+
+/**
+ * 出自ごとの塊。空のカテゴリは落とすので、
+ * 片方しか作品が無いうちは見出しごと出てこない。
+ */
+const WORKS_BY_CATEGORY: readonly WorkCategoryGroup[] = WORK_CATEGORY_ORDER.map(
+  (category) => ({
+    category,
+    works: ALL_WORKS.filter((work) => work.category === category),
+  }),
+).filter((group) => group.works.length > 0);
+
+/** 出自で束ねた作品 (各塊の中は getWorks() と同じ新しい順)。 */
+export function getWorksByCategory(): readonly WorkCategoryGroup[] {
+  return WORKS_BY_CATEGORY;
 }
 
 export function getWorksByExperience(slug: ExperienceSlug): readonly Work[] {

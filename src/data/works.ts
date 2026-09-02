@@ -8,6 +8,118 @@ import type { WorkEntry } from "./types";
  * date は旧データに無かったので、原則その作品の period.end を採用している。
  */
 export const WORKS = {
+  lsib: {
+    title: {
+      ja: "ラスサバ・イニブ 設置店舗マップ",
+      en: "LSIB Arcade Map",
+    },
+    tagline: {
+      ja: "戦場選びをサクッと10秒に ── 全国約770店舗を地図で探せる非公式マップ",
+      en: "Pick your battleground in ten seconds — an unofficial map of ~770 arcades across Japan",
+    },
+    body: [
+      {
+        ja: "『ジョジョの奇妙な冒険 ラストサバイバー』と『機動戦士ガンダム EXTREME VS.2 INFINITEBOOST』の設置店舗を、全国約770店舗ぶん地図に載せた非公式サイト。ピンの色でどのタイトルが置いてあるかが一目でわかります。",
+        en: "An unofficial site that maps roughly 770 arcades across Japan carrying JoJo's Bizarre Adventure: Last Survivor and Mobile Suit Gundam EXTREME VS.2 INFINITEBOOST. Pin colors show at a glance which title a venue has.",
+      },
+      {
+        ja: "タイトル・都道府県／市区町村・店舗名・現在地で絞り込めるほか、台数や録画台・配信台・喫煙所といった「対戦前に知りたいこと」も店舗ごとに見られます。",
+        en: "You can filter by title, prefecture and municipality, store name, or your current location, and each venue lists the things you want to know before heading out — cabinet count, recording and streaming setups, smoking areas.",
+      },
+      {
+        ja: "データは公式サイトから自動更新し、ユーザーからの報告は確認のうえ反映。掲載店舗数・最終更新日時・出典を画面に明示しています。公開から約1か月で延べ3,300人以上に使われました。",
+        en: "Data is refreshed automatically from the official sites, and user reports are reviewed before being applied. The venue count, last update time, and data sources are all shown on screen. Over 3,300 people used it in the first month or so after launch.",
+      },
+    ],
+    category: "personal",
+    period: { start: "2026-03", end: null },
+    stack: [
+      "typescript",
+      "nextjs",
+      "google-maps",
+      "react",
+      "tailwindcss",
+      "sentry",
+    ],
+    image: {
+      src: "/works/lsib.webp",
+      width: 1200,
+      height: 675,
+      alt: {
+        ja: "ラスサバ・イニブ 設置店舗マップ のスクリーンショット",
+        en: "Screenshot of LSIB Arcade Map",
+      },
+    },
+    links: {
+      repo: "https://github.com/Riochin/ls-inib-map",
+      demo: "https://lsib.world",
+      slides:
+        "https://speakerdeck.com/riochin/akedogemushe-zhi-dian-pu-saito-ge-ren-kai-fa-wu",
+    },
+    featured: true,
+  },
+
+  "exvs-command-trainer": {
+    title: { ja: "EXVSコマンド道場", en: "EXVS Command Dojo" },
+    tagline: {
+      ja: "機動戦士ガンダム EXTREME VS. のコマンドを練習・確認できるWebアプリ",
+      en: "A web app for drilling and looking up Mobile Suit Gundam EXTREME VS. commands",
+    },
+    body: [
+      {
+        ja: "機体ごとのコマンドを登録・編集し、練習モードで反復できるWebアプリ。対戦前の確認と手癖づけを1か所でできるようにしました。",
+        en: "A web app where you register and edit per-unit commands and drill them in a practice mode, so checking your inputs and building muscle memory happen in one place.",
+      },
+    ],
+    category: "personal",
+    period: { start: "2026-04", end: null },
+    stack: ["typescript", "nextjs", "turso", "drizzle", "authjs", "react"],
+    image: {
+      src: "/works/exvs-command-trainer.webp",
+      width: 884,
+      height: 590,
+      alt: {
+        ja: "EXVSコマンド道場 のスクリーンショット",
+        en: "Screenshot of EXVS Command Dojo",
+      },
+    },
+    links: {
+      repo: "https://github.com/Riochin/exvs-command-trainer",
+      demo: "https://exvs-command-trainer.vercel.app",
+    },
+  },
+
+  "portfolio-v1": {
+    title: { ja: "旧ポートフォリオサイト", en: "Portfolio (v1)" },
+    tagline: {
+      ja: "はじめて自分の名前で公開した、このサイトの前身",
+      en: "The first site I published under my own name — the predecessor of this one",
+    },
+    body: [
+      {
+        ja: "Next.js と Tailwind CSS で組んだ初代のポートフォリオ。作品と経歴を1ページにまとめ、スクロールに合わせたアニメーションと問い合わせフォームを備えていました。",
+        en: "The first portfolio I built, with Next.js and Tailwind CSS. It gathered my works and history on a single page, with scroll-triggered animation and a contact form.",
+      },
+      {
+        ja: "作品データが自由な文字列のまま散らばっていたり、日英の段落数がずれていたりと、書き足すほど壊れやすくなったのが今のサイトを作り直した動機です。",
+        en: "Work data lived as free-form strings scattered through the code, and the Japanese and English copy drifted apart paragraph by paragraph — the more I added, the more brittle it got, which is exactly why I rebuilt it as this site.",
+      },
+    ],
+    category: "personal",
+    period: { start: "2025-05", end: "2026-06" },
+    stack: ["typescript", "nextjs", "react", "tailwindcss", "framer-motion"],
+    image: {
+      src: "/works/portfolio-v1.webp",
+      width: 1200,
+      height: 593,
+      alt: {
+        ja: "旧ポートフォリオサイト のスクリーンショット",
+        en: "Screenshot of the old portfolio site",
+      },
+    },
+    links: {},
+  },
+
   begit: {
     title: { ja: "BeGit;", en: "BeGit;" },
     tagline: {
@@ -20,6 +132,7 @@ export const WORKS = {
         en: "Inspired by BeReal's post-the-moment-you-get-the-notification mechanic, brought into GitHub-based team development to make standups fun instead of a chore.",
       },
     ],
+    category: "hackathon",
     period: { start: "2026-06", end: "2026-06" },
     stack: ["swift", "swiftui", "go", "github-oauth", "docker", "terraform"],
     links: {
@@ -69,6 +182,7 @@ export const WORKS = {
         en: "The goal is to let you serendipitously meet others who passed through the same curiosity, before either of you had fallen for it.",
       },
     ],
+    category: "hackathon",
     period: { start: "2026-05", end: "2026-05" },
     stack: [
       "typescript",
@@ -123,6 +237,7 @@ export const WORKS = {
         en: "The watch sends sensor data to a Rust-based low-latency sync server over WebTransport, and battles are rendered on a web UI in real time.",
       },
     ],
+    category: "hackathon",
     period: { start: "2026-02", end: "2026-02" },
     stack: [
       "swift",
@@ -173,6 +288,7 @@ export const WORKS = {
         en: "Gamification elements like collectible badges make evacuation drills fun and repeatable.",
       },
     ],
+    category: "hackathon",
     period: { start: "2025-10", end: "2025-10" },
     stack: ["swift", "swiftui", "supabase", "gemini-api"],
     links: { repo: "https://github.com/jphacks/tk_a_2505" },
@@ -230,6 +346,7 @@ export const WORKS = {
         en: "The concept: catch the postcards that drift to you like paper planes.",
       },
     ],
+    category: "hackathon",
     period: { start: "2025-09", end: "2025-09" },
     stack: ["nextjs", "fastapi", "aws", "terraform", "ecr"],
     links: {
@@ -275,6 +392,7 @@ export const WORKS = {
         en: "Built out of a wish to turn everyday coding activity into a fun gaming experience.",
       },
     ],
+    category: "hackathon",
     period: { start: "2025-06", end: "2025-06" },
     stack: ["typescript", "react", "supabase", "go", "websocket"],
     links: {
@@ -324,6 +442,7 @@ export const WORKS = {
         en: "Commits are shared in real time through a Discord Activity, and the app keeps a record of the effort you put in.",
       },
     ],
+    category: "hackathon",
     period: { start: "2025-05", end: "2025-05" },
     stack: ["typescript", "react", "discord"],
     links: {
@@ -363,6 +482,7 @@ export const WORKS = {
         en: "We put as much care into what you actually learn as into the game itself.",
       },
     ],
+    category: "hackathon",
     period: { start: "2025-04", end: "2025-04" },
     stack: ["typescript", "react", "supabase"],
     links: {
@@ -393,6 +513,7 @@ export const WORKS = {
         en: "A QR-code-based entry and exit management system that shows cafeteria congestion in real time and helps relieve it.",
       },
     ],
+    category: "hackathon",
     period: { start: "2025-03", end: "2025-03" },
     stack: ["fastapi", "react", "firebase", "docker", "postgresql"],
     links: { repo: "https://github.com/Riochin/LunchJAM" },
@@ -435,6 +556,7 @@ export const WORKS = {
         en: "The live demo during the hackathon went spectacularly wrong.",
       },
     ],
+    category: "hackathon",
     period: { start: "2024-12", end: "2025-01" },
     stack: ["typescript", "hono", "react", "gcp", "docker", "mysql"],
     links: {
@@ -464,6 +586,7 @@ export const WORKS = {
         en: "Built during the Waffle College graduation hackathon, where it won the Best Award.",
       },
     ],
+    category: "hackathon",
     period: { start: "2024-12", end: "2025-01" },
     stack: ["html", "css", "javascript", "python", "flask"],
     links: {
@@ -515,6 +638,7 @@ export const WORKS = {
     body: [],
     // 旧データの date は '2024.11 - 2025.12' だが、他の作品の並びから
     // 2024.12 の誤記と判断した (要確認)。
+    category: "hackathon",
     period: { start: "2024-11", end: "2024-12" },
     stack: ["python", "fastapi", "aws", "dynamodb"],
     links: {

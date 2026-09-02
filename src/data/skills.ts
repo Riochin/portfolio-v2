@@ -79,6 +79,17 @@ export const SKILLS = {
   },
   flask: { label: "Flask", category: "framework", icon: "flask" },
   hono: { label: "Hono", category: "framework", icon: "hono" },
+  tailwindcss: {
+    label: "Tailwind CSS",
+    category: "framework",
+    icon: "tailwindcss",
+  },
+  "framer-motion": {
+    label: "Framer Motion",
+    category: "framework",
+    icon: "framer",
+  },
+  drizzle: { label: "Drizzle ORM", category: "framework", icon: "drizzle" },
 
   // インフラ
   docker: { label: "Docker", category: "infra", featured: true, icon: "docker" },
@@ -119,6 +130,15 @@ export const SKILLS = {
   discord: { label: "Discord", category: "service", icon: "discord" },
   "gemini-api": { label: "Gemini API", category: "service", icon: "googlegemini" },
   "github-oauth": { label: "GitHub OAuth", category: "service", icon: "github" },
+  "google-maps": {
+    label: "Google Maps API",
+    category: "service",
+    icon: "googlemaps",
+  },
+  turso: { label: "Turso", category: "service", icon: "turso" },
+  // simple-icons は Auth.js のアイコンを配っていない
+  authjs: { label: "Auth.js", category: "service" },
+  sentry: { label: "Sentry", category: "service", icon: "sentry" },
 
   // 概念・プラットフォーム
   websocket: { label: "WebSocket", category: "concept" },

@@ -42,6 +42,14 @@ export const DICT = {
     article: { ja: "紹介記事", en: "Write-up" },
     slides: { ja: "スライド", en: "Slides" },
   },
+  /**
+   * 作品の出自の見出し。キーは WorkCategory と同じにしてあるので、
+   * カテゴリを増やすと参照側 (works/page.tsx) の索引で型エラーになる。
+   */
+  workCategories: {
+    personal: { ja: "個人で開発したもの", en: "Built on my own" },
+    hackathon: { ja: "ハッカソンで開発したもの", en: "Built at hackathons" },
+  },
   about: {
     skills: { ja: "使っている技術", en: "Skills" },
     /** 上位再生曲なので「好きな曲」とは名乗らない。 */

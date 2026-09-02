@@ -38,6 +38,12 @@ export type Award = {
   readonly url?: string;
 };
 
+/**
+ * 作品の出自。ハッカソン作品と個人制作は読み手の見方が変わる
+ * (前者は受賞とチーム開発、後者は継続的な自主制作) ので一覧で束ねて分ける。
+ */
+export type WorkCategory = "personal" | "hackathon";
+
 export type WorkLinks = {
   readonly repo?: string;
   readonly demo?: string;
@@ -53,6 +59,8 @@ export type WorkEntry = {
   readonly tagline: Localized<string>;
   /** 詳細ページの本文 (旧 longDescription)。段落ごとに両言語を持つ。 */
   readonly body: readonly Localized<string>[];
+  /** 必須。作品を足すときに個人制作かハッカソンかを必ず決めさせる。 */
+  readonly category: WorkCategory;
   readonly period: Period;
   readonly role?: Localized<string>;
   readonly stack: readonly SkillSlug[];
