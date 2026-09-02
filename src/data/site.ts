@@ -21,6 +21,7 @@ export const SITE = {
   /** 外部サービスのユーザー名。SNS リンクと Output のフィード取得が共にここを読む。 */
   accounts: {
     github: "riochin",
+    mixi2: "riochin",
     x: "riochin",
     speakerdeck: "riochin",
     zenn: "riochin",
@@ -29,7 +30,13 @@ export const SITE = {
   },
 } as const;
 
-export type SocialKey = "github" | "x" | "speakerdeck" | "linkedin" | "zenn";
+export type SocialKey =
+  | "github"
+  | "mixi2"
+  | "x"
+  | "speakerdeck"
+  | "linkedin"
+  | "zenn";
 
 /**
  * アイコンのコンポーネント参照はここに置かない。
@@ -48,6 +55,11 @@ export const SOCIAL_LINKS = [
     key: "github",
     label: "GitHub",
     href: `https://github.com/${SITE.accounts.github}`,
+  },
+  {
+    key: "mixi2",
+    label: "mixi2",
+    href: `https://mixi.social/@${SITE.accounts.mixi2}`,
   },
   { key: "x", label: "X", href: `https://x.com/${SITE.accounts.x}` },
   {

@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { GithubIcon } from "@/components/icons/GithubIcon";
 import { LinkedinIcon } from "@/components/icons/LinkedinIcon";
+import { Mixi2Icon } from "@/components/icons/Mixi2Icon";
 import { XIcon } from "@/components/icons/XIcon";
 import { SpeakerDeckIcon } from "@/components/icons/SpeakerDeckIcon";
 import { ZennIcon } from "@/components/icons/ZennIcon";
@@ -16,6 +17,7 @@ const ICONS: Record<
   ComponentType<{ size?: number; className?: string }>
 > = {
   github: GithubIcon,
+  mixi2: Mixi2Icon,
   x: XIcon,
   speakerdeck: SpeakerDeckIcon,
   linkedin: LinkedinIcon,
