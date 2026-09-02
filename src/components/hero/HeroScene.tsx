@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Clouds, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
+import { Birds } from "./Birds";
 import { CloudMassCloud } from "./CloudMass";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
@@ -55,6 +56,7 @@ function DayScene({
         curve={DAY_SKY.curve}
       />
       <CloudLayer animated={animated} />
+      <Birds animated={animated} />
       <Ocean
         palette={DAY_OCEAN}
         animated={animated}

@@ -436,6 +436,45 @@ export const CLOUD_HAZE = DAY_SKY.mid;
 // 始めるため、ここが外部依存だと毎回の初回描画がその CDN の速さに引きずられる。
 export const CLOUD_TEXTURE = "/cloud.png";
 
+// たまに空を横切る鳥。ずっと飛んでいると「動くもの」が増えて空の静けさが
+// 壊れるので、一群れ通したら長めに間を空ける。
+// 距離が遠いぶん 1 羽は数ピクセルにしかならない。輪郭はシェーダの距離関数を
+// smoothstep で締めて出すので、その大きさでも縁は滑らかに出る。
+export const BIRDS = {
+  /** instancedMesh の確保数。flock の上限を下回らないこと */
+  limit: 14,
+  /** 一群れの羽数 */
+  flock: [4, 11] as [number, number],
+  /** 群れと群れの間隔(秒)と、最初の 1 群が出るまで */
+  gap: [10, 40] as [number, number],
+  firstGap: 8,
+  /** 飛ぶ高さ。雲の頭(最大 160 あたり)より上を通す */
+  altitude: [140, 205] as [number, number],
+  /** 奥行き。雲の帯より手前に置く。奥だと雲に紛れて見えない */
+  depth: [-430, -300] as [number, number],
+  /** 横切る速さ(ワールド単位/秒) */
+  speed: [34, 52] as [number, number],
+  /** 翼の差し渡し(ワールド単位) */
+  size: [3.6, 5.4] as [number, number],
+  /** 群れの粒どうしの間隔 */
+  spacing: 7,
+  /** 後続がどれだけ下がるか。列を水平に寝かせるほど横切って見える */
+  trail: 0.18,
+  /** 上下のゆれ幅 */
+  bob: 1.4,
+  /** ここを外れたら群れは終わり。画角の外まで送り切る */
+  span: 1000,
+  /** 羽ばたきの速さ(rad/s) */
+  flapSpeed: [7, 11] as [number, number],
+  /** 翼の角度。下限が打ち下ろし、上限が打ち上げ */
+  flapAngle: [-0.14, 0.62] as [number, number],
+  color: "#ffffff",
+  opacity: 0.9,
+  /** 翼の線の太さ(クアッド内の比) */
+  thickness: 0.2,
+  seed: 7,
+} as const;
+
 // instancedMesh の上限。全塊の segments 合計を超えないと粒が欠ける
 export const CLOUD_LIMIT = 4800;
 
