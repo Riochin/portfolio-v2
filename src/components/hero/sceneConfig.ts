@@ -225,6 +225,10 @@ export const CLOUD_LAYER: readonly CloudMass[] = [
   }),
 ];
 
+// 粒に貼るテクスチャ。drei の既定は外部 CDN(rawcdn.githack.com)を見に行くので、
+// 同じ画像を public に置いて自分のオリジンから配る。
+export const CLOUD_TEXTURE = "/cloud.png";
+
 // instancedMesh の上限。全塊の segments 合計を超えないと粒が欠ける
 export const CLOUD_LIMIT = 2000;
 

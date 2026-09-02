@@ -15,6 +15,7 @@ import {
   NIGHT_OCEAN,
   CLOUD_LAYER,
   CLOUD_LIMIT,
+  CLOUD_TEXTURE,
   DAY_OCEAN,
   STARS,
   NIGHT_SKY,
@@ -24,7 +25,11 @@ import {
 function CloudLayer({ animated }: { animated: boolean }) {
   return (
     // 粒の色をそのまま出したいので、光源に依存しない Basic マテリアルにする
-    <Clouds material={THREE.MeshBasicMaterial} limit={CLOUD_LIMIT}>
+    <Clouds
+      material={THREE.MeshBasicMaterial}
+      limit={CLOUD_LIMIT}
+      texture={CLOUD_TEXTURE}
+    >
       {CLOUD_LAYER.map((mass) => (
         <CloudMassCloud key={mass.seed} mass={mass} animated={animated} />
       ))}
