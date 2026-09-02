@@ -92,7 +92,9 @@ export default async function AboutPage() {
               <dt className="whitespace-nowrap text-muted-foreground">
                 {t(fact.label)}
               </dt>
-              <dd>{t(fact.value)}</dd>
+              {/* 値に入れた改行をそのまま出す。EN の所属名は自動折り返しに
+                  任せると切れる位置が幅次第で変わるため。 */}
+              <dd className="whitespace-pre-line">{t(fact.value)}</dd>
             </Fragment>
           ))}
         </dl>

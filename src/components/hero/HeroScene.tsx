@@ -2,13 +2,16 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Stars, Clouds, useProgress } from "@react-three/drei";
+import { Clouds, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
+import { Birds } from "./Birds";
 import { CloudMassCloud } from "./CloudMass";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
 import { Ocean } from "./Ocean";
+import { ShootingStar } from "./ShootingStar";
+import { StarField } from "./StarField";
 import {
   CAMERA,
   DAY_SKY,
@@ -18,7 +21,6 @@ import {
   CLOUD_TEXTURE,
   DAY_OCEAN,
   QUALITY,
-  STARS,
   NIGHT_SKY,
   NIGHT_BG,
   type Quality,
@@ -55,6 +57,7 @@ function DayScene({
         curve={DAY_SKY.curve}
       />
       <CloudLayer animated={animated} />
+      <Birds animated={animated} />
       <Ocean
         palette={DAY_OCEAN}
         animated={animated}
@@ -78,17 +81,11 @@ function NightScene({
         top={NIGHT_SKY.top}
         mid={NIGHT_SKY.mid}
         bottom={NIGHT_SKY.bottom}
+        curve={NIGHT_SKY.curve}
       />
       <MilkyWay />
-      <Stars
-        radius={STARS.radius}
-        depth={STARS.depth}
-        count={STARS.count}
-        factor={STARS.factor}
-        saturation={STARS.saturation}
-        fade={STARS.fade}
-        speed={animated ? STARS.speed : 0}
-      />
+      <StarField animated={animated} />
+      <ShootingStar animated={animated} />
       <Ocean
         palette={NIGHT_OCEAN}
         animated={animated}
@@ -217,10 +214,13 @@ export default function HeroScene({
         }}
         // 視点を振らないときはポインタも拾わせない。ヒーローブロックでは
         // Canvas がボタンの上に乗るので、クリックを下へ通す必要がある。
+        // 振るときは touch-none を当てる。指のなぞりをブラウザのスクロールや
+        // 引っ張り更新に持っていかれると、そこで pointercancel が飛んで
+        // 見回しが途切れてしまうため。
         // 角丸を canvas 自身にも持たせるのは、別の合成レイヤになると親の
         // overflow-hidden で切られず角がはみ出すため。--hero-radius を持たない
         // 全画面では変数が解決できず、border-radius は初期値(0)に戻る
-        className={`h-full w-full rounded-[var(--hero-radius)]${interactive ? "" : " pointer-events-none"}`}
+        className={`h-full w-full rounded-[var(--hero-radius)]${interactive ? " touch-none" : " pointer-events-none"}`}
       >
         {interactive && <CameraRig />}
         <Suspense fallback={null}>

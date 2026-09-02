@@ -19,6 +19,14 @@ const fragmentShader = /* glsl */ `
   uniform vec3 bottomColor;
   uniform float curve;
   varying vec3 vWorldPosition;
+
+  // NOTE: このシェーダは gl_FragColor をそのまま書き出しており、three の
+  // <colorspace_fragment>(linearToOutputTexel)を通していない。THREE.Color は
+  // hex を sRGB→リニアへ直して渡してくるので、画面に出るのは「hex のリニア値」
+  // であって hex そのものではない(実測: #0a68b4 が #21498e として出る)。
+  // 直すなら gl_FragColor の代入直後に #include <colorspace_fragment> を足す。
+  // ただし DAY_SKY / NIGHT_SKY の色はこの状態を前提に詰めてあるので、
+  // 足すときは両方の hex を「今のリニア値」に置き換えないと見た目が飛ぶ。
   void main() {
     float h = normalize(vWorldPosition).y;
     // curve が小さいほど、低い仰角でも一気に topColor へ寄る

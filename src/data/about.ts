@@ -31,7 +31,10 @@ export const ABOUT = {
       label: { ja: "所属", en: "Affiliation" },
       value: {
         ja: `津田塾大学 学芸学部 情報科学科 ${GRADE}年 / 栗原研究室`,
-        en: `Kurihara Lab, Department of Information Science, College of Liberal Arts, Tsuda University (year ${GRADE})`,
+        // EN は 1 行だと写真の幅を大きく超えるので、学科と学部の間で折る。
+        // 改行を活かすため dd 側に whitespace-pre-line を置いてある。
+        en: `Kurihara Lab, Department of Information Science,
+College of Liberal Arts, Tsuda University (year ${GRADE})`,
       },
     },
     {

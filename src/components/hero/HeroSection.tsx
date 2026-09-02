@@ -101,14 +101,25 @@ export function HeroSection({
           md 以上は pt が 0 なので 14.5rem、モバイルはヘッダーぶん 3.875rem を
           足して 18.5rem (端数は切り上げ)。 */}
       <div className="relative w-full max-w-3xl [--hero-reserve:22rem] max-md:short:[--hero-reserve:18.5rem] md:short:[--hero-reserve:14.5rem]">
-        {/* 挨拶文は幅によらずブロックの中央に重ねる (inset-0 = ブロックの内側
-            いっぱい)。色はテーマによらず白。下は昼も夜も空の写真なので、
+        {/* 挨拶文は水平線より下、海の上に重ねる。空には雲が湧くので、字が乗る
+            のは面の落ち着いた水側がいい。
+
+            水平線の高さはカメラから出る。画面の中央からの隔たりは
+            tan(pitch) / (2 * tan(fov/2)) で、既定 (pitch 0.055 / fov 55) なら
+            ブロックの上から 55.3%。字の中心はその下の 61% に置く (top を 22%
+            にすると、下辺との中点がちょうど 61%)。字の高さの半分が 3% ほどな
+            ので、上辺と水平線の間はまだ空く。ポインタ追従で pitch は ±0.12
+            振れ、上を向ききると水平線が 67% まで下がって字を越すが、それは
+            見回している間だけの一瞬で、据わりの良さを取った。
+            sceneConfig の CAMERA か POINTER_LOOK を触ったらここも計算し直す。
+
+            色はテーマによらず白。下は昼も夜も空の写真なので、
             白い雲に負けないよう暗い影を敷いて拾わせる。
             狭い幅ではブロックも小さいので、字を一回り落として左右に逃げを作り、
             それでも入らなければ折り返させる (中央揃えなので 2 行でも崩れない)。
             pointer-events-none にして、文字の上でもブロックを押せるようにする。 */}
         {!isExpanded && (
-          <h1 className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-4 text-center text-sm font-medium tracking-[0.2em] text-white [text-shadow:0_1px_3px_rgb(0_0_0/0.55),0_0_14px_rgb(0_0_0/0.45)] md:text-base">
+          <h1 className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 flex items-center justify-center px-4 text-center text-sm font-medium tracking-[0.2em] text-white [text-shadow:0_1px_3px_rgb(0_0_0/0.55),0_0_14px_rgb(0_0_0/0.45)] md:text-base">
             {/* 1 文字ずつ span に割ると読み上げが文字単位になりうるので、
                 支援技術には素の 1 文として渡し、見た目側は隠す。 */}
             <span className="sr-only">{labels.welcome}</span>

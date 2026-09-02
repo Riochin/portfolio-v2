@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Water } from "three-stdlib";
 import { OCEAN, SUN, type OceanPalette } from "./sceneConfig";
+import { setStarHeightScale } from "./starPass";
 
 /**
  * three.js 公式サンプル由来の Water(three-stdlib, MIT)。
@@ -70,6 +71,20 @@ export function Ocean({
         );
     };
     mesh.material.needsUpdate = true;
+
+    // 鏡像は reflectionSize 四方のバッファへシーンをもう一度描いて作る。
+    // gl_PointSize はピクセル単位なので、そのまま描くと星だけが相対的に
+    // 何倍にも膨らみ、水平線沿いの白い塊になる。焼いている間だけ倍率を
+    // このバッファに合わせ、終わったら画面のものへ戻す。
+    // (useFrame では間に合わない。鏡像を描くのは 1 フレームの内側)
+    const drawReflection = mesh.onBeforeRender;
+    const canvasSize = new THREE.Vector2();
+    mesh.onBeforeRender = function (renderer, ...rest) {
+      renderer.getSize(canvasSize);
+      setStarHeightScale(reflectionSize / canvasSize.y);
+      drawReflection.call(this, renderer, ...rest);
+      setStarHeightScale(renderer.getPixelRatio());
+    };
 
     mesh.rotation.x = -Math.PI / 2;
     // size は法線マップの繰り返し。小さいほど波ひとつが大きくなる
