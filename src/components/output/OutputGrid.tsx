@@ -15,6 +15,27 @@ const SOURCE_LABELS: Record<OutputItem["source"], string> = {
   qiita: "Qiita",
 };
 
+/**
+ * ソースごとのサムネイル枠の縦横比。
+ *
+ * 枠と実物の比がずれると object-cover が差分を削る。全ソース 16:9 に揃えて
+ * いたときは Zenn / Qiita の OGP (1200x630 = 1.905) が枠 (1.778) より横長で、
+ * 左右 40px ずつ落ちて OGP 内の白いカードの縁が切れていた。
+ * 実物どおりの比にしておけば object-cover は何も削らない。
+ *
+ * 比を分けても行の高さは揃う。Talks は Speaker Deck だけ、Articles は
+ * Zenn と Qiita だけで、同じグリッドに別の比が混ざらないため。
+ *
+ * 値はクラス名まるごとで持つ。Tailwind はソースを文字列として走査するので、
+ * `aspect-[${ratio}]` のように組み立てるとクラスが生成されない。
+ */
+const ASPECT_CLASS: Record<OutputItem["source"], string> = {
+  /** スライド 1 枚目のプレビュー (640x360)。 */
+  speakerdeck: "aspect-video",
+  zenn: "aspect-[1200/630]",
+  qiita: "aspect-[1200/630]",
+};
+
 /** 1 件ごとの出現ディレイ。DOM 順 = 左上から右下の順になる。WorkGrid と揃える。 */
 const STAGGER_MS = 60;
 
@@ -89,11 +110,12 @@ export function OutputGrid({
           }
         >
           <a href={item.url} target="_blank" rel="noopener noreferrer">
-            {/* Works のタイルは 16:10 だが、ここだけ 16:9。
-                敷くのが自前の写真ではなく他所の OGP (Speaker Deck は 16:9、
-                Zenn / Qiita は 1200x630) で、16:10 まで詰めると object-cover が
-                左右を削って画像内の見出しが切れてしまうため。 */}
-            <div className="photo-frame relative aspect-video overflow-hidden rounded-xl bg-gradient-to-br from-accent/25 to-accent/5">
+            {/* Works のタイルは 16:10 固定だが、ここは敷くのが自前の写真ではなく
+                他所の OGP なので、比は ASPECT_CLASS でソースに合わせる。
+                16:10 に詰めるとどのソースも左右が削れて見出しが切れてしまう。 */}
+            <div
+              className={`photo-frame relative ${ASPECT_CLASS[item.source]} overflow-hidden rounded-xl bg-gradient-to-br from-accent/25 to-accent/5`}
+            >
               {item.thumbnail && (
                 <Image
                   src={item.thumbnail}
