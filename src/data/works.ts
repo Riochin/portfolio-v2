@@ -408,8 +408,8 @@ export const WORKS = {
     links: { repo: "https://github.com/jphacks/tk_a_2505" },
     image: {
       src: "/works/hinan.webp",
-      width: 640,
-      height: 420,
+      width: 1200,
+      height: 675,
       alt: { ja: "HiNan! のスクリーンショット", en: "Screenshot of HiNan!" },
     },
     awards: [

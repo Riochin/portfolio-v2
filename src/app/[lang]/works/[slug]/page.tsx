@@ -75,7 +75,9 @@ export default async function WorkDetailPage({
             share="morph"
             default="none"
           >
-            <div className="photo-frame mb-8 overflow-hidden rounded-xl">
+            {/* 一覧タイルと同じ 16:9 の枠。作品ごとに元画像の比が違う
+                (正方形もある) ので、枠を固定して object-cover で埋める。 */}
+            <div className="photo-frame relative mb-8 aspect-[16/9] overflow-hidden rounded-xl bg-gradient-to-br from-accent/25 to-accent/5">
               <Image
                 src={work.image.src}
                 alt={t(work.image.alt)}
@@ -83,7 +85,7 @@ export default async function WorkDetailPage({
                 height={work.image.height}
                 priority
                 sizes="(max-width: 768px) 100vw, 768px"
-                className="w-full object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
           </ViewTransition>
