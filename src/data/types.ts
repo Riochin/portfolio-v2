@@ -78,12 +78,19 @@ export type ExperienceKind = "education" | "internship" | "program";
 export type ExperienceEntry = {
   /** 旧サイトの company は英語のみだったので Localized にする。 */
   readonly organization: Localized<string>;
+  /**
+   * プログラム名・役職。一覧では organization より上に太字で出る見出しなので、
+   * 所属名が無くても何のプログラムか分かる書き方にする ("Go College" ではなく
+   * "CA Go College")。
+   */
   readonly position: Localized<string>;
   readonly period: Period;
   readonly highlights: readonly Localized<string>[];
   readonly kind: ExperienceKind;
   readonly stack?: readonly SkillSlug[];
   readonly url?: string;
+  /** 一覧の左に出すサムネイル。無い経験もあるので任意。 */
+  readonly image?: ImageRef;
 };
 
 export type Experience = ExperienceEntry & { readonly slug: string };

@@ -15,6 +15,8 @@ export default async function OutputPage() {
 
   return (
     <PageShell wide>
+      <h1 className="sr-only">{t(DICT.pages.output)}</h1>
+
       <section>
         <h2 className="text-lg font-bold">{t(DICT.output.talks)}</h2>
         <div className="mt-4">

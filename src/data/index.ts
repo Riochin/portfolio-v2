@@ -1,7 +1,8 @@
 import { WORKS, type WorkSlug } from "./works";
 import { EXPERIENCES, type ExperienceSlug } from "./experience";
 import { SKILLS, type Skill, type SkillSlug } from "./skills";
-import { comparePeriodDesc } from "@/lib/date";
+import { compareStartDesc, comparePeriodDesc, yearOf } from "@/lib/date";
+import type { Year } from "@/lib/date";
 import type {
   Award,
   AwardEntry,
@@ -24,9 +25,31 @@ const ALL_WORKS: readonly Work[] = Object.entries(WORKS)
   .map(([slug, entry]) => ({ slug, ...entry }))
   .sort((a, b) => comparePeriodDesc(a.period, b.period));
 
+/** 開始年で見出しを立てるので、Works の終了日基準ではなく開始日の新しい順。 */
 const ALL_EXPERIENCES: readonly Experience[] = Object.entries(EXPERIENCES)
   .map(([slug, entry]) => ({ slug, ...entry }))
-  .sort((a, b) => comparePeriodDesc(a.period, b.period));
+  .sort((a, b) => compareStartDesc(a.period, b.period));
+
+export type ExperienceYearGroup = {
+  readonly year: Year;
+  readonly experiences: readonly Experience[];
+};
+
+/**
+ * 開始年ごとの塊。年をまたぐ経験は開始年の側に置く。
+ * ALL_EXPERIENCES が既に開始日の降順なので、隣が同じ年かを見るだけで畳める。
+ */
+const EXPERIENCES_BY_YEAR: readonly ExperienceYearGroup[] =
+  ALL_EXPERIENCES.reduce<{ year: Year; experiences: Experience[] }[]>(
+    (groups, experience) => {
+      const year = yearOf(experience.period.start);
+      const last = groups.at(-1);
+      if (last?.year === year) last.experiences.push(experience);
+      else groups.push({ year, experiences: [experience] });
+      return groups;
+    },
+    [],
+  );
 
 const ALL_AWARDS: readonly AwardEntry[] = ALL_WORKS.flatMap((work) =>
   (work.awards ?? []).map((award) => ({
@@ -96,8 +119,9 @@ export function getTopAward(work: Work): Award | undefined {
   )[0];
 }
 
-export function getExperiences(): readonly Experience[] {
-  return ALL_EXPERIENCES;
+/** 開始年で束ねた経歴 (新しい年から)。 */
+export function getExperiencesByYear(): readonly ExperienceYearGroup[] {
+  return EXPERIENCES_BY_YEAR;
 }
 
 export function getExperienceBySlug(slug: string): Experience | undefined {

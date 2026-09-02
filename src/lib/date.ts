@@ -45,6 +45,24 @@ export function comparePeriodDesc(a: Period, b: Period): number {
   );
 }
 
+/**
+ * 開始が新しい順。開始が同じなら終了が新しい方を先に。
+ *
+ * comparePeriodDesc と違って開始日が主キー。開始年で見出しを立てる並びでは
+ * 見出しと順序の基準が一致していないと、年をまたぐ項目が自分の年の塊から
+ * はみ出して見えるため。
+ */
+export function compareStartDesc(a: Period, b: Period): number {
+  return (
+    b.start.localeCompare(a.start) ||
+    periodEndKey(b).localeCompare(periodEndKey(a))
+  );
+}
+
+/** "2025-06" -> "2025" */
+export const yearOf = (yearMonth: YearMonth): Year =>
+  yearMonth.slice(0, 4) as Year;
+
 /** "2025-06" -> "2025.6" */
 export function formatYearMonth(yearMonth: YearMonth): string {
   const [year, month] = yearMonth.split("-");

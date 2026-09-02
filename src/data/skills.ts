@@ -1,9 +1,5 @@
 export type SkillCategory =
-  | "language"
-  | "framework"
-  | "infra"
-  | "service"
-  | "concept";
+  "language" | "framework" | "infra" | "service" | "concept";
 
 export type SkillDef = {
   /** ブランド名。日英で変わらないので Localized にしない。 */
@@ -45,12 +41,14 @@ export const SKILLS = {
     icon: "python",
   },
   // simple-icons は商標の都合で Java のアイコンを配っていないので OpenJDK で代用する
+  csharp: { label: "C#", category: "language" },
   java: {
     label: "Java",
     category: "language",
     featured: true,
     icon: "openjdk",
   },
+  kotlin: { label: "Kotlin", category: "language", icon: "kotlin" },
   go: { label: "Go", category: "language", featured: true, icon: "go" },
   rust: { label: "Rust", category: "language", icon: "rust" },
   swift: { label: "Swift", category: "language", icon: "swift" },
@@ -78,6 +76,8 @@ export const SKILLS = {
     icon: "fastapi",
   },
   flask: { label: "Flask", category: "framework", icon: "flask" },
+  flutter: { label: "Flutter", category: "framework", icon: "flutter" },
+  unity: { label: "Unity", category: "framework", icon: "unity" },
   hono: { label: "Hono", category: "framework", icon: "hono" },
   tailwindcss: {
     label: "Tailwind CSS",
@@ -92,7 +92,12 @@ export const SKILLS = {
   drizzle: { label: "Drizzle ORM", category: "framework", icon: "drizzle" },
 
   // インフラ
-  docker: { label: "Docker", category: "infra", featured: true, icon: "docker" },
+  docker: {
+    label: "Docker",
+    category: "infra",
+    featured: true,
+    icon: "docker",
+  },
   kubernetes: {
     label: "Kubernetes",
     category: "infra",
@@ -128,8 +133,17 @@ export const SKILLS = {
   dynamodb: { label: "DynamoDB", category: "service" },
   pgvector: { label: "pgvector", category: "service" },
   discord: { label: "Discord", category: "service", icon: "discord" },
-  "gemini-api": { label: "Gemini API", category: "service", icon: "googlegemini" },
-  "github-oauth": { label: "GitHub OAuth", category: "service", icon: "github" },
+  figma: { label: "Figma", category: "service", icon: "figma" },
+  "gemini-api": {
+    label: "Gemini API",
+    category: "service",
+    icon: "googlegemini",
+  },
+  "github-oauth": {
+    label: "GitHub OAuth",
+    category: "service",
+    icon: "github",
+  },
   "google-maps": {
     label: "Google Maps API",
     category: "service",

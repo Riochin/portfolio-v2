@@ -166,7 +166,7 @@ export default async function WorkDetailPage({
           <section className="mt-8 rounded-xl border border-border bg-surface p-4 text-sm">
             <h2 className="font-bold">{t(DICT.works.related)}</h2>
             <p className="mt-1 text-muted-foreground">
-              {t(related.organization)} — {t(related.position)}
+              {t(related.position)} — {t(related.organization)}
             </p>
           </section>
         )}
