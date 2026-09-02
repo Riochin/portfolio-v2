@@ -1,36 +1,52 @@
-import type { Metadata } from "next";
 import { PageShell } from "@/components/layout/PageShell";
-import { experiences } from "@/data/experience";
+import { getExperiences, getSkills } from "@/data";
+import { formatPeriod } from "@/lib/date";
+import { DICT } from "@/lib/i18n/dictionary";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
+import { getT } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Experience",
-};
+export const generateMetadata = () =>
+  buildPageMetadata({ path: "/experience", title: DICT.pages.experience });
 
-export default function ExperiencePage() {
+export default async function ExperiencePage() {
+  const { locale, t } = await getT();
+  const experiences = getExperiences();
+
   return (
     <PageShell>
       <ul className="space-y-8">
         {experiences.map((exp) => (
           <li
-            key={`${exp.organization}-${exp.period}`}
+            key={exp.slug}
             className="rounded-xl border border-border bg-surface p-6"
           >
             <div className="flex items-baseline justify-between gap-4">
-              <h2 className="text-lg font-bold">{exp.organization}</h2>
+              <h2 className="text-lg font-bold">{t(exp.organization)}</h2>
               <span className="shrink-0 text-sm text-muted-foreground">
-                {exp.period}
+                {formatPeriod(exp.period, locale)}
               </span>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">{exp.position}</p>
-            <p className="mt-3 leading-relaxed">{exp.description}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t(exp.position)}
+            </p>
+            <ul className="mt-3 space-y-1.5 leading-relaxed">
+              {exp.highlights.map((highlight) => (
+                <li key={highlight.en} className="flex gap-2">
+                  <span aria-hidden className="text-accent">
+                    ·
+                  </span>
+                  <span>{t(highlight)}</span>
+                </li>
+              ))}
+            </ul>
             {exp.stack && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {exp.stack.map((tech) => (
+                {getSkills(exp.stack).map((skill) => (
                   <span
-                    key={tech}
+                    key={skill.slug}
                     className="rounded-full border border-border px-3 py-0.5 text-xs"
                   >
-                    {tech}
+                    {skill.label}
                   </span>
                 ))}
               </div>

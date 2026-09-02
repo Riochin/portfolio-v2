@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { ExternalLink } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { getOutputItems } from "@/lib/output";
 import type { OutputItem } from "@/lib/output/types";
+import { DICT } from "@/lib/i18n/dictionary";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
+import { getT } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Output",
-};
+export const generateMetadata = () =>
+  buildPageMetadata({ path: "/output", title: DICT.pages.output });
 
 const sourceLabels: Record<OutputItem["source"], string> = {
   speakerdeck: "Speaker Deck",
@@ -19,9 +20,15 @@ function formatDate(iso: string) {
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function OutputList({ items }: { items: OutputItem[] }) {
+function OutputList({
+  items,
+  emptyLabel,
+}: {
+  items: OutputItem[];
+  emptyLabel: string;
+}) {
   if (items.length === 0) {
-    return <p className="text-muted-foreground">まだありません。</p>;
+    return <p className="text-muted-foreground">{emptyLabel}</p>;
   }
   return (
     <ul className="space-y-4">
@@ -59,20 +66,22 @@ function OutputList({ items }: { items: OutputItem[] }) {
 }
 
 export default async function OutputPage() {
+  const { t } = await getT();
   const { talks, articles } = await getOutputItems();
+  const emptyLabel = t(DICT.output.empty);
 
   return (
     <PageShell>
       <section>
-        <h2 className="text-lg font-bold">Talks</h2>
+        <h2 className="text-lg font-bold">{t(DICT.output.talks)}</h2>
         <div className="mt-4">
-          <OutputList items={talks} />
+          <OutputList items={talks} emptyLabel={emptyLabel} />
         </div>
       </section>
       <section className="mt-12">
-        <h2 className="text-lg font-bold">Articles</h2>
+        <h2 className="text-lg font-bold">{t(DICT.output.articles)}</h2>
         <div className="mt-4">
-          <OutputList items={articles} />
+          <OutputList items={articles} emptyLabel={emptyLabel} />
         </div>
       </section>
     </PageShell>

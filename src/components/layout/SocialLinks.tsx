@@ -1,24 +1,26 @@
+import type { ComponentType } from "react";
 import { GithubIcon } from "@/components/icons/GithubIcon";
 import { LinkedinIcon } from "@/components/icons/LinkedinIcon";
 import { XIcon } from "@/components/icons/XIcon";
 import { SpeakerDeckIcon } from "@/components/icons/SpeakerDeckIcon";
 import { ZennIcon } from "@/components/icons/ZennIcon";
+import { SOCIAL_LINKS, type SocialKey } from "@/data/site";
 
-const socialLinks = [
-  { href: "https://github.com/riochin", label: "GitHub", Icon: GithubIcon },
-  { href: "https://x.com/riochin", label: "X", Icon: XIcon },
-  {
-    href: "https://speakerdeck.com/riochin",
-    label: "Speaker Deck",
-    Icon: SpeakerDeckIcon,
-  },
-  {
-    href: "https://www.linkedin.com/in/rio-ichikawa-94332b361/",
-    label: "LinkedIn",
-    Icon: LinkedinIcon,
-  },
-  { href: "https://zenn.dev/riochin", label: "Zenn", Icon: ZennIcon },
-] as const;
+/**
+ * key -> アイコンの対応はここに置く。データ側 (src/data/site.ts) には
+ * シリアライズできない値を入れないため。Record<SocialKey, ...> なので
+ * SNS を足したときにアイコンの追加漏れが型エラーになる。
+ */
+const ICONS: Record<
+  SocialKey,
+  ComponentType<{ size?: number; className?: string }>
+> = {
+  github: GithubIcon,
+  x: XIcon,
+  speakerdeck: SpeakerDeckIcon,
+  linkedin: LinkedinIcon,
+  zenn: ZennIcon,
+};
 
 export function SocialLinks({
   direction = "column",
@@ -29,19 +31,22 @@ export function SocialLinks({
     <ul
       className={`flex gap-6 ${direction === "column" ? "flex-col" : "flex-row"}`}
     >
-      {socialLinks.map(({ href, label, Icon }) => (
-        <li key={label}>
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={label}
-            className="block text-foreground transition-colors hover:text-accent"
-          >
-            <Icon size={26} />
-          </a>
-        </li>
-      ))}
+      {SOCIAL_LINKS.map(({ key, href, label }) => {
+        const Icon = ICONS[key];
+        return (
+          <li key={key}>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              className="block text-foreground transition-colors hover:text-accent"
+            >
+              <Icon size={26} />
+            </a>
+          </li>
+        );
+      })}
     </ul>
   );
 }

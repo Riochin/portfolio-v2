@@ -29,12 +29,22 @@ Output                      中央: 筆記体ロゴ "Riochin"
 - ハンバーガーメニューでナビ + SNSアイコンをまとめる
 - 中央ブロックはそのまま(タップでWebGL全画面、`prefers-reduced-motion` 時は静止画のまま)
 
+## 多言語 (i18n)
+
+日英両対応。`/ja/...` `/en/...` のパスルーティングで、全ページを `src/app/[lang]/` 配下に置く。デフォルトは `ja`。
+
+- ロケールの解決は `next/root-params` の `lang()`。ルートレイアウトが `app/[lang]/layout.tsx` にあるので、任意の Server Component から prop drilling なしに読める。使用箇所は `src/lib/i18n/server.ts` 1 ファイルに閉じる
+- Client Component / Route Handler では `root-params` が使えない。前者はサーバーで解決した値を props で渡し、後者(OG 画像)は `params` から `lang` を受け取る
+- 接頭辞なしのパスは `src/proxy.ts` が 307 リダイレクト。`NEXT_LOCALE` cookie → `Accept-Language` → `ja` の優先順。2 ロケールなのでネゴシエーション用のライブラリは入れず自前で持つ
+- `alternates.languages` で hreflang (ja / en / x-default) を全ページに出す
+
 ## ルーティング / IA
 
 | ルート | 内容 |
 |---|---|
 | `/about` | About me |
-| `/works` | 制作物(ハッカソン作品など、プロジェクト単位) |
+| `/works` | 制作物(ハッカソン作品など、プロジェクト単位)。上部に作品横断の受賞一覧 |
+| `/works/[slug]` | 作品の詳細。本文・受賞・技術スタック・関連 Experience。作品ごとに OGP 生成 |
 | `/experience` | 経験(インターンなど、所属単位) |
 | `/output` | 登壇(SpeakerDeck) + 記事(Zenn/Qiita)の統合一覧。登壇が主戦場なので登壇を上位表示 |
 
@@ -42,15 +52,44 @@ Output                      中央: 筆記体ロゴ "Riochin"
 
 ### Works と Experience の関係
 
-作品単位(Works)と所属単位(Experience)は軸が違うため独立させる。ハッカソン作品がインターン中に生まれた場合など、関連付けたいケースがあるので Works 側に `relatedExperience` 参照フィールドを持たせる(未実装、必要になったら追加)。
+作品単位(Works)と所属単位(Experience)は軸が違うため独立させる。ハッカソン作品がインターン中に生まれた場合など、関連付けたいケースがあるので Works 側に `relatedExperience` 参照フィールドを持たせる。
+
+データは `src/data/*.ts` に TS モジュールとして持つ。レコードは配列ではなく **キー付きオブジェクト + `as const satisfies`** で書き、キーがそのまま slug になる。これにより `WorkSlug` / `ExperienceSlug` / `SkillSlug` が literal union になり、`relatedExperience` と `stack` の参照整合が型で保証される。
 
 ```ts
-// works の想定フィールド
-{ title, period, description, role, stack: string[], links: { repo?, demo?, article? }, image?, relatedExperience?: string }
+// src/data/types.ts
+type WorkEntry = {
+  title: Localized<string>;
+  tagline: Localized<string>;              // 一覧の1行説明
+  body: readonly Localized<string>[];      // 詳細ページの本文(段落ごと)
+  period: Period;                          // { start: YearMonth; end: YearMonth | null }
+  role?: Localized<string>;
+  stack: readonly SkillSlug[];             // 自由文字列ではなく skills マスタへの参照
+  links: { repo?; demo?; article?; slides? };
+  image?: ImageRef;                        // { src, width, height, alt: Localized<string> }
+  awards?: readonly Award[];               // { event, prize, rank, sponsor?, date }
+  relatedExperience?: ExperienceSlug;
+  featured?: boolean;
+};
 
-// experience の想定フィールド
-{ organization, position, period, description, stack?: string[] }
+type ExperienceEntry = {
+  organization: Localized<string>;
+  position: Localized<string>;
+  period: Period;
+  highlights: readonly Localized<string>[];
+  kind: "education" | "internship" | "program";
+  stack?: readonly SkillSlug[];
+  url?: string;
+};
 ```
+
+設計上の約束:
+
+- **`Localized<T>` は必ず葉に置く。** `readonly Localized<string>[]` であって `Localized<readonly string[]>` ではない。後者だと EN/JA で要素数がずれても型が通ってしまう(旧サイトの実害)。
+- **日付は `YearMonth` (`"2025-06"`)。** ゼロ埋めなので文字列比較でソートでき、`end: null` が「継続中」を表す。表示は `formatPeriod()` が `2025.6 – 現在` / `2025.6 – Present` に整形する。
+- **`src/data/` に React コンポーネントを置かない。** アイコンはスラッグ文字列だけ持ち、key → コンポーネントの対応はコンポーネント側 (`SocialLinks.tsx` / `SkillIcon.tsx`) に置く。データをシリアライズ可能に保ち Server → Client 境界を越えられるようにするため。
+- **並び替え・フィルタは `src/data/index.ts` のアクセサ層だけ**に置く。アクセサは同期かつロケール非依存 ── `opengraph-image.tsx` は Route Handler 扱いで `next/root-params` を使えないので、ここがロケールを知っていると OG 画像から呼べなくなる。
+- **アイデンティティ情報の単一の情報源は `src/data/site.ts`。** 名前・ブランド・外部サービスのユーザー名・ナビのパスはここだけにあり、`src/lib/output/config.ts` もここを読む。UI 文言は `src/lib/i18n/dictionary.ts`。
 
 ### Output のデータソース
 
@@ -103,7 +142,8 @@ Output                      中央: 筆記体ロゴ "Riochin"
 
 ## SEO / OGP
 
-- ページごとに `next/og` で動的生成(固定画像は使わない)
+- ページごとに `next/og` で動的生成(固定画像は使わない)。作品詳細は作品タイトル入りの OGP を slug × ロケールで事前生成する
+- `sitemap.ts` は全ページ × 全ロケールを hreflang alternates 付きで出力する。`robots.ts` は開発用の `/hero-capture` を除外する
 
 ## アナリティクス
 

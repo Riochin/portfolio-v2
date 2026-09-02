@@ -1,8 +1,13 @@
 import { ImageResponse } from "next/og";
+import { SITE } from "@/data/site";
 
 export const ogSize = { width: 1200, height: 630 };
+export const ogContentType = "image/png";
 
-export function renderOgImage(title?: string) {
+/** OG 画像の alt。画像ルートの `alt` export に使う。 */
+export const ogAlt = SITE.brand;
+
+export function renderOgImage({ title }: { title?: string } = {}) {
   return new ImageResponse(
     (
       <div
@@ -18,7 +23,7 @@ export function renderOgImage(title?: string) {
         }}
       >
         <div style={{ fontSize: 96, fontStyle: "italic", fontWeight: 700 }}>
-          Riochin
+          {SITE.brand}
         </div>
         {title && (
           <div style={{ marginTop: 24, fontSize: 40, color: "#8b8b99" }}>
@@ -26,7 +31,7 @@ export function renderOgImage(title?: string) {
           </div>
         )}
         <div style={{ marginTop: 40, fontSize: 24, color: "#8b7ef0" }}>
-          riochin.dev
+          {SITE.url.replace(/^https?:\/\//, "")}
         </div>
       </div>
     ),

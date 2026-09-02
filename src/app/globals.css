@@ -76,18 +76,32 @@ body {
 
 /* --- テーマ切替: 円形リベール ---
    root のデフォルトのクロスフェードを止め、新テーマのスナップショットを
-   ThemeToggle 側の Web Animations API で clip-path 展開させる。 */
-::view-transition-old(root),
-::view-transition-new(root) {
+   ThemeToggle 側の Web Animations API で clip-path 展開させる。
+   html[data-vt="theme"] で絞っているのは、この打ち消しがページ遷移の
+   view transition にも効いてしまい、モーフ以外がハードカットになるため。 */
+html[data-vt="theme"]::view-transition-old(root),
+html[data-vt="theme"]::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+  /* UA スタイルの block-size: auto のままだとスナップショットの箱がビュー
+     ポートと一致しないことがあり、clip-path の円が左上へずれる。箱を明示的に
+     固定しておく。 */
+  width: 100%;
+  height: 100%;
+  overflow: clip;
 }
 
-::view-transition-old(root) {
+/* root のジオメトリはテーマ切替で変わらないので、group の暗黙のトゥイーンで
+   箱が動かないよう止めておく(動くと円の中心が一緒に流れる)。 */
+html[data-vt="theme"]::view-transition-group(root) {
+  animation: none;
+}
+
+html[data-vt="theme"]::view-transition-old(root) {
   z-index: 1;
 }
 
-::view-transition-new(root) {
+html[data-vt="theme"]::view-transition-new(root) {
   z-index: 2;
 }
 
@@ -101,12 +115,12 @@ body {
   z-index: 3;
 }
 
-::view-transition-old(theme-icon) {
-  animation: theme-icon-out 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+html[data-vt="theme"]::view-transition-old(theme-icon) {
+  animation: theme-icon-out 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-::view-transition-new(theme-icon) {
-  animation: theme-icon-in 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+html[data-vt="theme"]::view-transition-new(theme-icon) {
+  animation: theme-icon-in 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes theme-icon-out {
@@ -128,5 +142,61 @@ body {
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation: none !important;
+  }
+}
+
+/* --- Works グリッドの出現 ---
+   framer-motion ではなく CSS で行う。variants を使うと SSR の HTML に
+   opacity:0 が焼き込まれ、JS が失敗したとき一覧が永久に見えなくなるため。
+   遅延はインライン変数 --reveal-delay で 1 件ずつずらし、左上から順に出す。 */
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.reveal-rise {
+  animation: reveal-rise 450ms cubic-bezier(0.22, 1, 0.36, 1)
+    var(--reveal-delay, 0ms) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-rise {
+    animation: none;
+  }
+}
+
+/* --- Works: 一覧タイル <-> 詳細 hero のモーフ ---
+   ViewTransition の share="morph" が付ける .morph クラスを狙う。
+   戻りは同じペアが逆向きに走るので、進む/戻るで別の指定は要らない
+   (ブラウザの戻るボタンも同じ経路を通る)。 */
+::view-transition-group(.morph) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 拡大中のピクセル補間のアラを目立たせないための軽いブラー */
+::view-transition-image-pair(.morph) {
+  animation-name: morph-blur;
+}
+
+@keyframes morph-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* 遷移中のオーバーレイがクリックを吸ってしまうのを防ぐ */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }

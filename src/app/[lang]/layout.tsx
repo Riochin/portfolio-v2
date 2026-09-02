@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { Zen_Maru_Gothic, Alex_Brush } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
-import "./globals.css";
+import { SITE } from "@/data/site";
+import { LOCALES, OG_LOCALE } from "@/lib/i18n/config";
+import { getT } from "@/lib/i18n/server";
+import { alternates } from "@/lib/i18n/paths";
+import "../globals.css";
 
 const zenMaruGothic = Zen_Maru_Gothic({
   variable: "--font-zen-maru-gothic",
@@ -16,19 +20,38 @@ const logoCursive = Alex_Brush({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://riochin.dev"),
-  title: {
-    default: "Riochin",
-    template: "%s | Riochin",
-  },
-  description: "Riochin のポートフォリオサイト",
-};
+export function generateStaticParams() {
+  return LOCALES.map((lang) => ({ lang }));
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale, t } = await getT();
+
+  return {
+    metadataBase: new URL(SITE.url),
+    title: {
+      default: SITE.brand,
+      template: `%s | ${SITE.brand}`,
+    },
+    description: t(SITE.description),
+    alternates: alternates(locale, "/"),
+    openGraph: {
+      type: "website",
+      siteName: SITE.brand,
+      locale: OG_LOCALE[locale],
+      title: SITE.brand,
+      description: t(SITE.description),
+      url: alternates(locale, "/").canonical,
+    },
+  };
+}
+
+export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
+  const { locale } = await getT();
+
   return (
     <html
-      lang="ja"
+      lang={locale}
       className={`${zenMaruGothic.variable} ${logoCursive.variable} h-full antialiased`}
       suppressHydrationWarning
     >

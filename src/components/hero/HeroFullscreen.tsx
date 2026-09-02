@@ -5,13 +5,16 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { HeroBackground } from "./HeroBackground";
 import { HeroCanvasWrapper } from "./HeroCanvasWrapper";
+import { SITE } from "@/data/site";
 
 export function HeroFullscreen({
   mode,
   onClose,
+  closeLabel,
 }: {
   mode: "light" | "dark";
   onClose: () => void;
+  closeLabel: string;
 }) {
   const [canvasReady, setCanvasReady] = useState(false);
   // レイアウトアニメーション中は要素に transform がかかっており、R3F が
@@ -49,12 +52,12 @@ export function HeroFullscreen({
         layoutId="hero-logo"
         className="hero-logo-out pointer-events-none absolute inset-0 z-10 flex items-center justify-center font-logo text-7xl text-[#1c1c1c] md:text-8xl dark:text-white"
       >
-        Riochin
+        {SITE.brand}
       </motion.span>
       <motion.button
         type="button"
         onClick={onClose}
-        aria-label="全画面表示を閉じる"
+        aria-label={closeLabel}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

@@ -3,27 +3,36 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const navItems = [
-  { href: "/about", label: "About me" },
-  { href: "/works", label: "Works" },
-  { href: "/experience", label: "Experience" },
-  { href: "/output", label: "Output" },
-] as const;
+export type NavItem = {
+  /** ロケール接頭辞まで解決済みの href。組み立ては SiteChrome (server) が行う。 */
+  readonly href: string;
+  readonly label: string;
+};
 
-export function SideNav() {
+export function SideNav({
+  items,
+  heading,
+  headingHref,
+  ariaLabel,
+}: {
+  items: readonly NavItem[];
+  heading: string;
+  headingHref: string;
+  ariaLabel: string;
+}) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="メインナビゲーション">
+    <nav aria-label={ariaLabel}>
       <Link
-        href="/"
+        href={headingHref}
         className="mb-6 block text-xl font-bold text-foreground transition-colors hover:text-accent"
       >
-        Rio Ichikawa
+        {heading}
       </Link>
       {/* ピルの padding のぶんだけ左に寄せて、文字の左端を見出しと揃える */}
       <ul className="-ml-4 flex flex-col gap-2">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
 

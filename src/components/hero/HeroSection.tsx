@@ -6,7 +6,12 @@ import { useTheme } from "next-themes";
 import { HeroBlock } from "./HeroBlock";
 import { HeroFullscreen } from "./HeroFullscreen";
 
-export function HeroSection() {
+export type HeroLabels = {
+  readonly expand: string;
+  readonly close: string;
+};
+
+export function HeroSection({ labels }: { labels: HeroLabels }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const { resolvedTheme } = useTheme();
@@ -31,11 +36,18 @@ export function HeroSection() {
             onClick={
               prefersReducedMotion ? undefined : () => setIsExpanded(true)
             }
+            ariaLabel={labels.expand}
           />
         )}
       </div>
       <AnimatePresence>
-        {isExpanded && <HeroFullscreen mode={mode} onClose={close} />}
+        {isExpanded && (
+          <HeroFullscreen
+            mode={mode}
+            onClose={close}
+            closeLabel={labels.close}
+          />
+        )}
       </AnimatePresence>
     </LayoutGroup>
   );
