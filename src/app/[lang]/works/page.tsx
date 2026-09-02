@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
+import { AwardList, type AwardListItem } from "@/components/works/AwardList";
 import { WorkGrid, type WorkGridItem } from "@/components/works/WorkGrid";
 import { getAwards, getSkills, getWorksByCategory } from "@/data";
 import { formatPeriod, formatYearMonth } from "@/lib/date";
@@ -16,7 +16,15 @@ const STACK_PREVIEW = 3;
 
 export default async function WorksPage() {
   const { locale, t } = await getT();
-  const awards = getAwards();
+  const awards = getAwards().map((award): AwardListItem => ({
+    key: `${award.work.slug}-${award.date}-${t(award.prize)}`,
+    date: formatYearMonth(award.date),
+    dateTime: award.date,
+    prize: t(award.prize),
+    event: t(award.event),
+    workTitle: t(award.work.title),
+    workHref: localePath(locale, `/works/${award.work.slug}`),
+  }));
 
   // ロケールをここで解決してから Client Component に渡す。
   // (アクセサ層はロケール非依存なので、この境界が唯一の解決点になる)
@@ -53,29 +61,7 @@ export default async function WorksPage() {
 
       <section className="mt-20">
         <h2 className="text-lg font-bold">{t(DICT.works.awards)}</h2>
-        <ul className="mt-4 space-y-2">
-          {awards.map((award) => (
-            <li
-              key={`${award.work.slug}-${award.date}-${t(award.prize)}`}
-              className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border py-2 text-sm"
-            >
-              <time
-                dateTime={award.date}
-                className="w-20 shrink-0 text-muted-foreground"
-              >
-                {formatYearMonth(award.date)}
-              </time>
-              <span className="font-medium">{t(award.prize)}</span>
-              <span className="text-muted-foreground">{t(award.event)}</span>
-              <Link
-                href={localePath(locale, `/works/${award.work.slug}`)}
-                className="ml-auto text-accent transition-opacity hover:opacity-70"
-              >
-                {t(award.work.title)}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <AwardList items={awards} />
       </section>
     </PageShell>
   );
