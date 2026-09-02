@@ -12,7 +12,9 @@ export function HeroBlock({
   ariaLabel: string;
 }) {
   return (
-    <div className="group relative h-full w-full">
+    // 角丸はサイト共通のスケールから独立させ、この 1 箇所で決める。
+    // 外枠(-inset-1)と同心にするため、そちらは +0.25rem した値を使う。
+    <div className="group relative h-full w-full [--hero-radius:0.25rem]">
       {/* ホバーするとアクセントがブロックの中心から広がって外へ染み出す。
           色は薄めずベタのまま、円を拡大することで表現する。
           clip-path のアニメーションは毎フレーム再ペイントが走ってカクつくため、
@@ -21,7 +23,7 @@ export function HeroBlock({
           キーボード操作でも同じ反応にするため focus-within も見る。 */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -inset-1 overflow-hidden rounded-[1.25rem]"
+        className="pointer-events-none absolute -inset-1 overflow-hidden rounded-[calc(var(--hero-radius)+0.25rem)]"
       >
         <span className="absolute left-1/2 top-1/2 aspect-square w-[125%] -translate-x-1/2 -translate-y-1/2 scale-0 rounded-full bg-accent transition-transform duration-500 ease-out group-hover:scale-100 group-focus-within:scale-100 motion-reduce:transition-none" />
       </span>
@@ -30,7 +32,7 @@ export function HeroBlock({
         type="button"
         onClick={onClick}
         aria-label={ariaLabel}
-        className={`relative block h-full w-full overflow-hidden rounded-2xl outline-none ${
+        className={`relative block h-full w-full overflow-hidden rounded-[var(--hero-radius)] outline-none ${
           onClick ? "cursor-pointer" : "cursor-default"
         }`}
         transition={{ type: "spring", stiffness: 200, damping: 26 }}

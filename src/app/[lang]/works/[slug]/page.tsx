@@ -110,7 +110,7 @@ export default async function WorkDetailPage({
             {getSkills(work.stack).map((skill) => (
               <span
                 key={skill.slug}
-                className="rounded-full border border-border px-3 py-0.5 text-xs"
+                className="rounded-xl border border-border px-3 py-0.5 text-xs"
               >
                 {skill.label}
               </span>

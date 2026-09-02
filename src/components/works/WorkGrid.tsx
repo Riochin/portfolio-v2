@@ -73,7 +73,7 @@ export function WorkGrid({ items }: { items: readonly WorkGridItem[] }) {
               {work.stack.map((label) => (
                 <span
                   key={label}
-                  className="rounded-full border border-border px-2 py-0.5"
+                  className="rounded-xl border border-border px-2 py-0.5"
                 >
                   {label}
                 </span>

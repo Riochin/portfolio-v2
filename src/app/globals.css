@@ -29,6 +29,11 @@
   --color-accent: var(--accent);
   --font-sans: var(--font-zen-maru-gothic), sans-serif;
   --font-logo: var(--font-logo-cursive), cursive;
+
+  /* 角の丸みはここだけで決める。カード・タイル・チップは全て rounded-xl を使う。
+     真円にしたいもの(プロフィール写真・アイコンボタン)は rounded-full のままで
+     この値には追随しない。Hero ブロックも独立(HeroBlock.tsx の --hero-radius)。 */
+  --radius-xl: 0.375rem;
 }
 
 body {

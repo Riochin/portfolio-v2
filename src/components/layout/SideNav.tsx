@@ -41,7 +41,7 @@ export function SideNav({
               <Link
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`inline-block rounded-full px-4 py-1.5 transition-colors ${
+                className={`inline-block rounded-xl px-4 py-1.5 transition-colors ${
                   isActive
                     ? "bg-accent text-white"
                     : "text-foreground hover:text-accent"
