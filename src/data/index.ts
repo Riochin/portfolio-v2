@@ -54,7 +54,7 @@ const EXPERIENCES_BY_YEAR: readonly ExperienceYearGroup[] =
 const ALL_AWARDS: readonly AwardEntry[] = ALL_WORKS.flatMap((work) =>
   (work.awards ?? []).map((award) => ({
     ...award,
-    work: { slug: work.slug, title: work.title },
+    work: { slug: work.slug, title: work.shortTitle ?? work.title },
   })),
 ).sort((a, b) => b.date.localeCompare(a.date));
 

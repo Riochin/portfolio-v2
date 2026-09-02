@@ -333,6 +333,10 @@ export const WORKS = {
       ja: "突き(ラッシュ)の速さ比べか？",
       en: "Rush Speed Contest?",
     },
+    shortTitle: {
+      ja: "突きの速さ比べか？",
+      en: "Rush Speed Contest?",
+    },
     tagline: {
       ja: "Apple Watchのセンサーデータを使ったリアルタイム対戦ゲーム",
       en: "A real-time fighting game using Apple Watch sensor data",
