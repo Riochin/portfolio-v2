@@ -12,10 +12,10 @@ import { Mountains } from "./Mountains";
 import { Ocean } from "./Ocean";
 import {
   CAMERA,
+  DAY_SKY,
   CLOUD_LAYER,
   CLOUD_LIMIT,
   DAY_OCEAN,
-  DAY_SKY,
   STARS,
   NIGHT_SKY,
   NIGHT_BG,
@@ -107,6 +107,9 @@ export default function HeroScene({
       // toDataURL でのキャプチャ時のみ必要。通常表示では性能上のコストになるので切る
       gl={{ preserveDrawingBuffer: exposeCapture }}
       onCreated={({ gl, scene, camera }) => {
+        // 素材の色はそのまま出したいので露出は等倍。空の輝度は DaySky 側で畳む
+        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        gl.toneMappingExposure = 1;
         gl.domElement.addEventListener(
           "webglcontextlost",
           () => setAttempt((n) => (n < 2 ? n + 1 : n)),

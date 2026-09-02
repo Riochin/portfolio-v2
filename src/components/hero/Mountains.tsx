@@ -66,14 +66,15 @@ function Ridge({ ridge }: { ridge: MountainRidge }) {
   );
 
   return (
-    <mesh position={[0, MOUNTAINS.centerY, ridge.z]}>
+    // 星より先に描いて深度を書き込む。そうしないと星が山の上に載る
+    <mesh position={[0, MOUNTAINS.centerY, ridge.z]} renderOrder={-1}>
       <planeGeometry args={[MOUNTAINS.width, MOUNTAINS.tall]} />
       <shaderMaterial
         uniforms={uniforms}
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
         transparent
-        depthWrite={false}
+        depthWrite
       />
     </mesh>
   );

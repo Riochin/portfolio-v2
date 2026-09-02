@@ -57,7 +57,7 @@ export function MilkyWay() {
       position={[...MILKY_WAY.position]}
       rotation={[...MILKY_WAY.rotation]}
     >
-      <planeGeometry args={[320, 90]} />
+      <planeGeometry args={[...MILKY_WAY.size]} />
       <shaderMaterial
         uniforms={uniforms}
         vertexShader={vertexShader}

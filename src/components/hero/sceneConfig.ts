@@ -14,12 +14,15 @@ export const POINTER_LOOK = {
   damping: 3,
 } as const;
 
-// mid は視線の高さ(=水平線)の色。ここを白っぽくすると水平線の霞になる
+// 太陽の向き。海面の映り込みに使う
+export const SUN = [0.3, 0.78, -0.5] as [number, number, number];
+
+// mid は視線の高さ(=水平線)の色。ここを白っぽくすると水平線の霞になる。
+// curve が小さいほど、低い仰角でも一気に top の青へ寄る。
 export const DAY_SKY = {
   top: "#0247d6",
   mid: "#a9dcf6",
   bottom: "#8fd0f2",
-  // 低い仰角でも真っ青まで持っていく。1 に近いほど水平線の薄い色が広がる
   curve: 0.34,
 } as const;
 
@@ -49,7 +52,7 @@ export const DAY_OCEAN: OceanPalette = {
   sky: "#7fccf2",
   haze: "#a9dcf6",
   sunColor: "#fffdf0",
-  sunDir: [0.34, 0.44, -1],
+  sunDir: SUN,
   sunPower: 340,
   sunStrength: 0.5,
   clarity: 0.65,
@@ -272,10 +275,12 @@ export const CLOUD_LAYER: readonly CloudMass[] = [
 export const CLOUD_LIMIT = 900;
 
 export const STARS = {
-  radius: 60,
-  depth: 50,
-  count: 14000,
-  factor: 5,
+  // 山や天の川より外側に置く。近いと星が山の手前に描かれてしまう
+  radius: 400,
+  depth: 200,
+  // 遠くへ置いたぶん、数と粒の大きさで見た目の密度を戻す
+  count: 22000,
+  factor: 18,
   saturation: 0.7,
   fade: true,
   speed: 0.6,
@@ -291,8 +296,9 @@ export const NIGHT_BG = "#05060d";
 
 // 水平線の上に横たわるように寝かせる
 export const MILKY_WAY = {
-  position: [14, 46, -150] as [number, number, number],
+  position: [44, 136, -500] as [number, number, number],
   rotation: [0.15, -0.1, 0.85] as [number, number, number],
+  size: [1060, 300] as [number, number],
 } as const;
 
 // 夜の下辺に置く山の稜線。板 1 枚で 1 つの尾根を描き、
@@ -315,8 +321,8 @@ export const MOUNTAINS = {
   tall: 600,
   centerY: -260,
   ridges: [
-    { z: -560, base: 8, height: 12, scale: 0.011, color: "#0e1430", seed: 3 },
-    { z: -420, base: 4, height: 14, scale: 0.014, color: "#080c1e", seed: 17 },
-    { z: -300, base: 0, height: 16, scale: 0.018, color: "#02030a", seed: 29 },
+    { z: -320, base: -14, height: 22, scale: 0.017, color: "#131c3a", seed: 3 },
+    { z: -230, base: -18, height: 20, scale: 0.024, color: "#0b1024", seed: 17 },
+    { z: -160, base: -22, height: 17, scale: 0.034, color: "#03040c", seed: 29 },
   ] as readonly MountainRidge[],
 } as const;
