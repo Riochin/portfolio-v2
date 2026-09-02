@@ -1,10 +1,26 @@
 import { fetchSpeakerDeckItems } from "./speakerdeck";
 import { fetchZennItems } from "./zenn";
 import { fetchQiitaItems } from "./qiita";
+import { fetchOgImage } from "./ogp";
 import type { OutputItem } from "./types";
 
 const byDateDesc = (a: OutputItem, b: OutputItem) =>
   new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+
+/**
+ * フィードがサムネイルを持たなかったぶんだけ、記事ページの og:image で埋める。
+ * (Qiita の API は画像を返さないのでここが効く)
+ * 1 件 1 リクエストになるが、fetch は revalidate 付きでキャッシュされる。
+ */
+async function withThumbnails(items: OutputItem[]): Promise<OutputItem[]> {
+  return Promise.all(
+    items.map(async (item) =>
+      item.thumbnail
+        ? item
+        : { ...item, thumbnail: await fetchOgImage(item.url) },
+    ),
+  );
+}
 
 export type OutputData = {
   talks: OutputItem[];
@@ -31,8 +47,13 @@ export async function getOutputItems(): Promise<OutputData> {
     ...(qiita.status === "fulfilled" ? qiita.value : []),
   ];
 
+  const [talksWithThumbnails, articlesWithThumbnails] = await Promise.all([
+    withThumbnails(talks),
+    withThumbnails(articles),
+  ]);
+
   return {
-    talks: talks.sort(byDateDesc),
-    articles: articles.sort(byDateDesc),
+    talks: talksWithThumbnails.sort(byDateDesc),
+    articles: articlesWithThumbnails.sort(byDateDesc),
   };
 }
