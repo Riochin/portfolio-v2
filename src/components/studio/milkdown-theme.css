@@ -1,0 +1,61 @@
+/* Crepe の既定テーマ (frame) を、このサイトのトークンに繋ぎ替える。
+   書く画面と公開後の見た目が違うと、書きながら仕上がりを判断できない。
+
+   globals.css ではなくここに置くのは、studio が dev 専用の道具だから。
+   MilkdownEditor.tsx がテーマ CSS の「後」に読むので、この上書きが勝つ。
+   セレクタも .milkdown の中に閉じてあり、サイト側へは漏れない。
+
+   参照している --background 等は globals.css が :root と .dark の両方で
+   定義しているので、テーマ切替にはこのファイルを触らずに追随する。 */
+.milkdown {
+  /* 書字面と地の色 */
+  --crepe-color-background: var(--surface);
+  --crepe-color-on-background: var(--foreground);
+
+  /* スラッシュメニューやツールバーなどの浮いている面 */
+  --crepe-color-surface: var(--surface);
+  --crepe-color-surface-low: var(--background);
+  --crepe-color-on-surface: var(--foreground);
+  --crepe-color-on-surface-variant: var(--muted-foreground);
+
+  --crepe-color-outline: var(--border);
+
+  /* Crepe の primary は既定が黒。ここをアクセントにすると、
+     カーソル・選択・リンク・アクティブなメニュー項目が一斉にサイトの色になる。 */
+  --crepe-color-primary: var(--accent);
+  --crepe-color-secondary: var(--border);
+  --crepe-color-on-secondary: var(--foreground);
+
+  --crepe-color-inverse: var(--foreground);
+  --crepe-color-on-inverse: var(--background);
+
+  /* 文中のコード。公開後は .article-body が枠付きの面で描くが、
+     編集中は色で分かれば十分なのでアクセントに寄せる。 */
+  --crepe-color-inline-code: var(--accent);
+
+  /* パレットに異常系の色が無いので、明暗どちらの地でも読める赤を 1 つ置く。 */
+  --crepe-color-error: #e05252;
+
+  /* ホバーと選択は透過で作る。地の色 (surface / background) が
+     ライトとダークで入れ替わっても、アクセントの被せ方は変わらない。 */
+  --crepe-color-hover: color-mix(in srgb, var(--accent) 12%, transparent);
+  --crepe-color-selected: color-mix(in srgb, var(--accent) 22%, transparent);
+  --crepe-color-inline-area: var(--border);
+
+  /* 本文 18px はサイト本体と同じ (globals.css の --text-base)。
+     書いている最中の行長と、公開後の行長を揃えるため。 */
+  --crepe-base-font-size: 18px;
+
+  /* 見出しと本文の両方を Zen Maru Gothic に。既定は Noto Serif / Noto Sans で、
+     サイトの丸ゴシックとは字面がまるで違う。
+     --font-sans ではなく生の変数を見るのは、globals.css の @theme が inline
+     指定でカスタムプロパティを吐かないため。 */
+  --crepe-font-title: var(--font-zen-maru-gothic), sans-serif;
+  --crepe-font-default: var(--font-zen-maru-gothic), sans-serif;
+}
+
+/* 書字面まわりの余白。既定は左右が詰まっていて、
+   ブロックのドラッグハンドルが本文に重なる。 */
+.milkdown .ProseMirror {
+  padding: 1.5rem 2rem 4rem;
+}

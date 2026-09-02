@@ -43,6 +43,9 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // _next / 開発用の保存エンドポイント / 拡張子付きのパス (画像・favicon) は素通し
-  matcher: ["/((?!_next|hero-capture/save|.*\\.[\\w]+$).*)"],
+  // _next / 開発用の保存エンドポイント / 拡張子付きのパス (画像・favicon) は素通し。
+  //
+  // studio/ を外すのは POST を守るため。リダイレクトすると 307 になり、
+  // 307 はメソッドを保つので /ja/studio/save へ POST し直されて 404 になる。
+  matcher: ["/((?!_next|hero-capture/save|studio/|.*\\.[\\w]+$).*)"],
 };

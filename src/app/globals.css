@@ -418,3 +418,175 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
     animation-delay: 0s !important;
   }
 }
+
+/* --- 記事本文 ---
+   content/articles/*.md を react-markdown が描いた素の HTML に、
+   まとめてスタイルを当てる。
+
+   @tailwindcss/typography を入れないのは、あれが要素の文字サイズを rem 直書きで
+   決めるため。このサイトは上の @theme で本文を 18px に持ち上げているので、
+   記事の中だけ 16px ベースラインに戻ってしまう。色も --tw-prose-* を
+   6 つのトークンに繋ぎ直すことになり、結局ここに書くのと変わらない。
+
+   サイズは全て var(--text-*) を参照する。@theme (inline でない方) は実際に
+   カスタムプロパティを吐くので、上のスケールを触ればここも一緒に動く。 */
+.article-body {
+  margin-top: 2rem;
+  line-height: 1.9;
+}
+
+/* 段落どうしの間隔。見出しの直後だけは詰める (下の隣接セレクタで戻す)。 */
+.article-body > * + * {
+  margin-top: 1.25rem;
+}
+
+.article-body h2 {
+  margin-top: 3rem;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.article-body h3 {
+  margin-top: 2.25rem;
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* 見出しと最初の本文はひとかたまりに見せる。 */
+.article-body h2 + *,
+.article-body h3 + * {
+  margin-top: 0.75rem;
+}
+
+.article-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.article-body ul,
+.article-body ol {
+  padding-left: 1.5rem;
+}
+
+.article-body ul {
+  list-style: disc;
+}
+
+.article-body ol {
+  list-style: decimal;
+}
+
+.article-body li + li {
+  margin-top: 0.375rem;
+}
+
+/* 文中のコード。地の文より一段小さくして、面で浮かせる。 */
+.article-body code {
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.125em 0.375em;
+  font-size: 0.875em;
+}
+
+/* コードブロック。
+   長い行は折り返さずに横スクロールさせる ── 折るとインデントが崩れて読めない。 */
+.article-body pre {
+  overflow-x: auto;
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+/* --- コードの色 (shiki) ---
+   ビルド時に ライト = rose-pine-dawn / ダーク = Dracula の 2 つを同時に焼いて
+   ある (lib/articles/highlighter.ts)。色は --shiki-light / --shiki-dark として
+   両方 HTML に載っているので、ここで見せる側を選ぶだけでよい ──
+   テーマを切り替えても再変換は起きず、クライアントに JS も送らない。
+
+   背景だけはテーマの値 (--shiki-light-bg) を使わず、サイトの面の色に差し替える。
+   rose-pine-dawn の地色 #faf4ed は暖色寄りで、ページの #fbf3f5 の上に置くと
+   そこだけ黄みがかって見えるため。構文の色 (紫の地の文・青のキーワード・
+   ピンクの関数) はテーマのまま活かす。ダークは Dracula の地色をそのまま使う ──
+   あの配色は自前の暗い面を前提に作られている。
+
+   枠線を添えるのは、サイトの他のカードが全て border + surface でできているから。
+
+   背景は pre にだけ当てる。span にも当てると、カスタムプロパティは継承するので
+   全トークンが同じ背景を塗り直すことになる (見た目は同じだが無駄)。 */
+.article-body .shiki {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.article-body .shiki,
+.article-body .shiki span {
+  color: var(--shiki-light);
+}
+
+/* コメントの斜体などもテーマごとに違うので一緒に切り替える。
+   その変数を持たないトークンは inherit に落ちて、pre の normal を継ぐ。 */
+.article-body .shiki span {
+  font-style: var(--shiki-light-font-style, inherit);
+}
+
+.dark .article-body .shiki {
+  background-color: var(--shiki-dark-bg);
+}
+
+.dark .article-body .shiki,
+.dark .article-body .shiki span {
+  color: var(--shiki-dark);
+}
+
+.dark .article-body .shiki span {
+  font-style: var(--shiki-dark-font-style, inherit);
+}
+
+/* ブロックの中の code は二重に枠と背景を着ない。 */
+.article-body pre code {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.article-body blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+}
+
+.article-body hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 2.5rem;
+}
+
+/* 表は幅を持てないことがあるので、はみ出したら本文ごとではなく表だけを送る。 */
+.article-body table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.article-body th,
+.article-body td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.article-body th {
+  font-weight: 700;
+}
+
+/* 画像は MarkdownImage が next/image で描く。p に包まれるので余白は段落側に付く。 */
+.article-body img {
+  border-radius: var(--radius-xl);
+}

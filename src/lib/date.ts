@@ -25,6 +25,19 @@ export type Year = `20${Digit}${Digit}`;
  */
 export type YearMonth = `${Year}-${Month}`;
 
+/** 01-31。存在しない日 (2 月 31 日など) までは型では防げないので isYearMonthDay() で確かめる。 */
+type Day = `0${Exclude<Digit, "0">}` | `1${Digit}` | `2${Digit}` | "30" | "31";
+
+/**
+ * "2026-09-03" 形式。記事の公開日に使う。
+ *
+ * 作品や経歴は月単位 (YearMonth) で足りるが、記事は同じ月に複数出るので日まで要る。
+ * ゼロ埋めなので YearMonth と同じく文字列比較で並ぶ。この形にしておくと
+ * OutputGrid の DATE_ONLY 分岐にそのまま乗り、new Date() の UTC 深夜解釈による
+ * SSR / hydrate のズレを踏まない。
+ */
+export type YearMonthDay = `${YearMonth}-${Day}`;
+
 /**
  * 期間。`end: null` は継続中を意味する。
  * optional ではなく必須にすることで、データを書くたびに「継続中か」を明示させる。
@@ -67,6 +80,17 @@ export const yearOf = (yearMonth: YearMonth): Year =>
 export function formatYearMonth(yearMonth: YearMonth): string {
   const [year, month] = yearMonth.split("-");
   return `${year}.${Number(month)}`;
+}
+
+/**
+ * "2026-09-03" -> "2026/09/03"
+ *
+ * new Date() を通さずに組み替える。`new Date("2026-09-03")` は UTC 深夜と
+ * 解釈されるので、getDate() で読み直すと UTC より西の環境で 1 日前になる。
+ * OutputGrid の formatDate が同じ理由で同じことをしている。
+ */
+export function formatYearMonthDay(value: YearMonthDay): string {
+  return value.replaceAll("-", "/");
 }
 
 const PRESENT: Record<Locale, string> = { ja: "現在", en: "Present" };

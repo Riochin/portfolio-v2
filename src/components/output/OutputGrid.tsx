@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import type { OutputItem } from "@/lib/output/types";
 
@@ -13,6 +14,8 @@ const SOURCE_LABELS: Record<OutputItem["source"], string> = {
   speakerdeck: "Speaker Deck",
   zenn: "Zenn",
   qiita: "Qiita",
+  /** 自前記事は出典を名乗らない。このサイト自身なので読み上げても情報が増えない。 */
+  self: "",
 };
 
 /**
@@ -34,6 +37,8 @@ const ASPECT_CLASS: Record<OutputItem["source"], string> = {
   speakerdeck: "aspect-video",
   zenn: "aspect-[1200/630]",
   qiita: "aspect-[1200/630]",
+  /** 自前記事のサムネイルは next/og で焼いた OG 画像なので Zenn / Qiita と同寸。 */
+  self: "aspect-[1200/630]",
 };
 
 /** 1 件ごとの出現ディレイ。DOM 順 = 左上から右下の順になる。WorkGrid と揃える。 */
@@ -102,17 +107,12 @@ export function OutputGrid({
 
   return (
     <ul className="grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2 xl:grid-cols-3">
-      {visible.map((item, index) => (
-        <li
-          key={item.url}
-          className="group reveal-rise"
-          style={
-            {
-              "--reveal-delay": `${Math.max(0, index - revealFrom) * STAGGER_MS}ms`,
-            } as React.CSSProperties
-          }
-        >
-          <a href={item.url} target="_blank" rel="noopener noreferrer">
+      {visible.map((item, index) => {
+        // 自前記事だけ遷移先がサイト内。別タブに飛ばさず、外部リンクの印も出さない。
+        const internal = item.source === "self";
+
+        const tile = (
+          <>
             {/* Works のタイルは 16:10 固定だが、ここは敷くのが自前の写真ではなく
                 他所の OGP なので、比は ASPECT_CLASS でソースに合わせる。
                 16:10 に詰めるとどのソースも左右が削れて見出しが切れてしまう。 */}
@@ -133,20 +133,44 @@ export function OutputGrid({
 
             <p className="mt-2.5 font-medium group-hover:text-accent">
               {item.title}
-              <span className="sr-only">（{SOURCE_LABELS[item.source]}）</span>
-              <ExternalLink
-                size={14}
-                className="ml-1 inline-block align-baseline opacity-60"
-              />
+              {!internal && (
+                <>
+                  <span className="sr-only">（{SOURCE_LABELS[item.source]}）</span>
+                  <ExternalLink
+                    size={14}
+                    className="ml-1 inline-block align-baseline opacity-60"
+                  />
+                </>
+              )}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
               <time dateTime={item.publishedAt}>
                 {formatDate(item.publishedAt)}
               </time>
             </p>
-          </a>
-        </li>
-      ))}
+          </>
+        );
+
+        return (
+          <li
+            key={item.url}
+            className="group reveal-rise"
+            style={
+              {
+                "--reveal-delay": `${Math.max(0, index - revealFrom) * STAGGER_MS}ms`,
+              } as React.CSSProperties
+            }
+          >
+            {internal ? (
+              <Link href={item.url}>{tile}</Link>
+            ) : (
+              <a href={item.url} target="_blank" rel="noopener noreferrer">
+                {tile}
+              </a>
+            )}
+          </li>
+        );
+      })}
 
       {/* 「もっとみる」もタイルとしてグリッドに並べる。1 列 (スマホ) では
           記事と同じ横幅のボタンに、2 列以上では h-full で行の高さまで伸びて
