@@ -36,6 +36,14 @@ export const DICT = {
     articles: { ja: "書いた記事", en: "Articles" },
     empty: { ja: "まだありません。", en: "Nothing here yet." },
   },
+  /**
+   * 自前記事 (content/articles/*.md) の詳細ページ。
+   * 一覧は独立させず /output の「書いた記事」に混ぜているので、戻り先も Output。
+   */
+  blog: {
+    back: { ja: "Output に戻る", en: "Back to Output" },
+    draft: { ja: "下書き", en: "Draft" },
+  },
   works: {
     awards: { ja: "受賞歴", en: "Awards" },
     stack: { ja: "技術スタック", en: "Stack" },

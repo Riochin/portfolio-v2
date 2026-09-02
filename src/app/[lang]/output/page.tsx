@@ -9,8 +9,9 @@ export const generateMetadata = () =>
   buildPageMetadata({ path: "/output", title: DICT.pages.output });
 
 export default async function OutputPage() {
-  const { t } = await getT();
-  const { talks, articles } = await getOutputItems();
+  const { locale, t } = await getT();
+  // locale を渡すのは自前記事のリンク先 (/ja/blog/...) を組み立てるため。
+  const { talks, articles } = await getOutputItems(locale);
   // Talks と Articles で同じものを渡すので、ロケール解決は 1 回だけにする。
   const gridLabels = {
     emptyLabel: t(DICT.output.empty),

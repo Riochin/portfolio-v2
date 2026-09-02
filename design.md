@@ -46,9 +46,13 @@ Output                      中央: 筆記体ロゴ "Riochin"
 | `/works` | 制作物(ハッカソン作品など、プロジェクト単位)。上部に作品横断の受賞一覧 |
 | `/works/[slug]` | 作品の詳細。本文・受賞・技術スタック・関連 Experience。作品ごとに OGP 生成 |
 | `/experience` | 経験(インターンなど、所属単位) |
-| `/output` | 登壇(SpeakerDeck) + 記事(Zenn/Qiita)の統合一覧。登壇が主戦場なので登壇を上位表示 |
+| `/output` | 登壇(SpeakerDeck) + 記事(Zenn/Qiita/自前)の統合一覧。登壇が主戦場なので登壇を上位表示 |
+| `/blog/[slug]` | 自前記事の本文。一覧は持たず、`/output` の「書いた記事」から入る |
+| `/studio`, `/studio/[slug]` | 記事を書く開発専用の画面。本番では 404 |
 
 `/contact` なし。`/output` は当初 `/articles` を検討したが、登壇 > 執筆という実態に合わせて改名。
+
+自前記事の一覧は `/blog` に作らず `/output` に混ぜる。ナビ項目は 4 つのままで、読み手から見ると「書いたもの」は媒体を問わず 1 箇所にある。本文だけ `/blog/[slug]` に置くのは、将来 `/output` から切り出したくなったときに URL を動かさずに済ませるため。
 
 ### Works と Experience の関係
 
@@ -154,3 +158,107 @@ type ExperienceEntry = {
 
 - Vercel、通常デプロイ(SSR/RSC活用、`output: export` は使わない)
 - ドメイン: riochin.dev
+
+## 記事 (自前コンテンツ)
+
+`/studio` で書き、`content/articles/<slug>.md` として残る。commit してデプロイすると公開される。
+
+### 情報源を TS ではなく Markdown にした
+
+作品・経歴は構造が決まっているので `src/data/*.ts` が最適だが、記事は長文の地の文で、TS の文字列リテラルに入れるとエスケープと 1 ファイルの肥大に耐えられない。Markdown なら `git diff` が人間に読め、Zenn / Qiita への転載もコピペで済む。
+
+- frontmatter は `title` / `publishedAt` / `draft` の 3 つだけ。`cover` は作らない (サムネイルは後述の OG 画像で足りる)、`tags` も作らない (描画する場所が無い)
+- 読み取りは `src/lib/articles/`。**`src/data/index.ts` と同じく同期・ロケール非依存**を守る ── `opengraph-image.tsx` は Route Handler 扱いで `next/root-params` を使えないため
+- キャッシュは本番だけ。`.md` は誰も import しないのでバンドラのグラフに載らず、dev で覚えると studio で保存しても一覧が古いまま張り付く
+
+### 記事だけ日本語単言語にした
+
+`Localized<T>` を葉に置く約束の唯一の例外。作品の tagline は 1 行なので日英を揃えられるが、記事は訳す負荷が執筆そのものを止める。`/output` に並ぶ Zenn / Qiita の記事も日本語なので、`/en` でそのまま出しても不揃いにならない (印も付けない)。
+
+### `outputFileTracingIncludes` が要る
+
+`/output` は完全な静的ページではない。`lib/output/*` の per-fetch `revalidate: 3600` がページに伝播していて、`prerender-manifest.json` 上も `initialRevalidateSeconds: 3600` の ISR になっている。つまり**デプロイの 1 時間後にサーバー上で再レンダリングされ、そこで `.md` を読む**。`@vercel/nft` は `join(process.cwd(), "content", "articles")` を追えないので、`next.config.ts` で明示的に同梱しないと、ビルドもデプロイ直後も正常なのに 1 時間後に `/output` だけが 500 になる。
+
+`/blog/[slug]` では `public/articles/**` も同梱する。本文の画像の寸法をビルド時に実ファイルから読む (`rehypeImageSize`) ためで、寸法を Markdown 側に書かないので画像を差し替えても数字が古くならない。
+
+`dynamicParams` は固定しない。未知の slug は記事が引けず `notFound()` に落ちるだけなので実行時レンダリングを塞ぐ必要が無く、逆に `false` にすると `generateStaticParams` の結果が再コンパイルまで据え置かれて、studio で保存した直後の数秒間だけ書いたばかりの記事が 404 になる。
+
+### エディタに Milkdown (Crepe) を選んだ
+
+Markdown を情報源にする以上、**開いて保存しただけで本文が変質しないこと**が要件になる。Milkdown は内部表現が remark そのものなので、これを満たす。
+
+- `tiptap-markdown` は 0.9.0 で最終更新が 1 年前 (本体は 3.x)。橋渡しが古すぎる
+- `@blocknote/core` は Markdown 変換が公式に lossy と明記されている
+- 素の `@milkdown/kit` は採らない。`plugin-block` / `plugin-slash` は `content: HTMLElement` を要求するヘッドレスな配置機構でしかなく、ドラッグハンドルもスラッシュメニューの中身も自前になる。Vue が依存に入るのは kit でも同じ (`@milkdown/components` 経由) なので、Crepe を避けても減らない
+- `remarkStringifyOptionsCtx` で箇条書きと水平線を `-` に寄せる。既定の `*` のままだと、手書きのファイルを一度開くだけで全行が書き換わって diff が汚れる
+- エディタは `devDependencies`。dev 専用ルートでしか読まないので本番の依存には出さない
+
+### studio の作りは hero-capture に倣う
+
+本番では素の 404 を返し、認証は持たない。書き込み先はリポジトリの作業ツリーで、著者が `git diff` で確かめて commit する (Vercel の実行時ファイルシステムは読み取り専用なので、この作りは本番に持ち上がらない)。
+
+- 保存口は `[lang]` の外 (`/studio/save`, `/studio/upload`)。Route Handler では `root-params` が使えないため。`proxy.ts` の matcher でも素通しにする ── リダイレクトされると 307 がメソッドを保って `/ja/studio/save` へ POST し直され 404 になる
+- 改名は実装しない。`public/articles/<slug>/` の画像も一緒に動かす必要があるので `git mv` に任せる
+- `SiteChrome` は studio でも隠さない。ルートレイアウトの Server Component が無条件に描いており、パスを知るには `headers()` が要る ── サイト全体が静的プリレンダリングから外れてしまう
+
+### 本文の画像
+
+Milkdown の既定は拡大率を **Markdown の alt 欄に**書き込む (`![1.00](...)`)。画像は url / alt / title の 3 枠しか無く、そこに src / ratio / caption を詰めた結果、alt の居場所が無い ── 開いて保存するだけで書いた説明が消えていた。`src/components/studio/imageBlockMarkdown.ts` でスキーマの ctx を差し替え、alt を残すようにした。
+
+- 等倍: `![説明](/articles/x/y.png "キャプション")` ── 標準の Markdown のまま
+- 縮小あり: `<img src alt title data-scale="0.45" />` ── 4 つ目の値が要るのでこのときだけ HTML。`rehype-raw` を通してあるので公開側でも描ける
+
+`extendSchema` は同じ id で新しいプラグインを作るため Crepe が積んでいるものと衝突する。スキーマを持つスライス (`imageBlockSchema.key`) を `ctx.update` で差し替えるほうが安全。
+
+**拡大縮小は比率を保った縮小**で、トリミングではない。エディタの img は width を持たない (auto) ので、ドラッグで高さを動かすと幅も比例して動く ── 実測で 400x200 に `height:100px` を与えると 200x100 になる。したがって倍率はそのまま「本文幅に対する幅の割合」として読め、公開側は `width: <割合>%` + 高さ auto で同じ見え方になる。`sizes` も割合に合わせて縮め、要らない大きさの画像を取りに行かせない。
+
+画像ブロックには alt の入力欄が無く、書けるのはキャプションだけ。alt が空のときは公開側でキャプションを alt に代える。
+
+### 記事の OG 画像
+
+他のページの OG がワードマークを中央に据えた「表紙」なのに対し、記事は Zenn / Qiita のカードに構造を寄せる (外枠 → 白いカード → 左上に見出し → 下辺に名乗り)。`/output` の一覧ではこの画像が Zenn / Qiita のサムネイルと**同じグリッドに並ぶ**ので、作りが揃っていないとそこだけ浮くため。1200x630 なので既存の `aspect-[1200/630]` ともそのまま揃う。
+
+中のカードはサイトの面の色 (`--surface` の白)。記事本文のコードブロックも同じ白に揃えてあるので、共有された画像から記事に入ったときに面の色が変わらない。
+
+枠は上がダークの地色 (`#070d1e` 夜空の紺)、下がダークのアクセント (`#8b7ef0` 天の川の紫) の縦グラデーション。紺を 48% まで厚く取ってから紫へ落とす ── 中点を上げると紫が支配的になり、夜空ではなく紫のカードに見える。**青から紫へ渡すグラデーションは採らない。Zenn のカードそのものになる**ため、同じ理由でカードの面も検討した (下記)。
+
+枠の帯には星を撒く。ダークモードのヒーローが星空なので、OG でも同じ題材を出す。乱数は固定の種で回して決定的にしてある ── ビルドのたびに配置が変わると、記事ごとに違う空になって「同じサイトのカード」に見えなくなる。カードに隠れる内側の座標は捨てて帯の中にだけ置き、角が丸いぶん四隅だけ自然に濃くなる。
+
+名乗りの前にはプロフィール写真を丸く置く。satori は webp を解せない (渡すと "not iterable" で落ちる) ので、`public/profile-og.png` に PNG の複製を持ち、`next.config.ts` でサーバー側のバンドルにも同梱する。`borderRadius` を img に直接掛けても satori は角を落とすだけなので、丸く切り抜いた入れ物に入れる。
+
+見出しは 4 行で打ち切って `…` を足す。satori は `-webkit-line-clamp` を解さないので、字幅を仮定して JS 側で切り、`maxHeight` を行の高さの整数倍にして 5 行目が半分覗くのを防ぐ。
+
+### 本文のスタイルは手書き
+
+`@tailwindcss/typography` は入れない。要素の文字サイズを rem 直書きで決めるので、本文を 18px に持ち上げてあるこのサイトでは記事の中だけ 16px ベースラインに戻ってしまう。色も `--tw-prose-*` を 6 つのトークンに繋ぎ直すことになり、`globals.css` の `.article-body` に 20 行ほど書くのと変わらない。
+
+### コードブロックの色
+
+shiki で**ライトとダークの 2 つを同時に焼く**。色は `--shiki-light` / `--shiki-dark` として両方 HTML に載り (`defaultColor: false`)、切り替えは `globals.css` の `.dark` が行う ── 実行時の再変換も、クライアントへ送る JS も要らない。
+
+- ダークは **Dracula**
+- ライトは **rose-pine-dawn**。基本の文字が紫 (`#575279`)、キーワードが青 (`#286983`)、関数がピンク (`#b4637a`) と、このサイトのアクセントの取り合わせにそのまま乗る。catppuccin-latte も比べたが、キーワードが橙・文字列が緑になるので採らなかった
+- どちらも MIT。改変は許諾されているが、色の値を公開ページに焼き込んで配る以上は著作権表示が要るので、リポジトリ直下の `THIRD-PARTY-NOTICES.md` に置いた
+- ただし**背景だけはテーマの値を使わない**。rose-pine-dawn の地色 `#faf4ed` は暖色寄りで、ページの `#fbf3f5` に置くとそこだけ黄みがかって見える。サイトの `--surface` に差し替え、他のカードと同じく `--border` の枠を添える。ダークは Dracula の地色をそのまま使う (あの配色は自前の暗い面を前提に作られている)
+
+`react-markdown` は同期版の `<Markdown>` ではなく `MarkdownAsync` を使う。shiki の rehype プラグインが非同期で、同期版は内部で `runSync()` を呼ぶため例外になる。
+
+言語定義は `shiki` の既定 bundle (8MB 超) を丸ごと積まず、core に必要なものだけ明示的に積む。正規表現エンジンも WASM (oniguruma) ではなく JS 実装を `forgiving` で使う。
+
+**言語まわりで 2 回ハマった。どちらも「色が付かないだけでエラーは出ない」ので気付きにくい:**
+
+- **積んでいない言語は無着色になる。** `fallbackLanguage` で text に落ちるので本文は普通に出るが、書いた側からは「テーマが効いていない」ようにしか見えない (Java で踏んだ)。使いそうな言語は先に入れておく
+- **shiki の言語 ID は小文字固定。** ` ```Java ` のように書かれると引けない。書き手が気にすることではないので `rehypeLowercaseLang` で均す
+- **Crepe の CodeMirror は言語リストの既定が空** (`const { languages = [] } = config`)。`@codemirror/language-data` を渡さないと、エディタ側はどの言語も色が付かない ── テーマを差し替えても塗る対象が無い
+
+エディタ側の CodeMirror も同じ 2 つに揃える。ライト用の rose-pine-dawn は CodeMirror 向けの実装が無いので、同じ配色を `createTheme` で張り直した (`src/components/studio/rosePineDawnCodeMirror.ts`)。判定はマウント時の 1 回きり ── 差し替えには Compartment が要るが、書いている途中にテーマを切り替えるのは稀なので持ち込まない。
+
+### studio の見た目
+
+Crepe の既定テーマ (frame) はサイトのトークンに繋ぎ替える (`src/components/studio/milkdown-theme.css`)。書く画面と公開後の見た目が違うと、書きながら仕上がりを判断できない。
+
+- 既定の書体は Noto Serif / Noto Sans。見出しも本文も **Zen Maru Gothic** に差し替える
+- 本文は 18px。サイト本体の `--text-base` と同じにして、書いている最中と公開後の行長を揃える
+- `--crepe-color-*` は全て `--background` / `--surface` / `--border` / `--foreground` / `--muted-foreground` / `--accent` に繋ぐ。これらは `globals.css` が `:root` と `.dark` の両方で定義しているので、テーマ切替には何も足さずに追随する
+- ホバーと選択は `color-mix` でアクセントを透過で被せる。地の色が明暗で入れ替わっても被せ方は変わらない
+- `globals.css` ではなく専用ファイルに置くのは、studio が dev 専用の道具だから。テーマ CSS の**後**に読ませ、セレクタも `.milkdown` の中に閉じてある
