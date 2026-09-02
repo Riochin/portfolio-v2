@@ -1,0 +1,262 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #fbf3f5;
+  --surface: #ffffff;
+  --border: #e4d9dd;
+  --foreground: #171717;
+  --muted-foreground: #6b6560;
+  --accent: #3d8fd9;
+}
+
+.dark {
+  --background: #070d1e;
+  --surface: #101a33;
+  --border: #22304f;
+  --foreground: #f5f5f5;
+  --muted-foreground: #8b8b99;
+  --accent: #8b7ef0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-zen-maru-gothic), sans-serif;
+  --font-logo: var(--font-logo-cursive), cursive;
+
+  /* 角の丸みはここだけで決める。カード・タイル・チップは全て rounded-xl を使う。
+     真円にしたいもの(プロフィール写真・アイコンボタン)は rounded-full のままで
+     この値には追随しない。Hero ブロックも独立(HeroBlock.tsx の --hero-radius)。 */
+  --radius-xl: 0.1875rem;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* --- 写真に枠線をつけない ---
+   写真は作品そのものなので、カードやチップと同じ border-border で縁取らない。
+   写真とそのラッパーには必ず photo-frame を付ける。あとから border ユーティリティ
+   が混ざっても効かないよう !important で潰しているが、これは「写真だ」と明示した
+   要素にしか当たらないので、素の img やカードの枠線には影響しない。
+   角の丸み(rounded-xl / rounded-full)と overflow-hidden は従来どおり呼び出し側で指定する。 */
+@utility photo-frame {
+  border: 0 !important;
+}
+
+/* --- Hero の挨拶文: 1 文字ずつの出現 ---
+   霞が晴れて文字が結像するイメージ。ぼかしを解きながら少しだけ浮き上がらせる。
+   framer-motion ではなく CSS で行う。variants を使うと SSR の HTML に
+   opacity:0 が焼き込まれ、JS が失敗したとき文字が永久に見えなくなるため。
+   遅延はインライン変数 --char-delay で 1 文字ずつずらす(reveal-rise と同じ手)。 */
+@keyframes hero-welcome-char {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(0.3em);
+  }
+}
+
+.hero-welcome-char {
+  /* transform を効かせるため。字間(tracking)はこの上の要素が持つ。 */
+  display: inline-block;
+  animation: hero-welcome-char 600ms cubic-bezier(0.22, 1, 0.36, 1)
+    var(--char-delay, 0ms) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-welcome-char {
+    animation: none;
+  }
+}
+
+/* --- テーマ切替: 円形リベール ---
+   root のデフォルトのクロスフェードを止め、新テーマのスナップショットを
+   ThemeToggle 側の Web Animations API で clip-path 展開させる。
+   html[data-vt="theme"] で絞っているのは、この打ち消しがページ遷移の
+   view transition にも効いてしまい、モーフ以外がハードカットになるため。 */
+html[data-vt="theme"]::view-transition-old(root),
+html[data-vt="theme"]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  /* UA スタイルの block-size: auto のままだとスナップショットの箱がビュー
+     ポートと一致しないことがあり、clip-path の円が左上へずれる。箱を明示的に
+     固定しておく。 */
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+}
+
+/* root のジオメトリはテーマ切替で変わらないので、group の暗黙のトゥイーンで
+   箱が動かないよう止めておく(動くと円の中心が一緒に流れる)。 */
+html[data-vt="theme"]::view-transition-group(root) {
+  animation: none;
+}
+
+html[data-vt="theme"]::view-transition-old(root) {
+  z-index: 1;
+}
+
+html[data-vt="theme"]::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* --- テーマ切替: 太陽/月アイコンのモーフ ---
+   独立した view-transition-name を持たせ、リベールの上で回転しながら入れ替わる。
+
+   名前を html[data-vt="theme"] の下だけで付けているのは、ボタンがヒーロー
+   以外の全ページ (JP/EN の隣・モバイルのフッター) に居座るようになったため。
+   常時 name を持たせると Works 一覧 <-> 詳細のモーフにもこのアイコンが
+   参加してしまい、ページ丈の違いぶんだけ画面を横切って飛ぶ。
+   data-vt はテーマ切替では startViewTransition の前に立てているので、
+   スナップショットを撮る時点ではもう名前が付いている。 */
+html[data-vt="theme"] .theme-icon {
+  view-transition-name: theme-icon;
+}
+
+::view-transition-group(theme-icon) {
+  z-index: 3;
+}
+
+html[data-vt="theme"]::view-transition-old(theme-icon) {
+  animation: theme-icon-out 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+html[data-vt="theme"]::view-transition-new(theme-icon) {
+  animation: theme-icon-in 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes theme-icon-out {
+  to {
+    opacity: 0;
+    transform: rotate(-120deg) scale(0.4);
+  }
+}
+
+@keyframes theme-icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(120deg) scale(0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* --- テーマ切替ボタンの出入り ---
+   ヒーローではこのボタンを出していないので、ヒーローとの行き来でだけ
+   何もない場所に現れ / 何も残さず消えることになる。そこだけ灯して落とす。
+   出るときは遅れて灯し、戻るときは待たせずに落とす。
+   framer-motion ではなく CSS なのは reveal-rise と同じ理由に加えて、
+   rAF が止まる裏タブで opacity:0 のまま取り残されないため。 */
+@keyframes chrome-toggle-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes chrome-toggle-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.chrome-toggle-in {
+  animation: chrome-toggle-in 500ms cubic-bezier(0.22, 1, 0.36, 1) 150ms
+    backwards;
+}
+
+/* 長さは ChromeThemeToggle の EXIT_MS と揃える(消えきってから畳むため) */
+.chrome-toggle-out {
+  animation: chrome-toggle-out 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  /* 消えかけの 1 枚は押させない */
+  pointer-events: none;
+}
+
+/* 退場中はヒーローの下部中央のボタンと一瞬だけ同居する。両方が theme-icon を
+   名乗ると名前が衝突して view transition が丸ごと飛び、テーマ切替がハード
+   カットになるので、消えていく側が名前を明け渡す。 */
+html[data-vt="theme"] .chrome-toggle-out .theme-icon {
+  view-transition-name: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chrome-toggle-in {
+    animation: none;
+  }
+
+  /* 退場は「消えてから畳む」の順序があるので、動きを消すのではなく一瞬で
+     終わらせる。animation: none にすると素のまま EXIT_MS だけ居座る。 */
+  .chrome-toggle-out {
+    animation-duration: 1ms;
+  }
+}
+
+/* --- Works グリッドの出現 ---
+   framer-motion ではなく CSS で行う。variants を使うと SSR の HTML に
+   opacity:0 が焼き込まれ、JS が失敗したとき一覧が永久に見えなくなるため。
+   遅延はインライン変数 --reveal-delay で 1 件ずつずらし、左上から順に出す。 */
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.reveal-rise {
+  animation: reveal-rise 450ms cubic-bezier(0.22, 1, 0.36, 1)
+    var(--reveal-delay, 0ms) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-rise {
+    animation: none;
+  }
+}
+
+/* --- Works: 一覧タイル <-> 詳細 hero のモーフ ---
+   ViewTransition の share="morph" が付ける .morph クラスを狙う。
+   戻りは同じペアが逆向きに走るので、進む/戻るで別の指定は要らない
+   (ブラウザの戻るボタンも同じ経路を通る)。 */
+::view-transition-group(.morph) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 拡大中のピクセル補間のアラを目立たせないための軽いブラー */
+::view-transition-image-pair(.morph) {
+  animation-name: morph-blur;
+}
+
+@keyframes morph-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* 遷移中のオーバーレイがクリックを吸ってしまうのを防ぐ */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
