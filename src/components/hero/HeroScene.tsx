@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stars, Clouds } from "@react-three/drei";
 import * as THREE from "three";
@@ -73,9 +74,15 @@ export default function HeroScene({
 }) {
   // キャプチャ時は sceneConfig のカメラ角そのままで固定したいので追従を切る
   const interactive = !exposeCapture;
+  // WebGL コンテキストを失うと以降なにも描かれず真っ白になる。canvas 要素ごと
+  // 作り直さないと復帰できないので、key を進めて Canvas を張り替える。
+  // (dev の StrictMode 二重マウントで R3F が forceContextLoss を呼ぶケースと、
+  //  実ブラウザの GPU リセットの両方に効く。無限ループを避けて 2 回まで)
+  const [attempt, setAttempt] = useState(0);
 
   return (
     <Canvas
+      key={attempt}
       camera={{
         position: [...CAMERA.position],
         rotation: [...CAMERA.rotation],
@@ -84,6 +91,11 @@ export default function HeroScene({
       // toDataURL でのキャプチャ時のみ必要。通常表示では性能上のコストになるので切る
       gl={{ preserveDrawingBuffer: exposeCapture }}
       onCreated={({ gl, scene, camera }) => {
+        gl.domElement.addEventListener(
+          "webglcontextlost",
+          () => setAttempt((n) => (n < 2 ? n + 1 : n)),
+          { once: true },
+        );
         if (exposeCapture) {
           window.__heroCapture = () => {
             gl.render(scene, camera);

@@ -49,8 +49,11 @@ function makeDistribute(
     const radius = radiusAt(t, mass);
 
     const angle = hash(index * 1.37 + seed) * Math.PI * 2;
+    // 円周方向にこぶを作る。これがないと輪郭がただの円錐になる
+    const lump =
+      1 + mass.lump * Math.sin(angle * mass.lumpFreq + t * mass.lumpTwist);
     // sqrt で円内一様に。中心に寄りすぎるとシルエットが痩せる
-    const spread = Math.sqrt(hash(index * 2.71 + seed)) * radius;
+    const spread = Math.sqrt(hash(index * 2.71 + seed)) * radius * lump;
     const jitter = (hash(index * 3.53 + seed) - 0.5) * mass.jitter;
 
     point.set(

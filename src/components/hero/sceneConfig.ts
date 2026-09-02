@@ -5,9 +5,9 @@ export const CAMERA = {
 } as const;
 
 export const DAY_SKY = {
-  top: "#0d6cc4",
-  mid: "#3f9be0",
-  bottom: "#8ec6ea",
+  top: "#2b86d2",
+  mid: "#74bce8",
+  bottom: "#bfe0f5",
 } as const;
 
 // 積乱雲を構成する塊ひとつ分のパラメータ。
@@ -27,9 +27,13 @@ export type CloudMass = {
   shoulder: number;
   /** 肩の太さ。裾を 1 とした比 */
   shoulderRadius: number;
-  /** もこもこした段の振幅と周期 */
+  /** 高さ方向のもこもこした段の振幅と周期 */
   bump: number;
   bumpFreq: number;
+  /** 円周方向のこぶの振幅・数・高さによるねじれ */
+  lump: number;
+  lumpFreq: number;
+  lumpTwist: number;
   /** 高さに応じた横ずれ(雲の傾き) */
   lean: number;
   /** 1 より大きいと下部に粒が密集する */
@@ -56,21 +60,24 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
   {
     position: [-1, 22, -34],
     bounds: [16, 20, 7],
-    segments: 300,
-    volume: 4.5,
+    segments: 780,
+    volume: 2.6,
     taper: 1.15,
     shoulder: 0.68,
     shoulderRadius: 0.46,
-    bump: 0.06,
-    bumpFreq: 7,
+    bump: 0.09,
+    bumpFreq: 11,
+    lump: 0.14,
+    lumpFreq: 7,
+    lumpTwist: 9,
     lean: 0.05,
     stack: 1.1,
     jitter: 0.03,
     depth: 0.85,
     opacity: 1,
-    bands: 5,
+    bands: 7,
     colorTop: "#ffffff",
-    colorBottom: "#cfe0f0",
+    colorBottom: "#a7c5e2",
     seed: 11,
     speed: 0.07,
     growth: 1.2,
@@ -80,21 +87,24 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
   {
     position: [-10, 8, -33],
     bounds: [9, 5, 6],
-    segments: 40,
-    volume: 4.2,
+    segments: 130,
+    volume: 2.6,
     taper: 1.2,
     shoulder: 0.45,
     shoulderRadius: 0.7,
-    bump: 0.05,
-    bumpFreq: 5,
+    bump: 0.07,
+    bumpFreq: 6,
+    lump: 0.16,
+    lumpFreq: 5,
+    lumpTwist: 6,
     lean: -0.4,
     stack: 1,
     jitter: 0.1,
     depth: 0.8,
     opacity: 1,
-    bands: 4,
+    bands: 5,
     colorTop: "#fbfdff",
-    colorBottom: "#cadcee",
+    colorBottom: "#a2c1e0",
     seed: 29,
     speed: 0.06,
     growth: 1,
@@ -104,21 +114,24 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
   {
     position: [10, 7, -33],
     bounds: [9, 5, 6],
-    segments: 42,
-    volume: 4.3,
+    segments: 135,
+    volume: 2.7,
     taper: 1.2,
     shoulder: 0.45,
     shoulderRadius: 0.72,
-    bump: 0.05,
-    bumpFreq: 6,
+    bump: 0.07,
+    bumpFreq: 7,
+    lump: 0.16,
+    lumpFreq: 6,
+    lumpTwist: 7,
     lean: 0.4,
     stack: 1,
     jitter: 0.1,
     depth: 0.8,
     opacity: 1,
-    bands: 4,
+    bands: 5,
     colorTop: "#fbfdff",
-    colorBottom: "#c8daed",
+    colorBottom: "#a0bfde",
     seed: 47,
     speed: 0.06,
     growth: 1,
@@ -128,21 +141,24 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
   {
     position: [0, 6, -60],
     bounds: [34, 3, 6],
-    segments: 40,
-    volume: 5,
+    segments: 95,
+    volume: 3.4,
     taper: 1.6,
     shoulder: 0.4,
     shoulderRadius: 0.85,
-    bump: 0.03,
-    bumpFreq: 3,
+    bump: 0.04,
+    bumpFreq: 4,
+    lump: 0.12,
+    lumpFreq: 4,
+    lumpTwist: 4,
     lean: 0,
     stack: 0.8,
     jitter: 0.15,
     depth: 0.5,
     opacity: 0.8,
     bands: 3,
-    colorTop: "#e6f1fa",
-    colorBottom: "#c9dcee",
+    colorTop: "#dfeefa",
+    colorBottom: "#b6cfe6",
     seed: 83,
     speed: 0.04,
     growth: 0.8,
@@ -151,7 +167,7 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
 ] as const;
 
 // instancedMesh の上限。全塊の segments 合計を超えないと粒が欠ける
-export const CLOUD_LIMIT = 500;
+export const CLOUD_LIMIT = 1200;
 
 export const STARS = {
   radius: 60,

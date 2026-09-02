@@ -8,9 +8,27 @@ const HEIGHT = 720;
 
 // HeroBackground が使う静止画の撮り直し用ビュー。
 // ビューポートに依存しない固定 16:9 で描き、そのまま /public へ焼き出す。
-export function HeroCapture() {
-  const [mode, setMode] = useState<"light" | "dark">("light");
+export function HeroCapture({
+  initialMode = "light",
+  bare = false,
+}: {
+  initialMode?: "light" | "dark";
+  bare?: boolean;
+}) {
+  const [mode, setMode] = useState<"light" | "dark">(initialMode);
   const [status, setStatus] = useState("");
+
+  // 縮小表示すると Canvas のバッファも縮むため、原寸のまま置いてはみ出させる
+  const canvas = (
+    <div style={{ width: WIDTH, height: HEIGHT }}>
+      <HeroCanvasWrapper key={mode} mode={mode} animated={false} exposeCapture />
+    </div>
+  );
+
+  // ヘッドレスブラウザ用。ページ全体が Canvas 1 枚になる
+  if (bare) {
+    return <div className="fixed inset-0 overflow-hidden">{canvas}</div>;
+  }
 
   const save = async () => {
     const dataUrl = window.__heroCapture?.();
@@ -50,15 +68,7 @@ export function HeroCapture() {
         </button>
         <span className="text-sm text-neutral-400">{status}</span>
       </div>
-      {/* 縮小表示すると Canvas のバッファも縮むため、原寸のまま置いてはみ出させる */}
-      <div style={{ width: WIDTH, height: HEIGHT }}>
-        <HeroCanvasWrapper
-          key={mode}
-          mode={mode}
-          animated={false}
-          exposeCapture
-        />
-      </div>
+      {canvas}
     </div>
   );
 }
