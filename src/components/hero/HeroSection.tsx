@@ -31,6 +31,9 @@ export function HeroSection({
   aboutHref: string;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  // 一度でも全画面から戻ったか。戻りのモーフを挟む回だけ、ブロックは
+  // Canvas を作るのを待つ
+  const [returning, setReturning] = useState(false);
   const [revealed, setRevealed] = useState(false);
   // 展開する瞬間にブロックが描いていた 1 枚。モーフの下敷きに使う
   const [snapshot, setSnapshot] = useState<string | null>(null);
@@ -52,7 +55,10 @@ export function HeroSection({
   // 重ねず、空が開ききってから出す(1 文字ずつの出現もそこで見せたい)。
   const shown = still || revealed;
 
-  const close = useCallback(() => setIsExpanded(false), []);
+  const close = useCallback(() => {
+    setReturning(true);
+    setIsExpanded(false);
+  }, []);
   const onRevealed = useCallback(() => setRevealed(true), []);
   const onFailed = useCallback(() => setFailed(true), []);
   const onCapture = useCallback((capture: () => string | null) => {
@@ -152,6 +158,7 @@ export function HeroSection({
               live={live}
               still={still}
               underlay={snapshot}
+              returning={returning}
               onCapture={onCapture}
               onRevealed={onRevealed}
               onFailed={onFailed}

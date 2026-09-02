@@ -2,7 +2,6 @@
 
 import {
   useCallback,
-  useEffect,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
@@ -11,6 +10,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { HeroBackground } from "./HeroBackground";
 import { HeroSceneClient } from "./HeroSceneClient";
+import { useMorphSettled } from "./morph";
 
 // 押したまま動いた距離がこれを越えたら、閉じる合図ではなく見回しとみなす (px)
 const TAP_SLOP = 10;
@@ -32,10 +32,9 @@ export function HeroFullscreen({
 }) {
   const [canvasReady, setCanvasReady] = useState(false);
   const handleReady = useCallback(() => setCanvasReady(true), []);
-  // レイアウトアニメーション中は要素に transform がかかっており、R3F が
-  // 変形後の小さい bounding rect を測ってそのサイズで固定してしまう。
-  // モーフ完了後にマウントすることで正しい全画面サイズで初期化させる。
-  const [layoutSettled, setLayoutSettled] = useState(false);
+  // モーフ中に作ると、変形後の小さい bounding rect のまま固定されてしまう。
+  // 収まってからマウントして、正しい全画面サイズで初期化させる。
+  const [layoutSettled, markLayoutSettled] = useMorphSettled(true);
   // 指で空を見回している間も、離せば click は上がってくる。押した点から
   // 動いたぶんを見て、なぞりだったときは閉じない。
   const origin = useRef<{ x: number; y: number } | null>(null);
@@ -58,19 +57,13 @@ export function HeroFullscreen({
     onClose();
   }, [onClose]);
 
-  useEffect(() => {
-    // onLayoutAnimationComplete が発火しないケースへの保険
-    const timer = setTimeout(() => setLayoutSettled(true), 900);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <motion.div
       layoutId="hero-block"
       onClick={handleClick}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
-      onLayoutAnimationComplete={() => setLayoutSettled(true)}
+      onLayoutAnimationComplete={markLayoutSettled}
       className="fixed inset-0 z-50 overflow-hidden bg-surface"
       transition={{ type: "spring", stiffness: 200, damping: 26 }}
     >
