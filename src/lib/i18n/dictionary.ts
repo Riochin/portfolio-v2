@@ -14,6 +14,11 @@ type DictNode = Localized<string>;
  * 以前はページタイトルが metadata.title と opengraph-image.tsx に二重に書かれていた。
  */
 export const DICT = {
+  /** ページをまたいで同じ意味で使う文言。 */
+  common: {
+    showMore: { ja: "もっとみる", en: "Show more" },
+    showLess: { ja: "閉じる", en: "Show less" },
+  },
   nav: {
     about: { ja: "About me", en: "About me" },
     works: { ja: "Works", en: "Works" },
@@ -43,8 +48,10 @@ export const DICT = {
     demo: { ja: "デモ", en: "Live demo" },
     article: { ja: "紹介記事", en: "Write-up" },
     slides: { ja: "スライド", en: "Slides" },
-    showMore: { ja: "もっとみる", en: "Show more" },
-    showLess: { ja: "閉じる", en: "Show less" },
+  },
+  experience: {
+    /** 経験カードから外部記事へ飛ばすリンクのラベル。 */
+    report: { ja: "参加体験記", en: "Write-up" },
   },
   /**
    * 作品の出自の見出し。キーは WorkCategory と同じにしてあるので、

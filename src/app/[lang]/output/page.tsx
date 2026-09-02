@@ -11,7 +11,12 @@ export const generateMetadata = () =>
 export default async function OutputPage() {
   const { t } = await getT();
   const { talks, articles } = await getOutputItems();
-  const emptyLabel = t(DICT.output.empty);
+  // Talks と Articles で同じものを渡すので、ロケール解決は 1 回だけにする。
+  const gridLabels = {
+    emptyLabel: t(DICT.output.empty),
+    moreLabel: t(DICT.common.showMore),
+    lessLabel: t(DICT.common.showLess),
+  };
 
   return (
     <PageShell wide>
@@ -20,13 +25,13 @@ export default async function OutputPage() {
       <section>
         <h2 className="text-lg font-bold">{t(DICT.output.talks)}</h2>
         <div className="mt-4">
-          <OutputGrid items={talks} emptyLabel={emptyLabel} />
+          <OutputGrid items={talks} {...gridLabels} />
         </div>
       </section>
       <section className="mt-16">
         <h2 className="text-lg font-bold">{t(DICT.output.articles)}</h2>
         <div className="mt-4">
-          <OutputGrid items={articles} emptyLabel={emptyLabel} />
+          <OutputGrid items={articles} {...gridLabels} />
         </div>
       </section>
     </PageShell>

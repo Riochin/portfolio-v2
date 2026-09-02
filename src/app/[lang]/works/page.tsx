@@ -56,8 +56,8 @@ export default async function WorksPage() {
           <div className="mt-6">
             <WorkGrid
               items={group.items}
-              moreLabel={t(DICT.works.showMore)}
-              lessLabel={t(DICT.works.showLess)}
+              moreLabel={t(DICT.common.showMore)}
+              lessLabel={t(DICT.common.showLess)}
             />
           </div>
         </section>
