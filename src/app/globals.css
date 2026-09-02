@@ -2,6 +2,14 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* 縦に余裕が無い画面 (横向きの端末など)。
+   ヒーローはブロックを画面のちょうど中央に据えるので、上下には必ず同じだけ
+   空く。下に居るもの (テーマ切替 + About への導線) の方が厚いため、その倍を
+   空けられない高さになると導線がボタンに乗る。31rem は「ブロックが下限の
+   9rem まで縮んでもまだ収まる」境目 (9rem + --hero-reserve の 22rem)。
+   ここを下回ったときだけ、中央を諦めて上の余りをブロックに回す。 */
+@custom-variant short (@media (height < 31rem));
+
 :root {
   --background: #fbf3f5;
   --surface: #ffffff;
