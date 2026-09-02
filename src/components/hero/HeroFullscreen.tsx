@@ -8,10 +8,16 @@ import { HeroSceneClient } from "./HeroSceneClient";
 
 export function HeroFullscreen({
   mode,
+  still = false,
+  snapshot = null,
   onClose,
   closeLabel,
 }: {
   mode: "light" | "dark";
+  /** WebGL を使わないと決まったか。焼いてある静止画へ倒す */
+  still?: boolean;
+  /** 展開する瞬間にブロックが描いていた 1 枚 */
+  snapshot?: string | null;
   onClose: () => void;
   closeLabel: string;
 }) {
@@ -33,17 +39,33 @@ export function HeroFullscreen({
       layoutId="hero-block"
       onClick={onClose}
       onLayoutAnimationComplete={() => setLayoutSettled(true)}
-      className="fixed inset-0 z-50 overflow-hidden"
+      className="fixed inset-0 z-50 overflow-hidden bg-surface"
       transition={{ type: "spring", stiffness: 200, damping: 26 }}
     >
-      <HeroBackground />
-      {layoutSettled && (
+      {/* モーフの下敷き。ブロックが最後に描いていた 1 枚をそのまま伸ばすので、
+          拡大の前後で絵が飛ばない。別に焼いた静止画を挟むと、波や雲の位相が
+          違うぶんだけ入れ替わりが目に付く。 */}
+      {still ? (
+        <HeroBackground />
+      ) : (
+        snapshot && (
+          // データ URL の 1 枚きりで最適化する余地がないので next/image は使わない
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={snapshot}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )
+      )}
+      {!still && layoutSettled && (
         <motion.div
           className="absolute inset-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: canvasReady ? 1 : 0 }}
           transition={{ duration: 0.8 }}
         >
+          {/* ブロック側で先に読み込んであれば、チャンクは取得済み */}
           <HeroSceneClient mode={mode} onReady={handleReady} />
         </motion.div>
       )}

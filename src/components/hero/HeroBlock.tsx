@@ -11,6 +11,8 @@ export function HeroBlock({
   mode,
   live = false,
   still = false,
+  underlay = null,
+  onCapture,
   onRevealed,
   onFailed,
 }: {
@@ -23,6 +25,9 @@ export function HeroBlock({
   live?: boolean;
   /** WebGL を使わないと決まったか。焼いてある静止画へ倒す */
   still?: boolean;
+  /** 全画面から戻ってきたときの下敷き。展開する直前に撮った 1 枚 */
+  underlay?: string | null;
+  onCapture?: (capture: () => string | null) => void;
   onRevealed?: () => void;
   onFailed?: () => void;
 }) {
@@ -45,9 +50,22 @@ export function HeroBlock({
         {/* ホバーすると窓の中の空だけがゆっくり寄る。クリック後の全画面モーフと
             同じ向きの動きなので、次に何が起きるかの予告になる。枠は動かさない。
             拡大は絵の層それぞれが持つ(進捗のバーと数字は寄らせたくないため)。 */}
+        {live && underlay && (
+          // 全画面から戻ると Canvas は作り直しになる。その数百ミリ秒を無地で
+          // 見せないよう、出ていく直前の 1 枚を敷いておく。
+          // データ URL の 1 枚きりで最適化する余地がないので next/image は使わない
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={underlay}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
         {live && (
           <HeroLiveCanvas
             mode={mode}
+            onCapture={onCapture}
             onRevealed={onRevealed}
             onFailed={onFailed}
           />

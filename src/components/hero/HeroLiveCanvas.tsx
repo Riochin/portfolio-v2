@@ -56,10 +56,13 @@ function useBlockQuality() {
  */
 export function HeroLiveCanvas({
   mode,
+  onCapture,
   onRevealed,
   onFailed,
 }: {
   mode: "light" | "dark";
+  /** 今描かれている絵を静止画として取り出す手段を親へ渡す */
+  onCapture?: (capture: () => string | null) => void;
   /** 絵が出た合図 */
   onRevealed?: () => void;
   /** 待っても描けなかった合図 */
@@ -159,6 +162,7 @@ export function HeroLiveCanvas({
           onAssetProgress={handleAssetProgress}
           onAssetsReady={handleAssetsReady}
           onReady={handleReady}
+          onCapture={onCapture}
         />
       </div>
       {withProgress && (

@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { HeroBlock } from "./HeroBlock";
@@ -16,7 +22,10 @@ export type HeroLabels = {
 export function HeroSection({ labels }: { labels: HeroLabels }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  // 展開する瞬間にブロックが描いていた 1 枚。モーフの下敷きに使う
+  const [snapshot, setSnapshot] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
+  const captureRef = useRef<(() => string | null) | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const supportsWebGL = useWebGLSupported();
   const { resolvedTheme } = useTheme();
@@ -36,6 +45,16 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
   const close = useCallback(() => setIsExpanded(false), []);
   const onRevealed = useCallback(() => setRevealed(true), []);
   const onFailed = useCallback(() => setFailed(true), []);
+  const onCapture = useCallback((capture: () => string | null) => {
+    captureRef.current = capture;
+  }, []);
+
+  const expand = useCallback(() => {
+    // まだ絵が出ていない間の Canvas は組み立ての途中で、撮っても意味のある
+    // 絵にならない。その場合は下敷きなしで無地から展開する。
+    setSnapshot(revealed ? (captureRef.current?.() ?? null) : null);
+    setIsExpanded(true);
+  }, [revealed]);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -78,16 +97,14 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
         <div className="aspect-[16/9] w-full">
           {!isExpanded && (
             <HeroBlock
-              onClick={
-                prefersReducedMotion || !shown
-                  ? undefined
-                  : () => setIsExpanded(true)
-              }
+              onClick={prefersReducedMotion || !shown ? undefined : expand}
               disabled={!shown}
               ariaLabel={labels.expand}
               mode={mode}
               live={live}
               still={still}
+              underlay={snapshot}
+              onCapture={onCapture}
               onRevealed={onRevealed}
               onFailed={onFailed}
             />
@@ -98,6 +115,8 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
         {isExpanded && (
           <HeroFullscreen
             mode={mode}
+            still={still}
+            snapshot={snapshot}
             onClose={close}
             closeLabel={labels.close}
           />
