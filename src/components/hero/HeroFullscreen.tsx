@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { HeroBackground } from "./HeroBackground";
 import { HeroCanvasWrapper } from "./HeroCanvasWrapper";
-import { SITE } from "@/data/site";
 
 export function HeroFullscreen({
   mode,
@@ -47,13 +46,6 @@ export function HeroFullscreen({
           <HeroCanvasWrapper mode={mode} onReady={() => setCanvasReady(true)} />
         </motion.div>
       )}
-      {/* 全画面では WebGL を遮らないようロゴをフェードアウト(opacity は CSS 側) */}
-      <motion.span
-        layoutId="hero-logo"
-        className="hero-logo-out pointer-events-none absolute inset-0 z-10 flex items-center justify-center font-logo text-7xl text-[#1c1c1c] md:text-8xl dark:text-white"
-      >
-        {SITE.brand}
-      </motion.span>
       <motion.button
         type="button"
         onClick={onClose}

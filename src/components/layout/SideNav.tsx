@@ -47,7 +47,7 @@ export function SideNav({
     <nav aria-label={ariaLabel}>
       <Link
         href={headingHref}
-        className="mb-6 block text-xl font-bold text-foreground transition-colors hover:text-accent"
+        className="mb-6 block font-logo text-4xl leading-none text-foreground transition-colors hover:text-accent"
       >
         {heading}
       </Link>

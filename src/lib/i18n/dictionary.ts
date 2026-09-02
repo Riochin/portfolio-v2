@@ -45,6 +45,12 @@ export const DICT = {
   about: {
     skills: { ja: "使っている技術", en: "Skills" },
   },
+  hero: {
+    welcome: {
+      ja: "Welcome to my portfolio",
+      en: "Welcome to my portfolio",
+    },
+  },
   aria: {
     mainNav: { ja: "メインナビゲーション", en: "Main navigation" },
     openMenu: { ja: "メニューを開く", en: "Open menu" },

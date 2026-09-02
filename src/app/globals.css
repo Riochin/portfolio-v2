@@ -52,40 +52,24 @@ body {
   border: 0 !important;
 }
 
-/* --- Hero ロゴのフェード ---
-   layoutId によるモーフ(framer が transform を制御)と衝突させないため、
-   opacity は CSS アニメーションで独立して動かす。 */
-@keyframes hero-logo-in {
+/* --- Hero の挨拶文のフェード ---
+   framer-motion ではなく CSS で行う。variants を使うと SSR の HTML に
+   opacity:0 が焼き込まれ、JS が失敗したとき文字が永久に見えなくなるため。 */
+@keyframes hero-welcome-in {
   from {
     opacity: 0;
-  }
-  to {
-    opacity: 1;
+    transform: translateY(8px);
   }
 }
 
-@keyframes hero-logo-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.hero-logo-in {
-  animation: hero-logo-in 500ms ease 200ms both;
-}
-
-.hero-logo-out {
-  animation: hero-logo-out 500ms ease 250ms both;
+.hero-welcome-in {
+  animation: hero-welcome-in 700ms cubic-bezier(0.22, 1, 0.36, 1) 150ms
+    backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-logo-in,
-  .hero-logo-out {
-    animation-duration: 1ms;
-    animation-delay: 0ms;
+  .hero-welcome-in {
+    animation: none;
   }
 }
 

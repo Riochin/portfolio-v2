@@ -9,8 +9,10 @@ import type { Localized } from "@/lib/i18n/types";
  */
 export const SITE = {
   url: "https://riochin.dev",
-  /** ワードマーク。ロゴとして描くので Localized にしない。 */
+  /** ブランド名。メタデータ・コピーライト・OG が読む。 */
   brand: "Riochin",
+  /** ナビに筆記体で描くワードマーク。ドメインを名乗るので brand とは別に持つ。 */
+  wordmark: "Riochin.dev",
   /** 表示名。ja でもローマ字表記で統一する。 */
   name: "Rio Ichikawa",
   description: {

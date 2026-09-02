@@ -64,7 +64,7 @@ export function SocialLinks({
                   transform と書くと拡大がトゥイーンされずスナップする。 */}
               <Icon
                 size={26}
-                className="transition-[fill,scale] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-135 group-hover:fill-[var(--brand)] motion-reduce:transition-none motion-reduce:group-hover:scale-100 dark:group-hover:fill-[var(--brand-dark)]"
+                className="transition-[fill,scale] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-115 group-hover:fill-[var(--brand)] motion-reduce:transition-none motion-reduce:group-hover:scale-100 dark:group-hover:fill-[var(--brand-dark)]"
               />
             </a>
           </li>

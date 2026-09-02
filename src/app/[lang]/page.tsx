@@ -8,6 +8,12 @@ export default async function Home() {
 
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center px-6">
+      {/* Alex Brush は上下に大きく張り出すので leading を素の 1 より広く取り、
+          p / y のディセンダが Hero ブロックに触れないようにしている。 */}
+      <h1 className="hero-welcome-in mb-8 text-center font-logo text-4xl leading-[1.3] text-foreground sm:text-5xl md:text-6xl">
+        {t(DICT.hero.welcome)}
+      </h1>
+
       <HeroSection
         labels={{
           expand: t(DICT.aria.expandHero),
