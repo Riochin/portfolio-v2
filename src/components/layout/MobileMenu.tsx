@@ -89,8 +89,9 @@ export function MobileMenu({
           行の高さはワードマークが決め、ボタンは枠も背景も持たず
           アイコンだけをその行の中央に置く。
           帯そのものをぼかして下端に境界線を引き、本文が下を流れても
-          ワードマークとアイコンの可読性を保つ。 */}
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-40 border-b border-border bg-background/80 px-4 py-4 backdrop-blur-md">
+          ワードマークとアイコンの可読性を保つ。
+          site-header は globals.css がテーマ切替中だけ掴むための目印。 */}
+      <header className="site-header pointer-events-none fixed inset-x-0 top-0 z-40 border-b border-border bg-background/80 px-4 py-4 backdrop-blur-md">
         {/* ワードマークは画面中央に据えたいので、ボタンのぶんだけずれないよう
             ボタン側を絶対配置で左端に逃がす。 */}
         <div className={`relative justify-center ${HEADER_ROW}`}>

@@ -89,6 +89,47 @@ export const WORKS = {
     },
   },
 
+  "portfolio-v2": {
+    title: { ja: "このポートフォリオサイト", en: "Portfolio (v2)" },
+    tagline: {
+      ja: "いま見ているこのサイト ── 書き足すほど壊れていった初代を、型付きのデータから組み直した2代目",
+      en: "The site you are looking at — the second generation, rebuilt around typed data after the first one grew brittle",
+    },
+    body: [
+      {
+        ja: "作品・経歴・技術スタックをすべて型付きのデータとして持ち直し、表示はそのデータを読むだけにしました。日英の文言は必ず対で持つ形にしてあるので、片方だけ書き足すと型エラーになります。",
+        en: "Works, history, and stack all live as typed data now, and the pages do nothing but read it. Japanese and English copy is always held as a pair, so adding one language without the other is a type error.",
+      },
+      {
+        ja: "トップのヒーローは three.js (React Three Fiber) でその場で描いている空と海です。クリックすると全画面に広がり、昼は雲と鳥、夜は星と流れ星が流れます。",
+        en: "The hero on the front page is a sky and ocean rendered live with three.js (React Three Fiber). Click it and it expands to fill the screen — clouds and birds by day, stars and shooting stars by night.",
+      },
+    ],
+    category: "personal",
+    period: { start: "2026-09", end: null },
+    stack: [
+      "typescript",
+      "nextjs",
+      "react",
+      "tailwindcss",
+      "framer-motion",
+      "threejs",
+    ],
+    image: {
+      src: "/works/portfolio-v2.webp",
+      width: 1200,
+      height: 603,
+      alt: {
+        ja: "このポートフォリオサイト のスクリーンショット",
+        en: "Screenshot of this portfolio site",
+      },
+    },
+    links: {
+      repo: "https://github.com/Riochin/portfolio-v2",
+      demo: "https://riochin.dev",
+    },
+  },
+
   "portfolio-v1": {
     title: { ja: "旧ポートフォリオサイト", en: "Portfolio (v1)" },
     tagline: {
@@ -117,7 +158,9 @@ export const WORKS = {
         en: "Screenshot of the old portfolio site",
       },
     },
-    links: {},
+    links: {
+      demo: "https://portfolio-olive-phi-42.vercel.app",
+    },
   },
 
   "buyer-ai-vs-seller-ai": {
@@ -689,7 +732,7 @@ export const WORKS = {
   },
 
   "gomen-nasai": {
-    title: { ja: "ごめんなさい.com", en: "Gomen-nasai.com" },
+    title: { ja: "ごめんなさい.com", en: "Sorry.com" },
     tagline: {
       ja: "謝罪文の添削・投稿・保存により、『まったく新しい謝罪体験』を提供するサービス",
       en: 'A service offering a "completely new apology experience" through correcting, posting, and saving apology letters',
@@ -714,7 +757,7 @@ export const WORKS = {
       height: 883,
       alt: {
         ja: "ごめんなさい.com のスクリーンショット",
-        en: "Screenshot of Gomen-nasai.com",
+        en: "Screenshot of Sorry.com",
       },
     },
     awards: [

@@ -86,11 +86,11 @@ College of Liberal Arts, Tsuda University (year ${GRADE})`,
       // 「わかりやすさ」の対象はあえて絞らない。発表も SNS の投稿も
       // ページもコードも同じこだわりなので、EN も "easy to use" や
       // "easy to read" に落とさず "easy to understand" のままにしてある。
-      ja: "プロダクトを作ること自体が大好きで、作りたいものに必要であればデザインからインフラまでフルスタックに触っています。なかでも「わかりやすくすること」には強いこだわりがあります。",
+      ja: "プロダクトをつくること自体が大好きで、つくりたいものに必要であればデザインからインフラまでフルスタックに触っています。なかでも「わかりやすくすること」には強いこだわりがあります。",
       en: "What I love is building products themselves, so I reach for whatever a project needs — from design all the way through to infrastructure. Above all, I care about making things easy to understand.",
     },
     {
-      ja: "ひとりでつくるのも好きですが、誰かとつくるのはもっと好きです❗️😸",
+      ja: "ひとりで開発するのも好きですが、誰かと開発するのはもっと好きです❗️😸",
       en: "I love building things on my own, but I love building them with other people even more❗️😸",
     },
   ] satisfies readonly Localized<string>[],

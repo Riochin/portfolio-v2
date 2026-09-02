@@ -75,7 +75,7 @@ export const EXPERIENCES = {
       },
       {
         ja: "卒業ハッカソンで「ごめんなさい.com」を開発し、最優秀賞&日本総研賞をW受賞しました",
-        en: 'Developed "gomen-nasai.com" and won both the Best Award and the Japan Research Institute Award at the graduation hackathon',
+        en: 'Developed "Sorry.com" and won both the Best Award and the Japan Research Institute Award at the graduation hackathon',
       },
     ],
     stack: ["python", "flask"],

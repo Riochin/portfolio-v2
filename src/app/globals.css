@@ -144,6 +144,18 @@ html[data-vt="theme"]::view-transition-new(root) {
   z-index: 2;
 }
 
+/* backdrop-filter は「自分の背後に実際に描かれたピクセル」を読むフィルタなので、
+   ページがスナップショット (::view-transition-old/new(root)) に置き換わっている
+   あいだは参照する相手がいない。ぼけだけが落ちて bg-background/80 の半透明が
+   残るため、1.1s のリベール中ずっと帯の下の本文がくっきり透けて見える。
+   切替中だけぼかしを畳んで、代わりに帯を不透明にする。data-vt は
+   startViewTransition より前に立てているので old / new どちらのスナップ
+   ショットも不透明な帯を持ち、リベールのあいだ帯は一貫して見える。 */
+html[data-vt="theme"] .site-header {
+  backdrop-filter: none;
+  background-color: var(--background);
+}
+
 /* --- テーマ切替: 太陽/月アイコンのモーフ ---
    独立した view-transition-name を持たせ、リベールの上で回転しながら入れ替わる。
 
@@ -331,13 +343,40 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
 @keyframes reveal-rise {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(20px);
   }
 }
 
+/* 曲線は easeOutQuint (0.22, 1, 0.36, 1) から easeOutCubic に落としてある。
+   前者は立ち上がりが極端で、90ms で距離の 2/3、150ms で 9 割を消化し切る ──
+   残りの尺は 2px を運ぶだけなので目に映らず、体感は「スライドイン」ではなく
+   「ポンと出る」になっていた。尺だけ伸ばしても見えない尻尾が伸びるだけなので、
+   曲線・尺・距離の 3 つを一緒に動かす。easeOutCubic は 9 割地点が全体の 55%
+   あたりに下りてくるので、400ms のうち大半が実際の動きとして読める。
+   距離を 16px から広げているのも同じ狙いで、尺を足さずに「滑った」感を稼ぐ。
+
+   尺が 400ms なのは stagger との兼ね合い。1 件ずつ出ているように見えるかは
+   「stagger ÷ 実際に動いて見える時間」で決まり、旧 easeOutQuint はこれが
+   60 / 150 ≒ 0.4 だった。easeOutCubic は動きが尺の 55% まで広がるので、
+   同じ 450ms のままだと 60 / 250 ≒ 0.24 まで落ちて、隣同士の動きが重なり切り
+   全件が一斉に浮き上がったように見える。400ms で 60 / 220 ≒ 0.27。
+   これ以上詰めると旧曲線と同じ「ポンと出る」に戻るので、まだ同時に見えるなら
+   尺ではなく stagger 側 (各ページの STAGGER_MS) を 75ms あたりまで広げる。
+
+   stagger は 60ms のまま。Works は最大 6 タイルなので末尾でも
+   400 + 300 = 700ms で終わる。 */
 .reveal-rise {
-  animation: reveal-rise 450ms cubic-bezier(0.22, 1, 0.36, 1)
+  animation: reveal-rise 400ms cubic-bezier(0.33, 1, 0.68, 1)
     var(--reveal-delay, 0ms) backwards;
+}
+
+/* 1 列のときだけ前に並ぶ枚数が違うもの (Works の「もっとみる」は 5 枚の次
+   ではなく 3 枚の次に出る) のための逃がし口。--reveal-delay-sm を持っていない
+   要素は今までどおり --reveal-delay をそのまま使う。 */
+@media (width < 40rem) {
+  .reveal-rise {
+    animation-delay: var(--reveal-delay-sm, var(--reveal-delay, 0ms));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

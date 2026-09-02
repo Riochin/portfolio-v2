@@ -1,9 +1,9 @@
 import { ViewTransition } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
+import { BackToWorksLink } from "@/components/works/BackToWorksLink";
 import { workImageTransitionName } from "@/components/works/workImageTransition";
 import {
   getExperienceBySlug,
@@ -59,17 +59,18 @@ export default async function WorkDetailPage({
   return (
     <PageShell>
       <article>
-        <Link
+        <BackToWorksLink
           href={localePath(locale, "/works")}
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
         >
           <ArrowLeft size={16} />
           {t(DICT.works.back)}
-        </Link>
+        </BackToWorksLink>
 
         {work.image && (
           // 一覧タイルと同じ name。一覧から来たときは画像がそのまま拡大し、
-          // 戻るときは同じモーフが逆再生される。
+          // 戻るときは同じモーフが逆再生される (ブラウザの戻るボタンも
+          // WorksHistoryBridge が同じ経路に乗せる)。
           <ViewTransition
             name={workImageTransitionName(work.slug)}
             share="morph"
