@@ -10,6 +10,7 @@ import { CloudMassCloud } from "./CloudMass";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
 import { Ocean } from "./Ocean";
+import { ShootingStar } from "./ShootingStar";
 import { StarField } from "./StarField";
 import {
   CAMERA,
@@ -84,6 +85,7 @@ function NightScene({
       />
       <MilkyWay />
       <StarField animated={animated} />
+      <ShootingStar animated={animated} />
       <Ocean
         palette={NIGHT_OCEAN}
         animated={animated}

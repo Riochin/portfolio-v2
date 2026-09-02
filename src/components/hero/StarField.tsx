@@ -112,13 +112,13 @@ function useStarGeometry() {
       color.lerp(NEUTRAL, 1 - saturation * (0.3 + 0.7 * lum));
       // 明るい星だけ 1 を越えさせる。芯が白く飽和して、周りにだけ色の
       // ついたハローが残る——肉眼で「大きい星」に見えるのはこの形
-      const gain = dimmed * (1 + 0.55 * lum * lum);
+      const gain = dimmed * (1 + 0.18 * lum * lum);
       colors[i * 3] = color.r * gain;
       colors[i * 3 + 1] = color.g * gain;
       colors[i * 3 + 2] = color.b * gain;
 
       // 明るい星ほど大きく、ただし差は平方根で抑える
-      sizes[i] = size * (0.5 + 2.4 * Math.sqrt(lum));
+      sizes[i] = size * (0.62 + 1.5 * Math.sqrt(lum));
 
       phases[i] = Math.random() * Math.PI * 2;
       rates[i] = STARS.twinkleSpeed * (0.6 + Math.random() * 0.9);
