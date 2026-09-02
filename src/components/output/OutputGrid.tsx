@@ -58,6 +58,19 @@ const PREVIEW_COUNT = 5;
  */
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
 
+/**
+ * 「もっとみる」を開いているかをセクションごとに控えておく場所。
+ *
+ * 自前記事のタイルはサイト内の記事へ飛ぶので、一覧はそこで unmount される。
+ * useState だけだと戻ったときに畳まれ、開いて 7 件目から入った人は自分の
+ * 読んでいた記事が一覧から消えている。WorkGrid と同じ作りで、モジュール
+ * スコープに置いてクライアント遷移のあいだだけ持たせる (リロードで消える)。
+ *
+ * 書くのは onClick の中だけ = ブラウザ側だけなので、サーバの評価では常に
+ * 空のまま。SSR は必ず畳んだ状態を返し、ハイドレーションもずれない。
+ */
+const expandedBySection = new Map<string, boolean>();
+
 function formatDate(value: string) {
   // 日付だけのものは Date を通さず、そのまま組み替える。
   // new Date("2025-06-05") は UTC 深夜と解釈されるので、getDate() で
@@ -78,12 +91,15 @@ function formatDate(value: string) {
  * 遷移先が外部サイトなので、Works と違って view transition は張らない。
  */
 export function OutputGrid({
+  sectionKey,
   items,
   emptyLabel,
   moreLabel,
   lessLabel,
   priorityCount = 0,
 }: {
+  /** 開閉を控えるときの見出し。ページ内のセクションごとに別であればよい。 */
+  sectionKey: string;
   items: readonly OutputItem[];
   emptyLabel: string;
   moreLabel: string;
@@ -91,7 +107,13 @@ export function OutputGrid({
   /** 先頭から何件を先読みするか。意味と理由は WorkGrid と同じ。 */
   priorityCount?: number;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(
+    () => expandedBySection.get(sectionKey) ?? false,
+  );
+  const toggle = () => {
+    expandedBySection.set(sectionKey, !expanded);
+    setExpanded(!expanded);
+  };
 
   if (items.length === 0) {
     return <p className="text-muted-foreground">{emptyLabel}</p>;
@@ -186,7 +208,7 @@ export function OutputGrid({
         >
           <button
             type="button"
-            onClick={() => setExpanded((open) => !open)}
+            onClick={toggle}
             aria-expanded={expanded}
             className="flex h-full w-full items-center justify-center rounded-xl border border-border px-6 py-3 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
           >
