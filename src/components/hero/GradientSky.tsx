@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import * as THREE from "three";
+import { SKY_RADIUS } from "./sceneConfig";
 
 const vertexShader = /* glsl */ `
   varying vec3 vWorldPosition;
@@ -50,7 +51,7 @@ export function GradientSky({
   );
 
   return (
-    <mesh scale={100}>
+    <mesh scale={SKY_RADIUS}>
       <sphereGeometry args={[1, 32, 32]} />
       <shaderMaterial
         uniforms={uniforms}

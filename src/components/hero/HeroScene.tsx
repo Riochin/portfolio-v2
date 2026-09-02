@@ -103,6 +103,8 @@ export default function HeroScene({
         position: [...CAMERA.position],
         rotation: [...CAMERA.rotation],
         fov: CAMERA.fov,
+        near: CAMERA.near,
+        far: CAMERA.far,
       }}
       // toDataURL でのキャプチャ時のみ必要。通常表示では性能上のコストになるので切る
       gl={{ preserveDrawingBuffer: exposeCapture }}

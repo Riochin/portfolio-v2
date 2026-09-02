@@ -2,9 +2,15 @@
 // rotation[0] を大きくすると水平線が下がり、空が広く見える。
 export const CAMERA = {
   position: [0, 3, 12] as [number, number, number],
-  rotation: [0.12, 0, 0] as [number, number, number],
+  rotation: [0.055, 0, 0] as [number, number, number],
   fov: 55,
+  // 水面の反射は遠方まで空を映すので、far を伸ばして空の球を収める
+  near: 1,
+  far: 40000,
 } as const;
+
+/** 空の球の半径。水面の反射が届く範囲を覆う大きさが要る */
+export const SKY_RADIUS = 12000;
 
 // マウス追従で視点を振る量(ラジアン)と追従の減衰係数。
 // pitch は水平線が画面から出ない範囲に収める
@@ -20,66 +26,66 @@ export const SUN = [0.3, 0.78, -0.5] as [number, number, number];
 // mid は視線の高さ(=水平線)の色。ここを白っぽくすると水平線の霞になる。
 // curve が小さいほど、低い仰角でも一気に top の青へ寄る。
 export const DAY_SKY = {
-  top: "#0247d6",
-  mid: "#a9dcf6",
-  bottom: "#8fd0f2",
-  curve: 0.34,
+  top: "#1f8fcf",
+  mid: "#cbeaf3",
+  bottom: "#a8ddee",
+  curve: 0.5,
 } as const;
 
 export type OceanPalette = {
-  /** 手前の水の色 */
-  near: string;
-  /** 遠くの水の色 */
-  far: string;
-  /** 見込み角が浅いところに映る空の色 */
-  sky: string;
-  /** 水平線で溶け込む霞の色 */
-  haze: string;
+  /** 水そのものの色。反射とフレネルで混ざる */
+  water: string;
+  /** 水面で反射する光の色 */
   sunColor: string;
-  sunDir: readonly [number, number, number];
-  /** 大きいほど太陽の映り込みが鋭くなる */
-  sunPower: number;
-  sunStrength: number;
-  /** 波の起伏でつく明暗の強さ。大きいほど透明感が出る */
-  clarity: number;
-  /** 明るい部分に乗せる色 */
-  shimmer: string;
+  /** 波の歪みの強さ。大きいほど反射が乱れる */
+  distortion: number;
+  /** 法線マップの繰り返し。小さいほど波ひとつが大きい */
+  waveSize: number;
+  /** 波が進む速さ */
+  speed: number;
+  /** 反射側に足される下駄。上げると水面が明るく浮く */
+  ambient: number;
+  /** 鏡像の強さ */
+  reflectStrength: number;
+  /** 拡散光の強さ。上げるほど水面が白っぽくなる */
+  diffuse: number;
+  /** 視線が浅いときに残す水の色の割合 */
+  scatterFloor: number;
 };
 
 export const DAY_OCEAN: OceanPalette = {
-  near: "#2ad6e6",
-  far: "#0a5cc6",
-  sky: "#7fccf2",
-  haze: "#a9dcf6",
-  sunColor: "#fffdf0",
-  sunDir: SUN,
-  sunPower: 340,
-  sunStrength: 0.5,
-  clarity: 0.65,
-  shimmer: "#5ff0e8",
+  water: "#1187b8",
+  sunColor: "#fff6e0",
+  distortion: 2.4,
+  waveSize: 5,
+  speed: 0.32,
+  ambient: 0.04,
+  reflectStrength: 0.55,
+  diffuse: 0.06,
+  scatterFloor: 0.75,
 } as const;
 
 export const NIGHT_OCEAN: OceanPalette = {
-  near: "#0d2036",
-  far: "#050c18",
-  sky: "#16203c",
-  haze: "#0a1020",
-  sunColor: "#c8d6ff",
-  sunDir: SUN,
-  sunPower: 300,
-  sunStrength: 0.9,
-  clarity: 0.25,
-  shimmer: "#2a4a80",
+  water: "#04101f",
+  sunColor: "#9fb4e8",
+  distortion: 2.0,
+  waveSize: 5,
+  speed: 0.22,
+  ambient: 0.005,
+  reflectStrength: 0.35,
+  diffuse: 0.3,
+  scatterFloor: 0.2,
 } as const;
 
 export const OCEAN = {
-  /** 板の一辺。fadeFar より十分大きくして end を見せない */
-  size: 2400,
-  /** さざ波の細かさ。大きいほど波が細かい */
-  ripple: 0.55,
-  /** この距離から波を平らにし、霞へ溶かし始める */
-  fadeNear: 60,
-  fadeFar: 320,
+  /** 水面の板の一辺。水平線の手前で切れないよう大きく取る */
+  size: 20000,
+  /** 継ぎ目なくタイルする法線マップ。scripts/generate-water-normals.mjs で生成 */
+  normalMap: "/water-normals.png",
+  /** 反射を焼き込むテクスチャの解像度。上げるほど鏡像が精細で重い */
+  reflectionSize: 512,
+  /** 垂直入射での反射率。下げるほど水そのものの色が出る */
+  reflectance: 0.045,
   /** 静止画キャプチャ時に使う固定の位相 */
   stillTime: 12,
 } as const;
@@ -156,7 +162,7 @@ const flat = (
   opacity: 0.92,
   bands: 3,
   colorTop: "#ffffff",
-  colorBottom: "#c3d6e8",
+  colorBottom: "#b4cbe0",
   seed,
   speed: 0.05,
   growth: 0.8,
@@ -165,33 +171,62 @@ const flat = (
   ...overrides,
 });
 
+// 背の高い積雲。flat と違い上を丸く盛り上げる
+const cumulus = (
+  seed: number,
+  position: readonly [number, number, number],
+  bounds: readonly [number, number, number],
+  overrides: Partial<CloudMass> = {},
+): CloudMass =>
+  flat(seed, position, bounds, {
+    shoulder: 0.6,
+    shoulderRadius: 0.42,
+    taper: 1.15,
+    stack: 1.15,
+    bump: 0.07,
+    bumpFreq: 8,
+    lump: 0.2,
+    lumpFreq: 6,
+    lumpTwist: 8,
+    jitter: 0.05,
+    depth: 0.9,
+    opacity: 1,
+    bands: 5,
+    ...overrides,
+  });
+
 export const CLOUD_LAYER: readonly CloudMass[] = [
-  // 写真のように水平線沿いへ帯として集める。高度をそろえて z を散らすと
-  // 遠いものほど自然に水平線へ近づく。
-  // shoulderRadius を下げて上を丸め、平たい筋ではなく積雲の頭にする。
-  flat(11, [-120, 24, -150], [20, 6, 12], { volume: 3, segments: 120 }),
-  flat(29, [-36, 22, -170], [16, 5, 11], { volume: 2.8, segments: 105 }),
-  flat(47, [48, 25, -185], [19, 6, 12], { volume: 3, segments: 115 }),
-  flat(67, [150, 23, -205], [21, 5.5, 12], { volume: 3.2, segments: 110 }),
-  flat(83, [-215, 23, -240], [23, 5, 13], { volume: 3.4, segments: 105 }),
-  flat(101, [-70, 21, -270], [22, 4.5, 13], { volume: 3.4, segments: 95 }),
-  flat(127, [70, 22, -300], [24, 4.5, 14], { volume: 3.6, segments: 95 }),
-  flat(149, [235, 21, -330], [26, 4, 14], { volume: 3.8, segments: 90 }),
-  flat(173, [-290, 20, -370], [28, 3.5, 14], { volume: 4, segments: 85 }),
-  flat(197, [-30, 20, -410], [30, 3, 15], { volume: 4.2, segments: 80 }),
-  flat(223, [140, 19, -450], [32, 2.8, 15], { volume: 4.4, segments: 75 }),
-  flat(251, [320, 19, -500], [34, 2.5, 16], { volume: 4.6, segments: 70 }),
-  // 水平線に張りつく雲列。空の霞と同化させて奥行きの底にする
-  flat(281, [-60, 18, -580], [60, 2, 18], {
+  // 写真のように、水平線に腰を据えた大きな積雲を主役に置く。
+  // 右にそびえる一番大きいものを軸に、左へ連なりながら低くしていく。
+  cumulus(11, [170, 70, -300], [50, 55, 24], { segments: 320, volume: 5.5 }),
+  cumulus(29, [86, 40, -268], [28, 26, 17], { segments: 190, volume: 4.4 }),
+  cumulus(47, [8, 27, -232], [23, 18, 15], { segments: 150, volume: 4 }),
+  cumulus(67, [-72, 32, -242], [25, 21, 16], { segments: 165, volume: 4.2 }),
+  cumulus(83, [-158, 30, -220], [21, 15, 14], { segments: 130, volume: 3.8 }),
+  cumulus(101, [-248, 26, -265], [23, 14, 15], { segments: 130, volume: 4 }),
+  cumulus(127, [268, 36, -322], [27, 23, 17], { segments: 160, volume: 4.4 }),
+
+  // 奥の雲列。低く薄くして帯の底を作り、空の霞へ溶かす
+  flat(149, [-40, 22, -400], [40, 5, 16], {
+    volume: 4.4,
+    segments: 90,
+    opacity: 0.7,
+  }),
+  flat(173, [180, 21, -460], [42, 4, 16], {
+    volume: 4.6,
+    segments: 85,
+    opacity: 0.6,
+  }),
+  flat(197, [0, 19, -560], [70, 2.5, 18], {
     volume: 5.4,
-    segments: 60,
-    opacity: 0.55,
+    segments: 70,
+    opacity: 0.45,
     shoulderRadius: 0.8,
   }),
 ];
 
 // instancedMesh の上限。全塊の segments 合計を超えないと粒が欠ける
-export const CLOUD_LIMIT = 1300;
+export const CLOUD_LIMIT = 2000;
 
 export const STARS = {
   // 山や天の川より外側に置く。近いと星が山の手前に描かれてしまう
