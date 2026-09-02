@@ -48,12 +48,30 @@ const PREVIEW_COUNT = 5;
  */
 const MOBILE_PREVIEW_COUNT = 3;
 
+/**
+ * 「もっとみる」を開いているかをセクションごとに控えておく場所。
+ *
+ * 詳細ページへ移ると一覧は unmount されるので、useState だけだと戻ってきた
+ * ときに畳まれた状態から始まる ── 開いて 7 件目を押した人は、戻ると自分の
+ * 押したタイルが消えている (モーフの相手も居ないので画像が飛ぶ先を失う)。
+ * WorksHistoryBridge のスクロール位置と同じく、モジュールスコープに置いて
+ * クライアント遷移のあいだだけ持たせる。リロードで消えるのも同じで、
+ * そのときはモーフも戻り扱いも走らないので辻褄が合う。
+ *
+ * 書くのは onClick の中だけ = ブラウザ側だけなので、サーバの評価では常に
+ * 空のまま。SSR は必ず畳んだ状態を返し、ハイドレーションもずれない。
+ */
+const expandedBySection = new Map<string, boolean>();
+
 export function WorkGrid({
+  sectionKey,
   items,
   moreLabel,
   lessLabel,
   priorityCount = 0,
 }: {
+  /** 開閉を控えるときの見出し。ページ内のセクションごとに別であればよい。 */
+  sectionKey: string;
   items: readonly WorkGridItem[];
   moreLabel: string;
   lessLabel: string;
@@ -68,7 +86,18 @@ export function WorkGrid({
    */
   priorityCount?: number;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(
+    () => expandedBySection.get(sectionKey) ?? false,
+  );
+  const toggle = () => {
+    expandedBySection.set(sectionKey, !expanded);
+    setExpanded(!expanded);
+  };
+
+  // 戻ってきたときに出現アニメを止める範囲は「マウントした時点で画面に在った
+  // 件数」。開いたまま戻ってきた回は 6 件目以降も最初から在るので、そこも
+  // 止めないと、押したタイルが opacity 0 から始まってモーフが切れる。
+  const [mountedExpanded] = useState(expanded);
 
   // 詳細から戻ってきた回かどうかはマウント時に決める。あとから見直すと、
   // 「もっとみる」を押した拍子に画面に出ている分まで再生されてしまう。
@@ -90,7 +119,9 @@ export function WorkGrid({
   // 「行き先で消えている」ことになって、拡大が縮小に見えず一度消える。
   // 「もっとみる」で後から現れる分は、押した手応えとして今までどおり出す。
   const revealClass = (index: number) =>
-    returning && index < PREVIEW_COUNT ? "" : "reveal-rise";
+    returning && index < (mountedExpanded ? items.length : PREVIEW_COUNT)
+      ? ""
+      : "reveal-rise";
 
   // 畳んでいるあいだ、1 列では 4 件目以降を伏せる。
   const hiddenWhenNarrow = (index: number) =>
@@ -169,7 +200,7 @@ export function WorkGrid({
         >
           <button
             type="button"
-            onClick={() => setExpanded((open) => !open)}
+            onClick={toggle}
             aria-expanded={expanded}
             className="flex h-full w-full items-center justify-center rounded-xl border border-border px-6 py-3 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
           >

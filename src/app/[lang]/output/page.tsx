@@ -28,13 +28,18 @@ export default async function OutputPage() {
         <div className="mt-4">
           {/* ファーストビューに入るのは Talks の 1 行目だけ。最大 3 列なので
               3 件を先読みする。Articles は画面外なので遅延のままでよい。 */}
-          <OutputGrid items={talks} {...gridLabels} priorityCount={3} />
+          <OutputGrid
+            sectionKey="talks"
+            items={talks}
+            {...gridLabels}
+            priorityCount={3}
+          />
         </div>
       </section>
       <section className="mt-16">
         <h2 className="text-lg font-bold">{t(DICT.output.articles)}</h2>
         <div className="mt-4">
-          <OutputGrid items={articles} {...gridLabels} />
+          <OutputGrid sectionKey="articles" items={articles} {...gridLabels} />
         </div>
       </section>
     </PageShell>

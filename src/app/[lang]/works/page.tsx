@@ -57,6 +57,7 @@ export default async function WorksPage() {
             {/* ファーストビューに入るのは最初のセクションの 1 行目だけ。
                 最大 3 列なので 3 件を先読みし、以降は既定どおり遅延に任せる。 */}
             <WorkGrid
+              sectionKey={group.category}
               items={group.items}
               moreLabel={t(DICT.common.showMore)}
               lessLabel={t(DICT.common.showLess)}

@@ -19,8 +19,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "『ジョジョの奇妙な冒険 ラストサバイバー』と『機動戦士ガンダム EXTREME VS.2 INFINITEBOOST』の設置店舗を、全国約770店舗ぶん地図に載せた非公式サイト。ピンの色でどのタイトルが置いてあるかが一目でわかります。",
-        en: "An unofficial site that maps roughly 770 arcades across Japan carrying JoJo's Bizarre Adventure: Last Survivor and Mobile Suit Gundam EXTREME VS.2 INFINITEBOOST. Pin colors show at a glance which title a venue has.",
+        ja: "対象は『ジョジョの奇妙な冒険 ラストサバイバー』と『機動戦士ガンダム EXTREME VS.2 INFINITEBOOST』の2タイトル。ピンの色でどちらが置いてあるかが一目でわかります。",
+        en: "It covers two titles: JoJo's Bizarre Adventure: Last Survivor and Mobile Suit Gundam EXTREME VS.2 INFINITEBOOST. Pin colors show at a glance which one a venue has.",
       },
       {
         ja: "タイトル・都道府県／市区町村・店舗名・現在地で絞り込めるほか、台数や録画台・配信台・喫煙所といった「対戦前に知りたいこと」も店舗ごとに見られます。",
@@ -67,8 +67,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "機体ごとのコマンドを登録・編集し、練習モードで反復できるWebアプリ。対戦前の確認と手癖づけを1か所でできるようにしました。",
-        en: "A web app where you register and edit per-unit commands and drill them in a practice mode, so checking your inputs and building muscle memory happen in one place.",
+        ja: "機体ごとにコマンドが違ううえ、覚えたつもりでも対戦中はとっさに出てきません。自分でコマンドを登録・編集し、練習モードで反復して手に覚えさせるところまでを1か所にまとめました。",
+        en: "Every unit has its own commands, and the ones you think you know still will not come out mid-match. Registering and editing your own commands, then drilling them in a practice mode until your hands remember, all happens in one place.",
       },
     ],
     category: "personal",
@@ -92,8 +92,8 @@ export const WORKS = {
   "portfolio-v2": {
     title: { ja: "このポートフォリオサイト", en: "Portfolio (v2)" },
     tagline: {
-      ja: "いま見ているこのサイト ── 書き足すほど壊れていった初代を、型付きのデータから組み直した2代目",
-      en: "The site you are looking at — the second generation, rebuilt around typed data after the first one grew brittle",
+      ja: "今見ているこのサイト！初代のコンセプトそのままに、よりわかりやすく",
+      en: "The very site you are looking at — the first one's concept, made clearer",
     },
     body: [
       {
@@ -101,8 +101,12 @@ export const WORKS = {
         en: "Works, history, and stack all live as typed data now, and the pages do nothing but read it. Japanese and English copy is always held as a pair, so adding one language without the other is a type error.",
       },
       {
-        ja: "トップのヒーローは three.js (React Three Fiber) でその場で描いている空と海です。クリックすると全画面に広がり、昼は雲と鳥、夜は星と流れ星が流れます。",
-        en: "The hero on the front page is a sky and ocean rendered live with three.js (React Three Fiber). Click it and it expands to fill the screen — clouds and birds by day, stars and shooting stars by night.",
+        ja: "トップページでは、夏の思い出と、自分が大事にしたいと思っている余白を意識しました。ヒーローの空と海は three.js (React Three Fiber) でその場で描いていて、クリックすると全画面に広がり、昼は雲と鳥、夜は星と流れ星が流れます。",
+        en: "For the front page I went after the feeling of a summer memory, and the open space I want to keep in my work. The sky and ocean in the hero are drawn live with three.js (React Three Fiber); click and they expand to fill the screen — clouds and birds by day, stars and shooting stars by night.",
+      },
+      {
+        ja: "新たにブログ機能を追加し、サイトの中に記事を書く場所をつくりました。記事は Markdown で持ち、書くところから公開までをこのサイトの中だけで完結させています。",
+        en: "I also added a blog, so there is now a place to write inside the site itself. Articles are kept as Markdown, and writing through publishing all happens without leaving this site.",
       },
     ],
     category: "personal",
@@ -222,8 +226,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "「寝るきっかけが生まれない」「睡眠習慣が続かず諦めてしまう」という課題に、友達と睡眠習慣を共有するという手段で応えたiOSアプリ。ロック画面から、いま何人が一緒に寝ているのかがわかります。",
-        en: "An iOS app that answers two problems — nothing prompts you to go to bed, and a sleep habit never sticks — by sharing that habit with friends. From the lock screen you can see how many of them are already asleep.",
+        ja: "「寝るきっかけが生まれない」「睡眠習慣が続かず諦めてしまう」という2つの課題から出発しました。ロック画面から、いま何人が一緒に寝ているのかがわかります。",
+        en: "It started from two problems: nothing prompts you to go to bed, and a sleep habit never sticks. From the lock screen you can see how many friends are already asleep.",
       },
       {
         ja: "就寝目標を決めると、達成できていないときはコンテンツを制限。1日1つの出来事を投稿してその日をふりかえり、友達の投稿にはスタンプを送れます。背景は時間帯に合わせて夜明けまで変わっていきます。",
@@ -281,8 +285,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "BeRealの「通知が来たら今すぐ投稿！」の仕組みをGitHub×チーム開発に持ち込み、義務感になりがちなスタンドアップをゲームのような楽しさに変えました。",
-        en: "Inspired by BeReal's post-the-moment-you-get-the-notification mechanic, brought into GitHub-based team development to make standups fun instead of a chore.",
+        ja: "「通知が来たら今すぐ投稿！」という仕組みをそのままチーム開発に持ち込み、義務感になりがちなスタンドアップをゲームのような楽しさに変えました。",
+        en: "The post-the-moment-you-get-the-notification mechanic, carried straight over into team development, turns a standup that easily becomes a chore into something closer to a game.",
       },
     ],
     category: "hackathon",
@@ -323,8 +327,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "Chrome拡張で閲覧履歴を自動収集し、AIが関心テーマを「ステッカー」として可視化するサービス。",
-        en: "A service that automatically collects your browsing history via a Chrome extension and lets AI visualize your interests as stickers.",
+        ja: "Chrome拡張が閲覧履歴を自動で集め、そこにAIが見つけた関心テーマを1枚ずつ「ステッカー」に起こしていきます。",
+        en: "A Chrome extension gathers your browsing history automatically, and AI turns each theme it finds in there into a sticker of its own.",
       },
       {
         ja: "embedding＋pgvectorによるオンラインクラスタリングとfal.ai FLUX.1 [schnell]によるステッカー画像生成で、検索履歴を「偏愛のステッカーブック」に変えます。",
@@ -386,8 +390,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "Apple Watchのパンチ動作をセンサーで検知し、リアルタイムで対戦できるマルチプレイヤー格闘ゲーム。",
-        en: "A real-time multiplayer fighting game where players punch with an Apple Watch as the input device.",
+        ja: "コントローラーは使いません。Apple Watchを腕につけて実際にパンチを繰り出すと、その動きがそのまま攻撃になります。",
+        en: "There is no controller. You strap on an Apple Watch and throw a real punch, and the motion itself becomes your attack.",
       },
       {
         ja: "WebTransportを介してRust製の低遅延同期サーバーと通信し、Web UI上でバトルがリアルタイム描画されます。",
@@ -437,12 +441,12 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "AIが生成する災害シナリオに基づいて、実際に近くの避難所まで歩いて避難訓練ができるiOSアプリ。",
-        en: "An iOS app where users receive AI-generated daily disaster scenarios and physically walk to nearby evacuation shelters for drill practice.",
+        ja: "毎日AIが「いま何が起きたか」という災害シナリオを出題し、それに合わせて近くの避難所まで実際に足を運びます。",
+        en: "Each day an AI poses a disaster scenario — what has just happened — and you make your way on foot to a nearby shelter to match it.",
       },
       {
-        ja: "バッジ収集などのゲーミフィケーション要素で、避難訓練を楽しく習慣化できます。",
-        en: "Gamification elements like collectible badges make evacuation drills fun and repeatable.",
+        ja: "たどり着くとバッジがたまっていくので、机の上で読むだけの訓練より続けやすくなっています。",
+        en: "Arriving earns you a badge, which makes it far easier to keep going than a drill you only read about at a desk.",
       },
     ],
     category: "hackathon",
@@ -499,8 +503,8 @@ export const WORKS = {
         en: "Wind vectors are derived from open logistics data — the Motor Vehicle Transport Statistics Survey published by Japan's Ministry of Land, Infrastructure, Transport and Tourism.",
       },
       {
-        ja: "紙飛行機のように飛ばされた絵葉書をキャッチしよう！というコンセプトから開発しました。",
-        en: "The concept: catch the postcards that drift to you like paper planes.",
+        ja: "風に乗った絵葉書は紙飛行機と同じで、誰の手元に届くかは飛ばした本人にもわかりません。",
+        en: "A postcard riding that wind behaves like a paper plane: not even the sender knows whose hands it will reach.",
       },
     ],
     category: "hackathon",
@@ -541,8 +545,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "GitHubのコントリビューションとテトリスを組み合わせたリアルタイム通信ゲーム！",
-        en: "A real-time multiplayer game that combines GitHub contributions with Tetris.",
+        ja: "リアルタイム通信で、離れた相手とそのまま対戦できます。",
+        en: "Real-time networking lets you play head-to-head with someone anywhere.",
       },
       {
         ja: "日々のコーディング活動が楽しいゲーム体験に変わってほしいという思いから、開発しました。",
@@ -631,8 +635,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "プログラミング学習中にさまざまな異変が起こる、8番出口ライクなプログラミング学習プラットフォーム。",
-        en: "An 8-Exit-like learning platform where all sorts of anomalies appear while you are learning to program.",
+        ja: "ゲーム『8番出口』の仕組みを、そのままプログラミング学習の画面に持ち込みました。",
+        en: "The mechanic of the game 8 Exit, carried straight over into a screen where you learn to program.",
       },
       {
         ja: "ゲーム面だけでなく、学べる内容にも力が入っています！",
@@ -666,8 +670,8 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "食堂の混雑状況をリアルタイムで把握し、混雑を緩和するためのQRコードベースの入退室管理システム。",
-        en: "A QR-code-based entry and exit management system that shows cafeteria congestion in real time and helps relieve it.",
+        ja: "読み取った入退室の記録から在室人数を数えているので、行く前に今どのくらい混んでいるかを確かめられます。",
+        en: "Scans in and out are counted into a live headcount, so you can check how packed it is before you head over.",
       },
     ],
     category: "hackathon",
