@@ -54,10 +54,10 @@ export type CloudMass = {
 export const CUMULONIMBUS: readonly CloudMass[] = [
   // 本体。裾が広く上へ絞れる塔。これ 1 つで入道雲のシルエットを作る
   {
-    position: [-1, 30, -34],
-    bounds: [23, 28, 10],
+    position: [-1, 22, -34],
+    bounds: [16, 20, 7],
     segments: 300,
-    volume: 6.4,
+    volume: 4.5,
     taper: 1.15,
     shoulder: 0.68,
     shoulderRadius: 0.46,
@@ -65,7 +65,7 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
     bumpFreq: 7,
     lean: 0.05,
     stack: 1.1,
-    jitter: 0.06,
+    jitter: 0.03,
     depth: 0.85,
     opacity: 1,
     bands: 5,
@@ -78,10 +78,10 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
   },
   // 左裾。本体の根元から張り出す塊
   {
-    position: [-15, 10, -33],
-    bounds: [13, 7, 8],
+    position: [-10, 8, -33],
+    bounds: [9, 5, 6],
     segments: 40,
-    volume: 6,
+    volume: 4.2,
     taper: 1.2,
     shoulder: 0.45,
     shoulderRadius: 0.7,
@@ -102,10 +102,10 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
   },
   // 右裾
   {
-    position: [15, 9, -33],
-    bounds: [14, 7, 8],
+    position: [10, 7, -33],
+    bounds: [9, 5, 6],
     segments: 42,
-    volume: 6.2,
+    volume: 4.3,
     taper: 1.2,
     shoulder: 0.45,
     shoulderRadius: 0.72,
@@ -127,9 +127,9 @@ export const CUMULONIMBUS: readonly CloudMass[] = [
   // 遠景の雲列。青みを混ぜて奥行きを出す
   {
     position: [0, 6, -60],
-    bounds: [45, 3, 6],
+    bounds: [34, 3, 6],
     segments: 40,
-    volume: 7,
+    volume: 5,
     taper: 1.6,
     shoulder: 0.4,
     shoulderRadius: 0.85,
