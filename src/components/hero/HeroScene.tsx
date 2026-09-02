@@ -76,25 +76,24 @@ function NightScene({ animated }: { animated: boolean }) {
   );
 }
 
-declare global {
-  interface Window {
-    __heroCapture?: () => string;
-  }
-}
-
 export default function HeroScene({
   mode,
   animated = true,
+  interactive = true,
   onReady,
-  exposeCapture = false,
+  onCapture,
+  preserveBuffer = false,
 }: {
   mode: "light" | "dark";
   animated?: boolean;
+  /** ポインタで視点を振れるようにするか。キャプチャでは切る */
+  interactive?: boolean;
   onReady?: () => void;
-  exposeCapture?: boolean;
+  /** 今描かれている絵を静止画として取り出す手段を親へ渡す */
+  onCapture?: (capture: () => string | null) => void;
+  /** 描画バッファを保持する。静止画の焼き出し用で、通常表示では性能上のコストになる */
+  preserveBuffer?: boolean;
 }) {
-  // キャプチャ時は sceneConfig のカメラ角そのままで固定したいので追従を切る
-  const interactive = !exposeCapture;
   // WebGL コンテキストを失うと以降なにも描かれず真っ白になる。canvas 要素ごと
   // 作り直さないと復帰できないので、key を進めて Canvas を張り替える。
   // (dev の StrictMode 二重マウントで R3F が forceContextLoss を呼ぶケースと、
@@ -111,8 +110,7 @@ export default function HeroScene({
         near: CAMERA.near,
         far: CAMERA.far,
       }}
-      // toDataURL でのキャプチャ時のみ必要。通常表示では性能上のコストになるので切る
-      gl={{ preserveDrawingBuffer: exposeCapture }}
+      gl={{ preserveDrawingBuffer: preserveBuffer }}
       onCreated={({ gl, scene, camera }) => {
         // 素材の色はそのまま出したいので露出は等倍。空の輝度は DaySky 側で畳む
         gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -122,12 +120,18 @@ export default function HeroScene({
           () => setAttempt((n) => (n < 2 ? n + 1 : n)),
           { once: true },
         );
-        if (exposeCapture) {
-          window.__heroCapture = () => {
+        onCapture?.(() => {
+          try {
+            // preserveDrawingBuffer なしでも、描いてから同じタスクの中で読めば
+            // 中身は残っている。読めなかった環境ではほぼ空の画像が返ってくるので、
+            // 明らかに小さいものは無かったことにする
             gl.render(scene, camera);
-            return gl.domElement.toDataURL("image/webp", 0.9);
-          };
-        }
+            const url = gl.domElement.toDataURL("image/webp", 0.9);
+            return url.length > 2000 ? url : null;
+          } catch {
+            return null;
+          }
+        });
         onReady?.();
       }}
       className="h-full w-full"

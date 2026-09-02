@@ -44,6 +44,8 @@ export const DICT = {
   },
   about: {
     skills: { ja: "使っている技術", en: "Skills" },
+    /** 上位再生曲なので「好きな曲」とは名乗らない。 */
+    tracks: { ja: "よく聴いている曲", en: "On repeat" },
   },
   hero: {
     welcome: {

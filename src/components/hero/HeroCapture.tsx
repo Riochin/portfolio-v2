@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { HeroCanvasWrapper } from "./HeroCanvasWrapper";
+import { useCallback, useRef, useState } from "react";
+import { HeroSceneClient } from "./HeroSceneClient";
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -17,11 +17,25 @@ export function HeroCapture({
 }) {
   const [mode, setMode] = useState<"light" | "dark">(initialMode);
   const [status, setStatus] = useState("");
+  const captureRef = useRef<(() => string | null) | null>(null);
+  const handleCapture = useCallback(
+    (capture: () => string | null) => {
+      captureRef.current = capture;
+    },
+    [],
+  );
 
   // 縮小表示すると Canvas のバッファも縮むため、原寸のまま置いてはみ出させる
   const canvas = (
     <div style={{ width: WIDTH, height: HEIGHT }}>
-      <HeroCanvasWrapper key={mode} mode={mode} animated={false} exposeCapture />
+      <HeroSceneClient
+        key={mode}
+        mode={mode}
+        animated={false}
+        interactive={false}
+        preserveBuffer
+        onCapture={handleCapture}
+      />
     </div>
   );
 
@@ -31,7 +45,7 @@ export function HeroCapture({
   }
 
   const save = async () => {
-    const dataUrl = window.__heroCapture?.();
+    const dataUrl = captureRef.current?.();
     if (!dataUrl) {
       setStatus("Canvas がまだ準備できていません");
       return;

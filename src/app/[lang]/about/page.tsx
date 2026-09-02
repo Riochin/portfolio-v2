@@ -2,9 +2,11 @@ import { Fragment } from "react";
 import Image from "next/image";
 import { PageShell } from "@/components/layout/PageShell";
 import { SkillIcon } from "@/components/skills/SkillIcon";
+import { TrackGrid } from "@/components/about/TrackGrid";
 import { ABOUT } from "@/data/about";
 import { SITE } from "@/data/site";
 import { getFeaturedSkills } from "@/data";
+import { getTopTracks } from "@/lib/spotify";
 import { DICT } from "@/lib/i18n/dictionary";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getT } from "@/lib/i18n/server";
@@ -12,9 +14,23 @@ import { getT } from "@/lib/i18n/server";
 export const generateMetadata = () =>
   buildPageMetadata({ path: "/about", title: DICT.pages.about });
 
+/*
+ * revalidate は「あえて」書いていない。消さないこと。
+ *
+ * Next 16 のキャッシュは opt-in なので、指定が無いこのページは build 時に
+ * 一度だけプリレンダリングされる ([lang] の generateStaticParams が
+ * /ja /en を両方生成する)。つまり Spotify の取得も 6 曲の抽選も
+ * ビルドの瞬間に 1 回走るだけで、以後はデプロイし直すまで固定される。
+ * revalidate を足すとその間隔で曲が入れ替わってしまう。
+ *
+ * 開発中だけは例外で、next dev はページを常にオンデマンドで描画して
+ * キャッシュしないため、リロードのたびに抽選し直される。本番では起きない。
+ */
+
 export default async function AboutPage() {
   const { t } = await getT();
   const skills = getFeaturedSkills();
+  const tracks = await getTopTracks();
 
   return (
     <PageShell>
@@ -84,6 +100,18 @@ export default async function AboutPage() {
           ))}
         </ul>
       </section>
+
+      {/* 技術の話をひと通り置いたあと、最後に人となりの話。
+          取得に失敗したときや連携前はセクションごと出さない ──
+          空の枠が残る方が「壊れている」ように見えるため。 */}
+      {tracks.length > 0 && (
+        <section className="mt-16">
+          <h2 className="text-lg font-bold">{t(DICT.about.tracks)}</h2>
+          <div className="mt-4">
+            <TrackGrid tracks={tracks} />
+          </div>
+        </section>
+      )}
 
       {/* 締めに置く。ここまで読んだ人が次に取る行動なので最後が自然。 */}
       <section className="mt-16">

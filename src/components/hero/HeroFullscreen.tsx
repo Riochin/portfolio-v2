@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { HeroBackground } from "./HeroBackground";
-import { HeroCanvasWrapper } from "./HeroCanvasWrapper";
+import { HeroSceneClient } from "./HeroSceneClient";
 
 export function HeroFullscreen({
   mode,
@@ -16,6 +16,7 @@ export function HeroFullscreen({
   closeLabel: string;
 }) {
   const [canvasReady, setCanvasReady] = useState(false);
+  const handleReady = useCallback(() => setCanvasReady(true), []);
   // レイアウトアニメーション中は要素に transform がかかっており、R3F が
   // 変形後の小さい bounding rect を測ってそのサイズで固定してしまう。
   // モーフ完了後にマウントすることで正しい全画面サイズで初期化させる。
@@ -43,7 +44,7 @@ export function HeroFullscreen({
           animate={{ opacity: canvasReady ? 1 : 0 }}
           transition={{ duration: 0.8 }}
         >
-          <HeroCanvasWrapper mode={mode} onReady={() => setCanvasReady(true)} />
+          <HeroSceneClient mode={mode} onReady={handleReady} />
         </motion.div>
       )}
       <motion.button
