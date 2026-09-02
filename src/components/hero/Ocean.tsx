@@ -19,9 +19,12 @@ import { OCEAN, SUN, type OceanPalette } from "./sceneConfig";
 export function Ocean({
   palette,
   animated,
+  reflectionSize = OCEAN.reflectionSize,
 }: {
   palette: OceanPalette;
   animated: boolean;
+  /** 鏡像を焼くテクスチャの一辺。常時描画するブロックでは落として使う */
+  reflectionSize?: number;
 }) {
   const normals = useTexture(OCEAN.normalMap);
   const ref = useRef<Water>(null);
@@ -34,8 +37,8 @@ export function Ocean({
     map.needsUpdate = true;
 
     const mesh = new Water(new THREE.PlaneGeometry(OCEAN.size, OCEAN.size), {
-      textureWidth: OCEAN.reflectionSize,
-      textureHeight: OCEAN.reflectionSize,
+      textureWidth: reflectionSize,
+      textureHeight: reflectionSize,
       waterNormals: map,
       sunDirection: new THREE.Vector3(...SUN).normalize(),
       sunColor: new THREE.Color(palette.sunColor),
@@ -74,7 +77,7 @@ export function Ocean({
     // 静止画キャプチャでも波が出るよう、初期位相をずらしておく
     mesh.material.uniforms.time.value = OCEAN.stillTime;
     return mesh;
-  }, [normals, palette]);
+  }, [normals, palette, reflectionSize]);
 
   useEffect(() => {
     const { geometry, material } = water;

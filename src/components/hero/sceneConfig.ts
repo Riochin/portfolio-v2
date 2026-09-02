@@ -226,7 +226,8 @@ export const CLOUD_LAYER: readonly CloudMass[] = [
 ];
 
 // 粒に貼るテクスチャ。drei の既定は外部 CDN(rawcdn.githack.com)を見に行くので、
-// 同じ画像を public に置いて自分のオリジンから配る。
+// 同じ画像を public に置いて自分のオリジンから配る。ヒーローは初期表示で描き
+// 始めるため、ここが外部依存だと毎回の初回描画がその CDN の速さに引きずられる。
 export const CLOUD_TEXTURE = "/cloud.png";
 
 // instancedMesh の上限。全塊の segments 合計を超えないと粒が欠ける
@@ -258,3 +259,25 @@ export const MILKY_WAY = {
   rotation: [0.15, -0.1, 0.85] as [number, number, number],
   size: [1060, 300] as [number, number],
 } as const;
+
+/**
+ * 描画品質。ヒーローブロックの Canvas はページを開いている間ずっと回るので、
+ * 常時ぶんは削りたい。ただし削るのは解像度だけで、粒の数や配置には触らない。
+ * ブロックには静止画ポスターを重ねてクロスフェードで差し替えるので、
+ * シルエットが変わると入れ替わった瞬間に絵が飛ぶ。
+ */
+export type Quality = {
+  /** R3F の dpr。[下限, 上限] を渡すと画面に合わせてこの範囲に収まる */
+  dpr: readonly [number, number];
+  /** 海面の反射を焼くテクスチャの一辺。Ocean はここへシーンをもう一度描く */
+  reflectionSize: number;
+};
+
+export const QUALITY = {
+  /** 全画面表示と静止画キャプチャ。見せ場なので上げる */
+  full: { dpr: [1, 2], reflectionSize: OCEAN.reflectionSize },
+  /** ブロック常設。小さい箱なので反射の精細さは効いてこない */
+  block: { dpr: [1, 1.5], reflectionSize: 256 },
+  /** 狭い幅。電池を使いすぎないようもう一段落とす */
+  blockCompact: { dpr: [1, 1.25], reflectionSize: 128 },
+} as const satisfies Record<string, Quality>;

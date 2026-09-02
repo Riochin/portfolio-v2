@@ -5,6 +5,7 @@ import { AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { HeroBlock } from "./HeroBlock";
 import { HeroFullscreen } from "./HeroFullscreen";
+import { useWebGLSupported } from "./webgl";
 
 export type HeroLabels = {
   readonly welcome: string;
@@ -14,11 +15,27 @@ export type HeroLabels = {
 
 export function HeroSection({ labels }: { labels: HeroLabels }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const [failed, setFailed] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const supportsWebGL = useWebGLSupported();
   const { resolvedTheme } = useTheme();
   const mode = resolvedTheme === "dark" ? "dark" : "light";
 
+  // 静止画へ倒すのは WebGL が無いか、動きを減らす設定のときだけ。どちらも
+  // まだ分からない間(サーバと水和の 1 回目)は無地で、どちらにも倒さない。
+  const still =
+    supportsWebGL === false || prefersReducedMotion === true || failed;
+  // resolvedTheme が決まる前に始めると、暗いテーマでも一度昼の空を
+  // 組み立ててから夜へ切り替わってしまう。
+  const live = supportsWebGL === true && !still && Boolean(resolvedTheme);
+  // 読み込みの間、ブロックは出さず中央の線だけが見えている。挨拶文もその線と
+  // 重ねず、空が開ききってから出す(1 文字ずつの出現もそこで見せたい)。
+  const shown = still || revealed;
+
   const close = useCallback(() => setIsExpanded(false), []);
+  const onRevealed = useCallback(() => setRevealed(true), []);
+  const onFailed = useCallback(() => setFailed(true), []);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -39,21 +56,22 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
             狭い幅では地の色が明るく白が消えるため、通常の本文色に戻す。
             pointer-events-none にして、文字の上でもブロックを押せるようにする。 */}
         {!isExpanded && (
-          <h1 className="pointer-events-none mb-8 text-center text-sm tracking-[0.2em] text-foreground md:absolute md:inset-0 md:z-10 md:mb-0 md:flex md:items-center md:justify-center md:text-base md:font-medium md:text-white md:[text-shadow:0_1px_3px_rgb(0_0_0/0.55),0_0_14px_rgb(0_0_0/0.45)]">
+          <h1 className="pointer-events-none mb-8 min-h-5 text-center text-sm tracking-[0.2em] text-foreground md:absolute md:inset-0 md:z-10 md:mb-0 md:flex md:items-center md:justify-center md:text-base md:font-medium md:text-white md:[text-shadow:0_1px_3px_rgb(0_0_0/0.55),0_0_14px_rgb(0_0_0/0.45)]">
             {/* 1 文字ずつ span に割ると読み上げが文字単位になりうるので、
                 支援技術には素の 1 文として渡し、見た目側は隠す。 */}
             <span className="sr-only">{labels.welcome}</span>
             <span aria-hidden>
-              {[...labels.welcome].map((char, i) => (
-                <span
-                  key={i}
-                  className="hero-welcome-char"
-                  style={{ "--char-delay": `${i * 40}ms` } as CSSProperties}
-                >
-                  {/* inline-block にすると半角空白が潰れるので実体で置く */}
-                  {char === " " ? "\u00a0" : char}
-                </span>
-              ))}
+              {shown &&
+                [...labels.welcome].map((char, i) => (
+                  <span
+                    key={i}
+                    className="hero-welcome-char"
+                    style={{ "--char-delay": `${i * 40}ms` } as CSSProperties}
+                  >
+                    {/* inline-block にすると半角空白が潰れるので実体で置く */}
+                    {char === " " ? "\u00a0" : char}
+                  </span>
+                ))}
             </span>
           </h1>
         )}
@@ -61,9 +79,17 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
           {!isExpanded && (
             <HeroBlock
               onClick={
-                prefersReducedMotion ? undefined : () => setIsExpanded(true)
+                prefersReducedMotion || !shown
+                  ? undefined
+                  : () => setIsExpanded(true)
               }
+              disabled={!shown}
               ariaLabel={labels.expand}
+              mode={mode}
+              live={live}
+              still={still}
+              onRevealed={onRevealed}
+              onFailed={onFailed}
             />
           )}
         </div>
