@@ -1,0 +1,94 @@
+import { WORKS, type WorkSlug } from "./works";
+import { EXPERIENCES, type ExperienceSlug } from "./experience";
+import { SKILLS, type Skill, type SkillSlug } from "./skills";
+import { comparePeriodDesc } from "@/lib/date";
+import type { Award, AwardEntry, Experience, Work } from "./types";
+
+/**
+ * アクセサ層。並び替えとフィルタはここだけに置く。
+ * (旧サイトはソートが一切なく、データファイルの記述順がそのまま表示順だった)
+ *
+ * 全て同期・ロケール非依存にしてあるのが重要な制約。
+ * opengraph-image.tsx は Route Handler 扱いで next/root-params を使えないため、
+ * ここがロケールを知っていると OG 画像から呼べなくなる。
+ * ロケールの解決は描画側で t() を使って行う。
+ */
+
+const ALL_WORKS: readonly Work[] = Object.entries(WORKS)
+  .map(([slug, entry]) => ({ slug, ...entry }))
+  .sort((a, b) => comparePeriodDesc(a.period, b.period));
+
+const ALL_EXPERIENCES: readonly Experience[] = Object.entries(EXPERIENCES)
+  .map(([slug, entry]) => ({ slug, ...entry }))
+  .sort((a, b) => comparePeriodDesc(a.period, b.period));
+
+const ALL_AWARDS: readonly AwardEntry[] = ALL_WORKS.flatMap((work) =>
+  (work.awards ?? []).map((award) => ({
+    ...award,
+    work: { slug: work.slug, title: work.title },
+  })),
+).sort((a, b) => b.date.localeCompare(a.date));
+
+/** 受賞バッジで「一番良い賞」を選ぶための序列。 */
+const RANK_ORDER = {
+  grand: 0,
+  excellence: 1,
+  sponsor: 2,
+  finalist: 3,
+  other: 4,
+} as const;
+
+export function getWorks(): readonly Work[] {
+  return ALL_WORKS;
+}
+
+export function getFeaturedWorks(): readonly Work[] {
+  return ALL_WORKS.filter((work) => work.featured);
+}
+
+export function getWorkSlugs(): WorkSlug[] {
+  return Object.keys(WORKS) as WorkSlug[];
+}
+
+export function getWorkBySlug(slug: string): Work | undefined {
+  return ALL_WORKS.find((work) => work.slug === slug);
+}
+
+export function getWorksByExperience(slug: ExperienceSlug): readonly Work[] {
+  return ALL_WORKS.filter((work) => work.relatedExperience === slug);
+}
+
+/** その作品で最も上位の受賞。一覧のバッジ表示に使う。 */
+export function getTopAward(work: Work): Award | undefined {
+  if (!work.awards || work.awards.length === 0) return undefined;
+  return [...work.awards].sort(
+    (a, b) => RANK_ORDER[a.rank] - RANK_ORDER[b.rank],
+  )[0];
+}
+
+export function getExperiences(): readonly Experience[] {
+  return ALL_EXPERIENCES;
+}
+
+export function getExperienceBySlug(slug: string): Experience | undefined {
+  return ALL_EXPERIENCES.find((experience) => experience.slug === slug);
+}
+
+/** 作品横断の受賞一覧 (日付の新しい順)。 */
+export function getAwards(): readonly AwardEntry[] {
+  return ALL_AWARDS;
+}
+
+export function getSkill(slug: SkillSlug): Skill {
+  return { slug, ...SKILLS[slug] };
+}
+
+export function getSkills(slugs: readonly SkillSlug[]): Skill[] {
+  return slugs.map(getSkill);
+}
+
+export function getFeaturedSkills(): Skill[] {
+  return (Object.keys(SKILLS) as SkillSlug[])
+    .map(getSkill)
+    .filter((skill) => skill.featured);
+}
