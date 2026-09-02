@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { ArticleBody } from "@/components/blog/ArticleBody";
 import { getArticleBySlug, getArticleSlugs } from "@/lib/articles";
@@ -62,13 +62,27 @@ export default async function ArticlePage({
   return (
     <PageShell>
       <article>
-        <Link
-          href={localePath(locale, "/output")}
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
-        >
-          <ArrowLeft size={16} />
-          {t(DICT.blog.back)}
-        </Link>
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <Link
+            href={localePath(locale, "/output")}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
+          >
+            <ArrowLeft size={16} />
+            {t(DICT.blog.back)}
+          </Link>
+
+          {/* 読んでいて直したくなったらそのまま studio へ渡る導線。dev だけ。
+              本番では studio 自体が notFound() になるので出さない。 */}
+          {process.env.NODE_ENV !== "production" && (
+            <Link
+              href={localePath(locale, `/studio/${slug}`)}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-accent hover:text-accent"
+            >
+              <Pencil size={14} />
+              編集
+            </Link>
+          )}
+        </div>
 
         <h1 className="text-2xl font-bold">{article.title}</h1>
 

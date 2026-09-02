@@ -19,10 +19,19 @@ import { localePath } from "@/lib/i18n/paths";
 export async function SiteChrome() {
   const { locale, t } = await getT();
 
-  const items: readonly NavItem[] = NAV_ITEMS.map((item) => ({
-    href: localePath(locale, item.path),
-    label: t(DICT.nav[item.key]),
-  }));
+  const items: readonly NavItem[] = [
+    ...NAV_ITEMS.map((item) => ({
+      href: localePath(locale, item.path),
+      label: t(DICT.nav[item.key]),
+    })),
+    // 記事を書く studio は dev だけの道具なので NAV_ITEMS には混ぜず、ここで
+    // 末尾 (Output の下) に足す。本番ではページ自体が notFound() になるので
+    // 項目も出さない。文言を DICT に足さないのも studio のページと同じ理由で、
+    // 著者ひとりの道具なので日英に訳す相手が居ない。
+    ...(process.env.NODE_ENV === "production"
+      ? []
+      : [{ href: localePath(locale, "/studio"), label: "Studio" }]),
+  ];
 
   const homeHref = localePath(locale, "/");
 
