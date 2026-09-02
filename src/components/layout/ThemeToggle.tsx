@@ -5,7 +5,32 @@ import { flushSync } from "react-dom";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 
-export function ThemeToggle({ ariaLabel }: { ariaLabel: string }) {
+/* hero は下部中央に単体で置く大きな丸ボタン。chrome は JP/EN の隣やフッターに
+   並ぶ小さなアイコンで、枠を持たず周りの文字リンクと同じ重さに見せる。
+   切替の演出はボタンの矩形からしか作らないので、大きさが変わっても
+   「押した場所から円が開く」挙動はどちらも同じになる。 */
+const VARIANTS = {
+  hero: {
+    className:
+      "flex h-16 w-16 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-accent hover:text-accent",
+    icon: 24,
+    placeholder: "h-6 w-6",
+  },
+  chrome: {
+    className:
+      "flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-accent",
+    icon: 18,
+    placeholder: "h-[18px] w-[18px]",
+  },
+} as const;
+
+export function ThemeToggle({
+  ariaLabel,
+  variant = "hero",
+}: {
+  ariaLabel: string;
+  variant?: keyof typeof VARIANTS;
+}) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -80,20 +105,22 @@ export function ThemeToggle({ ariaLabel }: { ariaLabel: string }) {
       });
   }, [isDark, setTheme]);
 
+  const style = VARIANTS[variant];
+
   return (
     <button
       ref={buttonRef}
       type="button"
       onClick={toggle}
       aria-label={ariaLabel}
-      className="flex h-16 w-16 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-accent hover:text-accent"
+      className={style.className}
     >
       {mounted ? (
         <span className="theme-icon flex items-center justify-center">
-          {isDark ? <Moon size={24} /> : <Sun size={24} />}
+          {isDark ? <Moon size={style.icon} /> : <Sun size={style.icon} />}
         </span>
       ) : (
-        <span className="h-6 w-6" />
+        <span className={style.placeholder} />
       )}
     </button>
   );

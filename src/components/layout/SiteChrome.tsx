@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ChromeThemeToggle } from "./ChromeThemeToggle";
 import { Copyright } from "./Copyright";
 import { MobileMenu } from "./MobileMenu";
 import { SideNav, type NavItem } from "./SideNav";
@@ -47,6 +48,12 @@ export async function SiteChrome() {
             ariaLabel={t(DICT.aria.languageToggle)}
           />
         }
+        themeToggle={
+          <ChromeThemeToggle
+            ariaLabel={t(DICT.aria.themeToggle)}
+            className="pointer-events-auto absolute inset-y-0 -right-[7px] flex items-center"
+          />
+        }
         wordmark={
           <Link
             href={homeHref}
@@ -68,10 +75,19 @@ export async function SiteChrome() {
           ariaLabel={labels.mainNav}
         />
         <div className="flex flex-col gap-3">
-          <LanguageSwitcher
-            locale={locale}
-            ariaLabel={t(DICT.aria.languageToggle)}
-          />
+          {/* テーマ切替は JP/EN と同じ「サイトの設定」の列なので同じ行に並べる。
+              ヒーローではボタンが消えるが、行の高さは JP/EN が決めるので
+              下の Copyright は動かない。 */}
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher
+              locale={locale}
+              ariaLabel={t(DICT.aria.languageToggle)}
+            />
+            <ChromeThemeToggle
+              ariaLabel={t(DICT.aria.themeToggle)}
+              className="-my-2"
+            />
+          </div>
           <Copyright />
         </div>
       </div>

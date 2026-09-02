@@ -28,6 +28,7 @@ export function MobileMenu({
   headingHref,
   labels,
   languageSwitcher,
+  themeToggle,
   wordmark,
 }: {
   items: readonly NavItem[];
@@ -36,6 +37,7 @@ export function MobileMenu({
   labels: MenuLabels;
   /** Server Component 側で組み立てたものを slot として受け取る */
   languageSwitcher: React.ReactNode;
+  themeToggle: React.ReactNode;
   wordmark: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
@@ -127,6 +129,10 @@ export function MobileMenu({
           >
             {wordmark}
           </motion.div>
+          {/* ハンバーガーと対になる右端。ワードマークを中央に据えたままにしたい
+              ので、こちらも絶対配置で行から抜く。メニューを開いている間も
+              ヘッダーはオーバーレイの上に残るので、押せるままでよい。 */}
+          {themeToggle}
         </div>
       </header>
     </div>

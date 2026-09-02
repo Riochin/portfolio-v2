@@ -110,8 +110,15 @@ html[data-vt="theme"]::view-transition-new(root) {
 }
 
 /* --- テーマ切替: 太陽/月アイコンのモーフ ---
-   独立した view-transition-name を持たせ、リベールの上で回転しながら入れ替わる。 */
-.theme-icon {
+   独立した view-transition-name を持たせ、リベールの上で回転しながら入れ替わる。
+
+   名前を html[data-vt="theme"] の下だけで付けているのは、ボタンがヒーロー
+   以外の全ページ (JP/EN の隣・モバイルのフッター) に居座るようになったため。
+   常時 name を持たせると Works 一覧 <-> 詳細のモーフにもこのアイコンが
+   参加してしまい、ページ丈の違いぶんだけ画面を横切って飛ぶ。
+   data-vt はテーマ切替では startViewTransition の前に立てているので、
+   スナップショットを撮る時点ではもう名前が付いている。 */
+html[data-vt="theme"] .theme-icon {
   view-transition-name: theme-icon;
 }
 
@@ -146,6 +153,55 @@ html[data-vt="theme"]::view-transition-new(theme-icon) {
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation: none !important;
+  }
+}
+
+/* --- テーマ切替ボタンの出入り ---
+   ヒーローではこのボタンを出していないので、ヒーローとの行き来でだけ
+   何もない場所に現れ / 何も残さず消えることになる。そこだけ灯して落とす。
+   出るときは遅れて灯し、戻るときは待たせずに落とす。
+   framer-motion ではなく CSS なのは reveal-rise と同じ理由に加えて、
+   rAF が止まる裏タブで opacity:0 のまま取り残されないため。 */
+@keyframes chrome-toggle-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes chrome-toggle-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.chrome-toggle-in {
+  animation: chrome-toggle-in 500ms cubic-bezier(0.22, 1, 0.36, 1) 150ms
+    backwards;
+}
+
+/* 長さは ChromeThemeToggle の EXIT_MS と揃える(消えきってから畳むため) */
+.chrome-toggle-out {
+  animation: chrome-toggle-out 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  /* 消えかけの 1 枚は押させない */
+  pointer-events: none;
+}
+
+/* 退場中はヒーローの下部中央のボタンと一瞬だけ同居する。両方が theme-icon を
+   名乗ると名前が衝突して view transition が丸ごと飛び、テーマ切替がハード
+   カットになるので、消えていく側が名前を明け渡す。 */
+html[data-vt="theme"] .chrome-toggle-out .theme-icon {
+  view-transition-name: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chrome-toggle-in {
+    animation: none;
+  }
+
+  /* 退場は「消えてから畳む」の順序があるので、動きを消すのではなく一瞬で
+     終わらせる。animation: none にすると素のまま EXIT_MS だけ居座る。 */
+  .chrome-toggle-out {
+    animation-duration: 1ms;
   }
 }
 
