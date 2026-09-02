@@ -36,6 +36,13 @@
   --radius-xl: 0.1875rem;
 }
 
+/* ヒーローは 1 画面で閉じるようにしてあるので、指で引っ張ったときの跳ね返りが
+   入ると土台ごと動いて見える。下層のページでも「端で跳ねる」必要はないため、
+   引っ張って更新ごと全ページで止める。 */
+html {
+  overscroll-behavior: none;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -179,11 +186,28 @@ html[data-vt="theme"]::view-transition-new(theme-icon) {
     backwards;
 }
 
-/* 長さは ChromeThemeToggle の EXIT_MS と揃える(消えきってから畳むため) */
+/* 曲線は入場の ease-out を裏返さない。あれを退場に当てると前半で消えきって
+   しまい (300ms のうち 150ms 時点で opacity 0.04)、フェードではなくハード
+   カットに見える。テーマアイコンのモーフと同じ標準曲線に揃える。
+   delay を含めた総尺は ChromeThemeToggle の EXIT_MS と揃える
+   (消えきってから畳むため)。 */
 .chrome-toggle-out {
-  animation: chrome-toggle-out 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: chrome-toggle-out 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  /* モバイルではヘッダーの backdrop-filter の下に居る。合成のされ方によって
+     子の opacity が無視されることがあるので、自前のレイヤーに追い出す。 */
+  will-change: opacity;
   /* 消えかけの 1 枚は押させない */
   pointer-events: none;
+}
+
+/* モバイルでヒーローへ戻る導線はメニューの中のワードマークだけなので、退場は
+   必ずオーバーレイの幕引き (MobileMenu の fade = 0.28s) と重なる。幕がまだ
+   濃いうちにボタンだけ先に消えると、フェードではなく「抜けた」ように見える。
+   幕が引けるのを待ってから落とす。 */
+@media (width < 48rem) {
+  .chrome-toggle-out {
+    animation-delay: 150ms;
+  }
 }
 
 /* 退場中はヒーローの下部中央のボタンと一瞬だけ同居する。両方が theme-icon を
@@ -199,9 +223,11 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   }
 
   /* 退場は「消えてから畳む」の順序があるので、動きを消すのではなく一瞬で
-     終わらせる。animation: none にすると素のまま EXIT_MS だけ居座る。 */
+     終わらせる。animation: none にすると素のまま EXIT_MS だけ居座る。
+     モバイルの待ち時間もここで畳む(素のまま居座るのは同じなので)。 */
   .chrome-toggle-out {
     animation-duration: 1ms;
+    animation-delay: 0s;
   }
 }
 
