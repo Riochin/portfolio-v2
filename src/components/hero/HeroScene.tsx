@@ -2,13 +2,14 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Stars, Clouds, useProgress } from "@react-three/drei";
+import { Clouds, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
 import { CloudMassCloud } from "./CloudMass";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
 import { Ocean } from "./Ocean";
+import { StarField } from "./StarField";
 import {
   CAMERA,
   DAY_SKY,
@@ -18,7 +19,6 @@ import {
   CLOUD_TEXTURE,
   DAY_OCEAN,
   QUALITY,
-  STARS,
   NIGHT_SKY,
   NIGHT_BG,
   type Quality,
@@ -78,17 +78,10 @@ function NightScene({
         top={NIGHT_SKY.top}
         mid={NIGHT_SKY.mid}
         bottom={NIGHT_SKY.bottom}
+        curve={NIGHT_SKY.curve}
       />
       <MilkyWay />
-      <Stars
-        radius={STARS.radius}
-        depth={STARS.depth}
-        count={STARS.count}
-        factor={STARS.factor}
-        saturation={STARS.saturation}
-        fade={STARS.fade}
-        speed={animated ? STARS.speed : 0}
-      />
+      <StarField animated={animated} />
       <Ocean
         palette={NIGHT_OCEAN}
         animated={animated}

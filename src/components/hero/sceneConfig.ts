@@ -75,14 +75,14 @@ export const DAY_OCEAN: OceanPalette = {
 } as const;
 
 export const NIGHT_OCEAN: OceanPalette = {
-  water: "#04101f",
+  water: "#030b17",
   sunColor: "#9fb4e8",
   distortion: 2.0,
   waveSize: 5,
   speed: 0.22,
   ambient: 0.005,
-  reflectStrength: 0.35,
-  diffuse: 0.3,
+  reflectStrength: 0.6,
+  diffuse: 0.15,
   scatterFloor: 0.2,
 } as const;
 
@@ -439,31 +439,93 @@ export const CLOUD_TEXTURE = "/cloud.png";
 // instancedMesh の上限。全塊の segments 合計を超えないと粒が欠ける
 export const CLOUD_LIMIT = 4800;
 
+// 星も天の川も、この半径の球面に置く。空の球より内側であれば奥行きの
+// 前後関係は変わらないので、あとは水面の反射がどこまで映すかだけの問題。
+export const STAR_RADIUS = 8000;
+export const GALAXY_RADIUS = 10000;
+
 export const STARS = {
-  // 山や天の川より外側に置く。近いと星が山の手前に描かれてしまう
-  radius: 400,
-  depth: 200,
-  // 遠くへ置いたぶん、数と粒の大きさで見た目の密度を戻す
-  count: 22000,
-  factor: 18,
-  saturation: 0.7,
-  fade: true,
-  speed: 0.6,
+  count: 42000,
+  /** 粒の基本サイズ(CSS ピクセル)。等級ぶんの倍率がこれに掛かる */
+  size: 1.6,
+  /** 等級分布の偏り。大きいほど暗い星が増え、明るい星が希少になる。
+      count と一緒に上げると、明るい星の数はそのままに暗い星だけが増える。
+      count を据え置いてここだけ上げれば、明るい星が減って全体の数は変わらない */
+  falloff: 26,
+  /** 一番暗い星の明るさ。0 にすると見えない粒を撒くだけになる。
+      数を増やすときはここも下げる。下げないと、増えたぶんが
+      「そこそこ見える星」として効いてしまい、空が粗く見える */
+  dimmest: 0.022,
+  /** 天の川の帯へどれだけ星を寄せるか。0 で一様、1 で帯の中の密度が倍。
+      天の川は「星が濃い場所」なので、霞の側より星の側で見せたい */
+  bandBias: 2.2,
+  /** 大気の減光。向きの y 成分 (= 仰角の sin) がこの間で 0 まで落ちる。
+      0.17 で仰角 9.8 度。ここを上げすぎると天の川の中心まで霞に沈む */
+  extinctionTop: 0.17,
+  extinctionFloor: 0.004,
+  /** 色の濃さ。0 で全部白。暗い星ほどここからさらに白へ寄る */
+  saturation: 0.55,
+  /** またたきの速さと最大振幅。暗い星ほど、低い星ほど強く振れる */
+  twinkleSpeed: 1.6,
+  twinkle: 0.35,
 } as const;
 
+// 空の地色。mid が視線の高さ(=水平線)なので、そこを一段明るくすると
+// 写真のように「水平線側が明るい」空になる。黒に落とすと星が黒地の白点に
+// 見えてしまうので、天頂もあくまで深い青紫までに留める。
 export const NIGHT_SKY = {
-  top: "#0a0a1e",
-  mid: "#141a33",
-  bottom: "#05060d",
+  top: "#04050b",
+  mid: "#373f61",
+  bottom: "#070a12",
+  curve: 0.75,
 } as const;
 
-export const NIGHT_BG = "#05060d";
+export const NIGHT_BG = "#05070f";
 
-// 水平線の上に横たわるように寝かせる
+/**
+ * 天の川。板ではなく空の球そのものに、銀河面からの角度で帯を描く。
+ * 板だと矩形の縁が見えるうえ、星の分布と揃えられない。
+ *
+ * pole は銀河面の法線で、帯はこれに垂直な大円として空を一周する。
+ * どこをどんな傾きで通るかは pole ひとつで決まってしまうので、画面の
+ * どこに出したいかから逆算する。
+ *
+ *   画面中央の向きは、カメラが -z を向いて CAMERA.rotation[0] だけ
+ *   見上げているので (0, sin p, -cos p)。画面の横方向は r = (1,0,0)、
+ *   縦方向は u = (0, cos p, sin p)。
+ *
+ *   通したい点 P (ここでは横は中央、仰角 12 度ほど) と、そこでの画面上の
+ *   傾き t (水平から 50 度で右上がり = cos50 * r + sin50 * u) を決めれば、
+ *   pole = normalize(cross(P, t))。
+ *
+ *   ここを触るときは P と t から取り直すこと。pole の 3 つの数字を直接
+ *   いじっても、帯は位置と傾きが同時に動いてしまい合わせられない。
+ *
+ * core は中心部の膨らみを置く向き。帯から外れると膨らみだけが浮くので、
+ * pole と直交する点、つまり上の P をそのまま使う。
+ */
 export const MILKY_WAY = {
-  position: [44, 136, -500] as [number, number, number],
-  rotation: [0.15, -0.1, 0.85] as [number, number, number],
-  size: [1060, 300] as [number, number],
+  pole: [0.763, -0.634, -0.129] as [number, number, number],
+  core: [0, 0.2, -0.98] as [number, number, number],
+  /** 帯の太さ(銀河緯度の sin)。中心から片側 5.5 度で 1/e まで落ち、
+      裾を入れて 17 度ほどの帯になる */
+  width: 0.095,
+  /** 帯の反り。大円のままだと画面ではほぼ直線に見えるので、core から
+      離れるほど銀河面から浮かせて弓なりにする。符号で反る向きが変わる */
+  curve: 0.13,
+  /** 中心部の膨らみの広がり(ラジアン)と、そこでの増光。
+      広げすぎると帯ぜんぶが暖色になり、写真の「中心だけ暖かい」が消える */
+  coreSpread: 0.35,
+  coreGain: 1.3,
+  /** 暗黒帯の深さと太さ。帯を縦に裂く塵の筋なので、帯より細くないと
+      全体が一様に暗くなるだけで筋に見えない */
+  dust: 0.8,
+  dustWidth: 0.04,
+  /** 全体の濃さ */
+  intensity: 0.3,
+  /** 帯の地の色と、中心部の暖かい色 */
+  band: "#8f9dc8",
+  coreColor: "#e5c9b4",
 } as const;
 
 /**
