@@ -66,7 +66,11 @@ const fragmentShader = /* glsl */ `
     // 遠景ほど波を平らにする。そうしないと地平付近でノイズがちらつく
     float detail = 1.0 - smoothstep(uFadeNear, uFadeFar, dist);
     vec2 p = vWorld.xz * uRipple;
-    float height = waves(p);
+    // 透明感の明暗は waves() の最低周波数が支配的で、時間が進むと
+    // 大きな滲みになる。明暗だけは細かい成分から取り、木漏れ日のような
+    // 粒の揃ったきらめきにする
+    float dapple = noise(p * 3.1 + vec2(uTime * 0.07, -uTime * 0.05)) * 0.65
+      + noise(p * 6.7 - vec2(uTime * 0.05, uTime * 0.08)) * 0.35;
     float eps = 0.35;
     float amp = 0.55 * detail;
     vec3 normal = normalize(vec3(
@@ -87,8 +91,8 @@ const fragmentShader = /* glsl */ `
     // 浅い海の透明感は、波の起伏ごとに光の抜け方が違うことで出る。
     // 谷で uShimmer を「引く」と補色が抜けて黒ずむので、山は光を足し、
     // 谷は色相を保ったまま倍率で軽く沈めるだけにする。
-    float crest = max(height - 0.45, 0.0);
-    float trough = max(0.45 - height, 0.0);
+    float crest = max(dapple - 0.5, 0.0);
+    float trough = max(0.5 - dapple, 0.0);
     body *= 1.0 - trough * uClarity * 0.3 * detail;
     body += uShimmer * crest * uClarity * detail;
 

@@ -14,13 +14,17 @@ export function HeroBlock({
   return (
     <div className="group relative h-full w-full">
       {/* ホバーするとアクセントがブロックの中心から広がって外へ染み出す。
-          色は薄めずベタのまま、円形のクリップを広げることで表現する。
-          (半径 71% で角に届くので、余裕を見て 75%)
+          色は薄めずベタのまま、円を拡大することで表現する。
+          clip-path のアニメーションは毎フレーム再ペイントが走ってカクつくため、
+          GPU で合成される transform(scale) を使う。
+          円の一辺は角に届くよう対角より大きく取り、枠の形で切り抜く。
           キーボード操作でも同じ反応にするため focus-within も見る。 */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -inset-1 rounded-[1.25rem] bg-accent [clip-path:circle(0%_at_50%_50%)] transition-[clip-path] duration-500 ease-out group-hover:[clip-path:circle(75%_at_50%_50%)] group-focus-within:[clip-path:circle(75%_at_50%_50%)] motion-reduce:transition-none"
-      />
+        className="pointer-events-none absolute -inset-1 overflow-hidden rounded-[1.25rem]"
+      >
+        <span className="absolute left-1/2 top-1/2 aspect-square w-[125%] -translate-x-1/2 -translate-y-1/2 scale-0 rounded-full bg-accent transition-transform duration-500 ease-out group-hover:scale-100 group-focus-within:scale-100 motion-reduce:transition-none" />
+      </span>
       <motion.button
         layoutId="hero-block"
         type="button"

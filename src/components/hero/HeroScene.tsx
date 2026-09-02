@@ -8,12 +8,11 @@ import { CameraRig } from "./CameraRig";
 import { CloudMassCloud } from "./CloudMass";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
-import { Mountains } from "./Mountains";
 import { Ocean } from "./Ocean";
-import { VolumeClouds } from "./VolumeClouds";
 import {
   CAMERA,
   DAY_SKY,
+  NIGHT_OCEAN,
   CLOUD_LAYER,
   CLOUD_LIMIT,
   DAY_OCEAN,
@@ -42,7 +41,7 @@ function DayScene({ animated }: { animated: boolean }) {
         bottom={DAY_SKY.bottom}
         curve={DAY_SKY.curve}
       />
-      <VolumeClouds animated={animated} />
+      <CloudLayer animated={animated} />
       <Ocean palette={DAY_OCEAN} animated={animated} />
     </>
   );
@@ -67,7 +66,7 @@ function NightScene({ animated }: { animated: boolean }) {
         fade={STARS.fade}
         speed={animated ? STARS.speed : 0}
       />
-      <Mountains />
+      <Ocean palette={NIGHT_OCEAN} animated={animated} />
     </>
   );
 }

@@ -59,6 +59,19 @@ export const DAY_OCEAN: OceanPalette = {
   shimmer: "#5ff0e8",
 } as const;
 
+export const NIGHT_OCEAN: OceanPalette = {
+  near: "#0d2036",
+  far: "#050c18",
+  sky: "#16203c",
+  haze: "#0a1020",
+  sunColor: "#c8d6ff",
+  sunDir: SUN,
+  sunPower: 300,
+  sunStrength: 0.9,
+  clarity: 0.25,
+  shimmer: "#2a4a80",
+} as const;
+
 export const OCEAN = {
   /** 板の一辺。fadeFar より十分大きくして end を見せない */
   size: 2400,
@@ -129,21 +142,21 @@ const flat = (
   segments: 70,
   volume: 4,
   taper: 1.4,
-  shoulder: 0.5,
-  shoulderRadius: 0.92,
+  shoulder: 0.58,
+  shoulderRadius: 0.48,
   bump: 0.05,
   bumpFreq: 5,
-  lump: 0.3,
-  lumpFreq: 5,
+  lump: 0.26,
+  lumpFreq: 6,
   lumpTwist: 4,
   lean: 0,
   stack: 1,
   jitter: 0.18,
   depth: 1,
-  opacity: 0.44,
-  bands: 2,
+  opacity: 0.92,
+  bands: 3,
   colorTop: "#ffffff",
-  colorBottom: "#dcebf7",
+  colorBottom: "#c3d6e8",
   seed,
   speed: 0.05,
   growth: 0.8,
@@ -153,126 +166,32 @@ const flat = (
 });
 
 export const CLOUD_LAYER: readonly CloudMass[] = [
-  // 手前(z が小さい)ほど大きく厚く、奥ほど小さく薄くして遠近感を作る。
-  // 形が揃うと並んだ判子に見えるので、taper / shoulderRadius / lump を
-  // 塊ごとに散らして輪郭を変えている。
-  flat(11, [-48, 30, -58], [20, 3.6, 12], {
-    volume: 2.4,
-    segments: 110,
-    opacity: 0.6,
-    taper: 1.1,
-    shoulderRadius: 0.78,
-    lump: 0.36,
-    lumpFreq: 4,
-    jitter: 0.3,
-  }),
-  flat(29, [58, 27, -78], [18, 2.8, 11], {
-    volume: 2.4,
-    segments: 95,
-    opacity: 0.55,
-    taper: 1.7,
-    shoulderRadius: 0.9,
-    lump: 0.24,
-    lumpFreq: 7,
-    depth: 0.8,
-  }),
-  flat(47, [-18, 26, -112], [22, 2.4, 12], {
-    volume: 2.6,
-    segments: 90,
-    opacity: 0.52,
-    taper: 1.3,
-    shoulderRadius: 0.84,
-    lump: 0.42,
-    lumpFreq: 3,
-    jitter: 0.24,
-  }),
-  flat(67, [-98, 24, -150], [19, 2, 12], {
-    volume: 2.8,
-    segments: 75,
-    opacity: 0.5,
-    taper: 2,
-    shoulderRadius: 0.95,
-    lump: 0.2,
-    lumpFreq: 6,
-  }),
-  flat(83, [46, 23, -188], [23, 1.8, 12], {
-    volume: 3,
-    segments: 75,
-    opacity: 0.48,
-    taper: 1.2,
-    shoulderRadius: 0.8,
-    lump: 0.34,
-    lumpFreq: 5,
-    depth: 1.2,
-  }),
-  flat(101, [142, 22, -238], [25, 1.5, 14], {
-    volume: 3.2,
-    segments: 70,
-    opacity: 0.46,
-    taper: 1.6,
-    shoulderRadius: 0.92,
-    lump: 0.26,
-    lumpFreq: 8,
-  }),
-  flat(127, [-162, 21, -290], [27, 1.3, 14], {
-    volume: 3.4,
-    segments: 65,
-    opacity: 0.44,
-    taper: 1,
-    shoulderRadius: 0.76,
-    lump: 0.4,
-    lumpFreq: 4,
-    jitter: 0.28,
-  }),
-  flat(149, [-42, 20, -350], [29, 1.2, 14], {
-    volume: 3.6,
-    segments: 60,
-    opacity: 0.42,
-    taper: 1.8,
-    shoulderRadius: 0.94,
-    lump: 0.22,
-    lumpFreq: 6,
-  }),
-  flat(173, [112, 19, -420], [31, 1, 16], {
-    volume: 3.8,
-    segments: 55,
-    opacity: 0.4,
-    taper: 1.3,
-    shoulderRadius: 0.86,
-    lump: 0.3,
-    lumpFreq: 5,
-  }),
-  flat(197, [-258, 19, -500], [33, 0.9, 16], {
-    volume: 4,
-    segments: 50,
-    opacity: 0.38,
-    taper: 1.5,
-    shoulderRadius: 0.9,
-    lump: 0.28,
-    lumpFreq: 7,
-  }),
-  flat(223, [204, 18, -580], [35, 0.8, 16], {
-    volume: 4.4,
-    segments: 45,
-    opacity: 0.34,
-    taper: 1.2,
-    shoulderRadius: 0.82,
-    lump: 0.32,
-    lumpFreq: 4,
-  }),
+  // 写真のように水平線沿いへ帯として集める。高度をそろえて z を散らすと
+  // 遠いものほど自然に水平線へ近づく。
+  // shoulderRadius を下げて上を丸め、平たい筋ではなく積雲の頭にする。
+  flat(11, [-120, 24, -150], [20, 6, 12], { volume: 3, segments: 120 }),
+  flat(29, [-36, 22, -170], [16, 5, 11], { volume: 2.8, segments: 105 }),
+  flat(47, [48, 25, -185], [19, 6, 12], { volume: 3, segments: 115 }),
+  flat(67, [150, 23, -205], [21, 5.5, 12], { volume: 3.2, segments: 110 }),
+  flat(83, [-215, 23, -240], [23, 5, 13], { volume: 3.4, segments: 105 }),
+  flat(101, [-70, 21, -270], [22, 4.5, 13], { volume: 3.4, segments: 95 }),
+  flat(127, [70, 22, -300], [24, 4.5, 14], { volume: 3.6, segments: 95 }),
+  flat(149, [235, 21, -330], [26, 4, 14], { volume: 3.8, segments: 90 }),
+  flat(173, [-290, 20, -370], [28, 3.5, 14], { volume: 4, segments: 85 }),
+  flat(197, [-30, 20, -410], [30, 3, 15], { volume: 4.2, segments: 80 }),
+  flat(223, [140, 19, -450], [32, 2.8, 15], { volume: 4.4, segments: 75 }),
+  flat(251, [320, 19, -500], [34, 2.5, 16], { volume: 4.6, segments: 70 }),
   // 水平線に張りつく雲列。空の霞と同化させて奥行きの底にする
-  flat(251, [-60, 18, -680], [64, 0.7, 20], {
+  flat(281, [-60, 18, -580], [60, 2, 18], {
     volume: 5.4,
-    segments: 45,
-    opacity: 0.28,
-    taper: 1.8,
-    shoulderRadius: 0.96,
-    lump: 0.18,
+    segments: 60,
+    opacity: 0.55,
+    shoulderRadius: 0.8,
   }),
 ];
 
 // instancedMesh の上限。全塊の segments 合計を超えないと粒が欠ける
-export const CLOUD_LIMIT = 900;
+export const CLOUD_LIMIT = 1300;
 
 export const STARS = {
   // 山や天の川より外側に置く。近いと星が山の手前に描かれてしまう
@@ -299,67 +218,4 @@ export const MILKY_WAY = {
   position: [44, 136, -500] as [number, number, number],
   rotation: [0.15, -0.1, 0.85] as [number, number, number],
   size: [1060, 300] as [number, number],
-} as const;
-
-// 夜の下辺に置く山の稜線。板 1 枚で 1 つの尾根を描き、
-// 近い尾根ほど画面で高く・暗くなるよう並べると奥行きが出る。
-export type MountainRidge = {
-  z: number;
-  /** 谷の高さ(ワールド y) */
-  base: number;
-  /** 谷から峰までの高さ */
-  height: number;
-  /** 稜線の細かさ。小さいほど尾根が長い */
-  scale: number;
-  color: string;
-  seed: number;
-};
-
-export const MOUNTAINS = {
-  /** 視点を振っても端が見えない幅・高さ */
-  width: 1800,
-  tall: 600,
-  centerY: -260,
-  ridges: [
-    { z: -320, base: -14, height: 22, scale: 0.017, color: "#131c3a", seed: 3 },
-    { z: -230, base: -18, height: 20, scale: 0.024, color: "#0b1024", seed: 17 },
-    { z: -160, base: -22, height: 17, scale: 0.034, color: "#03040c", seed: 29 },
-  ] as readonly MountainRidge[],
-} as const;
-
-// レイマーチングで描く雲の層。ポリゴンではなく密度関数として定義する。
-// VolumeClouds.tsx がピクセルごとに視線を進めながら積分する。
-export const VOLUME_CLOUDS = {
-  /** 雲の層の下端と上端(ワールド y) */
-  bottom: 420,
-  top: 600,
-  /** 大きいほど空が雲で埋まる 0..1 */
-  coverage: 0.3,
-  /** 雲の濃さ */
-  density: 1.1,
-  /** 視線方向の積分ステップ数。増やすほど綺麗だが重い */
-  steps: 44,
-  /** 太陽方向へのステップ数。陰影の精度 */
-  lightSteps: 4,
-  /** 1 ステップの上限。水平に近いレイのちらつきを抑える */
-  maxStep: 30,
-  /** 大きな塊のスケール。小さいほど雲が大きい */
-  scale: 0.0024,
-  /** 縁を削る細かいノイズのスケール */
-  detailScale: 0.009,
-  /** 縁を削る強さ。上げすぎると雲がちぎれて粒々になる */
-  erode: 0.22,
-  /** 積分を打ち切る距離。水平に近いレイが無限に伸びるのを防ぐ */
-  maxDistance: 9000,
-  /** この距離に向けて空の霞へ溶かす */
-  fadeDistance: 5000,
-  /** 雲が流れる向きと速さ */
-  wind: [1.6, 0, 0.6] as [number, number, number],
-  sunColor: "#fffaf0",
-  shadowColor: "#93b0cd",
-  haze: "#bcdcf2",
-  /** 視線方向を得るためだけの球の半径 */
-  domeRadius: 600,
-  /** 静止画キャプチャ時に使う固定の位相 */
-  stillTime: 40,
 } as const;
