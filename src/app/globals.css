@@ -12,9 +12,9 @@
 }
 
 .dark {
-  --background: #07070f;
-  --surface: #12121f;
-  --border: #23233a;
+  --background: #070d1e;
+  --surface: #101a33;
+  --border: #22304f;
   --foreground: #f5f5f5;
   --muted-foreground: #8b8b99;
   --accent: #8b7ef0;
