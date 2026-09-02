@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
-import { workImageTransitionName } from "@/components/works/WorkGrid";
+import { workImageTransitionName } from "@/components/works/workImageTransition";
 import {
   getExperienceBySlug,
   getSkills,
@@ -37,8 +37,12 @@ export async function generateMetadata({
   });
 }
 
-const LINK_ORDER = ["demo", "repo", "article", "slides"] as const satisfies
-  readonly (keyof WorkLinks)[];
+const LINK_ORDER = [
+  "demo",
+  "repo",
+  "article",
+  "slides",
+] as const satisfies readonly (keyof WorkLinks)[];
 
 export default async function WorkDetailPage({
   params,

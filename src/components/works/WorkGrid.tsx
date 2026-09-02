@@ -1,6 +1,9 @@
-import { ViewTransition } from "react";
+"use client";
+
+import { useState, ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { workImageTransitionName } from "./workImageTransition";
 
 /**
  * 一覧タイル 1 件分。
@@ -24,20 +27,43 @@ export type WorkGridItem = {
 /** 1 件ごとの出現ディレイ。DOM 順 = 左上から右下の順になる。 */
 const STAGGER_MS = 60;
 
-/** 一覧タイルと詳細ページの hero を結ぶ view transition の名前。 */
-export function workImageTransitionName(slug: string): string {
-  return `work-image-${slug}`;
-}
+/**
+ * 折り畳まずに出す件数。
+ *
+ * 5 なのは「もっとみる」をタイルとしてグリッドに並べるから。5 + ボタン = 6 で、
+ * 3 列でも 2 列でも最終行に穴があかない。
+ */
+const PREVIEW_COUNT = 5;
 
-export function WorkGrid({ items }: { items: readonly WorkGridItem[] }) {
+export function WorkGrid({
+  items,
+  moreLabel,
+  lessLabel,
+}: {
+  items: readonly WorkGridItem[];
+  moreLabel: string;
+  lessLabel: string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  const collapsible = items.length > PREVIEW_COUNT;
+  const visible =
+    collapsible && !expanded ? items.slice(0, PREVIEW_COUNT) : items;
+
+  // 「もっとみる」で現れたぶんは、その中での順番でずらす。
+  // 通し番号のままだと 7 件目が 360ms 待ってから出てきて、押した手応えが鈍る。
+  const revealFrom = expanded ? PREVIEW_COUNT : 0;
+
   return (
     <ul className="grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2 xl:grid-cols-3">
-      {items.map((work, index) => (
+      {visible.map((work, index) => (
         <li
           key={work.slug}
           className="group reveal-rise"
           style={
-            { "--reveal-delay": `${index * STAGGER_MS}ms` } as React.CSSProperties
+            {
+              "--reveal-delay": `${Math.max(0, index - revealFrom) * STAGGER_MS}ms`,
+            } as React.CSSProperties
           }
         >
           <Link href={work.href}>
@@ -82,6 +108,31 @@ export function WorkGrid({ items }: { items: readonly WorkGridItem[] }) {
           </Link>
         </li>
       ))}
+
+      {/* 「もっとみる」もタイルとしてグリッドに並べる。1 列 (スマホ) では
+            作品と同じ横幅のボタンに、2 列以上では h-full で行の高さまで伸びて
+            作品タイルと同じ大きさの面になる。 */}
+      {collapsible && (
+        <li
+          className="reveal-rise"
+          style={
+            {
+              "--reveal-delay": `${Math.max(0, visible.length - revealFrom) * STAGGER_MS}ms`,
+            } as React.CSSProperties
+          }
+        >
+          <button
+            type="button"
+            onClick={() => setExpanded((open) => !open)}
+            aria-expanded={expanded}
+            className="flex h-full w-full items-center justify-center rounded-xl border border-border px-6 py-3 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
+          >
+            {expanded
+              ? lessLabel
+              : `${moreLabel} (${items.length - PREVIEW_COUNT})`}
+          </button>
+        </li>
+      )}
     </ul>
   );
 }

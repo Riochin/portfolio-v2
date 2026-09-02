@@ -54,7 +54,11 @@ export default async function WorksPage() {
         <section key={group.category} className={index === 0 ? "" : "mt-16"}>
           <h2 className="text-lg font-bold">{group.heading}</h2>
           <div className="mt-6">
-            <WorkGrid items={group.items} />
+            <WorkGrid
+              items={group.items}
+              moreLabel={t(DICT.works.showMore)}
+              lessLabel={t(DICT.works.showLess)}
+            />
           </div>
         </section>
       ))}

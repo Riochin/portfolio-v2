@@ -43,6 +43,8 @@ export const DICT = {
     demo: { ja: "デモ", en: "Live demo" },
     article: { ja: "紹介記事", en: "Write-up" },
     slides: { ja: "スライド", en: "Slides" },
+    showMore: { ja: "もっとみる", en: "Show more" },
+    showLess: { ja: "閉じる", en: "Show less" },
   },
   /**
    * 作品の出自の見出し。キーは WorkCategory と同じにしてあるので、
