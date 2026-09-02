@@ -3,6 +3,7 @@
 import { useState, ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { isReturningFromWorkDetail } from "./WorksHistoryBridge";
 import { workImageTransitionName } from "./workImageTransition";
 
 /**
@@ -28,12 +29,24 @@ export type WorkGridItem = {
 const STAGGER_MS = 60;
 
 /**
- * 折り畳まずに出す件数。
+ * 折り畳まずに出す件数 (2 列以上)。
  *
  * 5 なのは「もっとみる」をタイルとしてグリッドに並べるから。5 + ボタン = 6 で、
  * 3 列でも 2 列でも最終行に穴があかない。
  */
 const PREVIEW_COUNT = 5;
+
+/**
+ * 折り畳まずに出す件数 (1 列 = sm 未満)。
+ *
+ * 1 列だとタイルが画面幅いっぱいで背が高く、5 件並べると「もっとみる」に
+ * 届くまで指で何画面も送ることになる。3 + ボタン = 4 で 1 列でも収まる。
+ *
+ * SSR では画面幅が分からないので、件数そのものは 2 列以上に合わせたまま
+ * CSS (max-sm:hidden) で余りを伏せる。JS で幅を見て出し分けると、
+ * ハイドレーションの瞬間に 5 件が 3 件へ縮む瞬きが出る。
+ */
+const MOBILE_PREVIEW_COUNT = 3;
 
 export function WorkGrid({
   items,
@@ -57,20 +70,38 @@ export function WorkGrid({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  const collapsible = items.length > PREVIEW_COUNT;
+  // 詳細から戻ってきた回かどうかはマウント時に決める。あとから見直すと、
+  // 「もっとみる」を押した拍子に画面に出ている分まで再生されてしまう。
+  const [returning] = useState(isReturningFromWorkDetail);
+
+  // 1 列のときだけ畳む件数が違うので、「畳めるか」も幅で変わる
+  // (作品 4 件のセクションは 1 列でだけ「もっとみる」が要る)。
+  const collapsible = items.length > MOBILE_PREVIEW_COUNT;
+  const collapsibleWide = items.length > PREVIEW_COUNT;
   const visible =
-    collapsible && !expanded ? items.slice(0, PREVIEW_COUNT) : items;
+    collapsibleWide && !expanded ? items.slice(0, PREVIEW_COUNT) : items;
 
   // 「もっとみる」で現れたぶんは、その中での順番でずらす。
   // 通し番号のままだと 7 件目が 360ms 待ってから出てきて、押した手応えが鈍る。
   const revealFrom = expanded ? PREVIEW_COUNT : 0;
+
+  // 戻ってきたときは、最初から画面に在った分の出現アニメを流さない。
+  // 流すとモーフの相手のタイルが opacity 0 から始まり、詳細の画像が
+  // 「行き先で消えている」ことになって、拡大が縮小に見えず一度消える。
+  // 「もっとみる」で後から現れる分は、押した手応えとして今までどおり出す。
+  const revealClass = (index: number) =>
+    returning && index < PREVIEW_COUNT ? "" : "reveal-rise";
+
+  // 畳んでいるあいだ、1 列では 4 件目以降を伏せる。
+  const hiddenWhenNarrow = (index: number) =>
+    !expanded && index >= MOBILE_PREVIEW_COUNT ? "max-sm:hidden" : "";
 
   return (
     <ul className="grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2 xl:grid-cols-3">
       {visible.map((work, index) => (
         <li
           key={work.slug}
-          className="group reveal-rise"
+          className={`group ${revealClass(index)} ${hiddenWhenNarrow(index)}`}
           style={
             {
               "--reveal-delay": `${Math.max(0, index - revealFrom) * STAGGER_MS}ms`,
@@ -79,8 +110,8 @@ export function WorkGrid({
         >
           <Link href={work.href}>
             {/* 詳細ページの hero と同じ name を付けて、クリック時に画像がそのまま
-                拡大するモーフにする。戻るときは同じモーフが自動で逆再生される
-                (ブラウザの戻るボタンでも同様)。 */}
+                拡大するモーフにする。戻るときは同じモーフが逆再生される
+                (ブラウザの戻るボタンも WorksHistoryBridge が同じ経路に乗せる)。 */}
             <ViewTransition
               name={workImageTransitionName(work.slug)}
               share="morph"
@@ -126,10 +157,13 @@ export function WorkGrid({
             作品タイルと同じ大きさの面になる。 */}
       {collapsible && (
         <li
-          className="reveal-rise"
+          className={`${returning ? "" : "reveal-rise"} ${collapsibleWide ? "" : "sm:hidden"}`}
           style={
             {
               "--reveal-delay": `${Math.max(0, visible.length - revealFrom) * STAGGER_MS}ms`,
+              // 1 列では前に並ぶ枚数が 1 段少ないので、待つ長さもその分短い
+              // (globals.css の reveal-rise が幅で読み分ける)。
+              "--reveal-delay-sm": `${Math.max(0, (expanded ? visible.length : MOBILE_PREVIEW_COUNT) - revealFrom) * STAGGER_MS}ms`,
             } as React.CSSProperties
           }
         >
@@ -139,9 +173,22 @@ export function WorkGrid({
             aria-expanded={expanded}
             className="flex h-full w-full items-center justify-center rounded-xl border border-border px-6 py-3 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
           >
-            {expanded
-              ? lessLabel
-              : `${moreLabel} (${items.length - PREVIEW_COUNT})`}
+            {expanded ? (
+              lessLabel
+            ) : (
+              <>
+                {/* 残り件数も畳む枚数で変わる。幅は CSS でしか分からないので
+                    両方書いて出し分ける。 */}
+                <span className="sm:hidden">
+                  {moreLabel} ({items.length - MOBILE_PREVIEW_COUNT})
+                </span>
+                {collapsibleWide && (
+                  <span className="hidden sm:inline">
+                    {moreLabel} ({items.length - PREVIEW_COUNT})
+                  </span>
+                )}
+              </>
+            )}
           </button>
         </li>
       )}

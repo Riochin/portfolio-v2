@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Zen_Maru_Gothic, Alex_Brush } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { WorksHistoryBridge } from "@/components/works/WorksHistoryBridge";
 import { SITE } from "@/data/site";
 import { LOCALES, OG_LOCALE } from "@/lib/i18n/config";
 import { getT } from "@/lib/i18n/server";
@@ -57,6 +58,9 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     >
       <body className="min-h-full flex flex-col text-base">
         <ThemeProvider>
+          {/* Works だけの仕組みだが、Next より先に popstate を購読する必要が
+              あるので最初のバンドルに入るここから読み込む (詳細は同ファイル)。 */}
+          <WorksHistoryBridge />
           <SiteChrome />
           {children}
         </ThemeProvider>

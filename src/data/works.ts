@@ -732,7 +732,7 @@ export const WORKS = {
   },
 
   "gomen-nasai": {
-    title: { ja: "ごめんなさい.com", en: "Gomen-nasai.com" },
+    title: { ja: "ごめんなさい.com", en: "Sorry.com" },
     tagline: {
       ja: "謝罪文の添削・投稿・保存により、『まったく新しい謝罪体験』を提供するサービス",
       en: 'A service offering a "completely new apology experience" through correcting, posting, and saving apology letters',
@@ -757,7 +757,7 @@ export const WORKS = {
       height: 883,
       alt: {
         ja: "ごめんなさい.com のスクリーンショット",
-        en: "Screenshot of Gomen-nasai.com",
+        en: "Screenshot of Sorry.com",
       },
     },
     awards: [

@@ -370,6 +370,15 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
     var(--reveal-delay, 0ms) backwards;
 }
 
+/* 1 列のときだけ前に並ぶ枚数が違うもの (Works の「もっとみる」は 5 枚の次
+   ではなく 3 枚の次に出る) のための逃がし口。--reveal-delay-sm を持っていない
+   要素は今までどおり --reveal-delay をそのまま使う。 */
+@media (width < 40rem) {
+  .reveal-rise {
+    animation-delay: var(--reveal-delay-sm, var(--reveal-delay, 0ms));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal-rise {
     animation: none;
