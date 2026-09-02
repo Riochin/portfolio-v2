@@ -63,3 +63,20 @@ export function formatPeriod(period: Period, locale: Locale): string {
   if (period.end === period.start) return start;
   return `${start} – ${formatYearMonth(period.end)}`;
 }
+
+/**
+ * 日本の学年 (4 月始まり)。`start` は入学年月。
+ *
+ * 「3年」をデータに直書きすると毎年 4 月に静かに古くなるので、入学年月から導く。
+ * 会計年度と同じ数え方: 1〜3 月は前年度に属する。
+ */
+export function academicYear(start: YearMonth, now: Date = new Date()): number {
+  const fiscalYear = (year: number, month: number) =>
+    month >= 4 ? year : year - 1;
+  const [startYear, startMonth] = start.split("-").map(Number);
+  return (
+    fiscalYear(now.getFullYear(), now.getMonth() + 1) -
+    fiscalYear(startYear, startMonth) +
+    1
+  );
+}

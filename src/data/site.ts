@@ -15,6 +15,13 @@ export const SITE = {
   wordmark: "Riochin.dev",
   /** 表示名。ja でもローマ字表記で統一する。 */
   name: "Rio Ichikawa",
+  /**
+   * About の見出しで名前に添えるハンドル。
+   * accounts.x とは別に持つ ── こちらは「名乗り」で、リンク先は持たない。
+   */
+  handle: "@riochin555",
+  /** 公開する連絡先。About の連絡先セクションが mailto: にして読む。 */
+  email: "118029.ichikama@gmail.com",
   description: {
     ja: "Riochin のポートフォリオサイト",
     en: "Portfolio of Rio Ichikawa",

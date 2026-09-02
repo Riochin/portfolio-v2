@@ -84,3 +84,25 @@ export type Experience = ExperienceEntry & { readonly slug: string };
 export type AwardEntry = Award & {
   readonly work: { readonly slug: string; readonly title: Localized<string> };
 };
+
+/**
+ * About の写真の横に並べる「ラベル: 値」の 1 行。
+ * 段落 (ABOUT.paragraphs) と違って拾い読みできるので、所属や好きなもののような
+ * 事実はこちらに置く。行を足したいときは about.ts の配列に 1 要素足すだけでよい。
+ */
+export type ProfileFact = {
+  readonly label: Localized<string>;
+  readonly value: Localized<string>;
+};
+
+/**
+ * About の本文の下に見出し付きで置くセクション。
+ *
+ * ProfileFact と分けているのは値が配列だから。Localized は必ず葉に置くので
+ * `readonly Localized<string>[]` であって `Localized<readonly string[]>` では
+ * ない ── 後者だと日英で項目数がずれても型が通ってしまう。
+ */
+export type ProfileSection = {
+  readonly label: Localized<string>;
+  readonly items: readonly Localized<string>[];
+};
