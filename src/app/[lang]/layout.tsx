@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Zen_Maru_Gothic, Alex_Brush } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { WorksHistoryBridge } from "@/components/works/WorksHistoryBridge";
@@ -20,6 +21,13 @@ const logoCursive = Alex_Brush({
   weight: "400",
   subsets: ["latin"],
 });
+
+/**
+ * GA4 の測定 ID (G-XXXXXXXXXX)。Vercel の Production だけに入れてあるので、
+ * ローカルとプレビューでは undefined になり、計測タグ自体が出ない。
+ * 開発中のページビューを本番のレポートに混ぜないための切り分け。
+ */
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
@@ -65,6 +73,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           {children}
         </ThemeProvider>
       </body>
+      {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
     </html>
   );
 }
