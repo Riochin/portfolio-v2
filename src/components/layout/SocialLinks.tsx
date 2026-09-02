@@ -54,17 +54,14 @@ export function SocialLinks({
               }
               className="group block text-foreground"
             >
-              {/* fill を currentColor から差し替えるので、拡大と一緒に svg 側で受ける。
+              {/* fill を currentColor から差し替えるので、色の変化は svg 側で受ける。
                   ブランド色が url(#...) のときも fill なら同じ書き方で通る。
-                  ease は行きも戻りも一度だけ行き過ぎて戻る back-out。これが
-                  「ポップ」の正体なので、ただの ease-out に戻さないこと。
-                  制御点の y (1.56) が行き過ぎの量なので、弾みの調整はここを触る。
-                  transition の対象が transform ではなく scale なのは、Tailwind v4 の
-                  scale-* が transform ではなく単独の scale プロパティを書くため。
-                  transform と書くと拡大がトゥイーンされずスナップする。 */}
+                  拡大はやめて、待機中に少し落とした濃度をホバーで戻す
+                  フェードだけにしてある。fill と opacity が同じ長さで
+                  重なるので、色がじわっと差してくるように見える。 */}
               <Icon
-                size={26}
-                className="transition-[fill,scale] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-115 group-hover:fill-[var(--brand)] motion-reduce:transition-none motion-reduce:group-hover:scale-100 dark:group-hover:fill-[var(--brand-dark)]"
+                size={30}
+                className="opacity-70 transition-[fill,opacity] duration-300 ease-out group-hover:fill-[var(--brand)] group-hover:opacity-100 dark:group-hover:fill-[var(--brand-dark)]"
               />
             </a>
           </li>
