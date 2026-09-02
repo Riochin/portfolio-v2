@@ -39,10 +39,21 @@ export function WorkGrid({
   items,
   moreLabel,
   lessLabel,
+  priorityCount = 0,
 }: {
   items: readonly WorkGridItem[];
   moreLabel: string;
   lessLabel: string;
+  /**
+   * 先頭から何件を先読みするか。ファーストビューに入る行のぶんだけ渡す
+   * (最大 3 列なので 3。2 つ目以降のセクションは画面外なので 0 のまま)。
+   *
+   * next/image は既定で loading="lazy" になる。画面に映っているタイルまで
+   * 遅延にすると、プリロードスキャナが拾わないぶん「レイアウトが決まってから
+   * 取りに行く」順序になり、reveal-rise で先に出たグラデーションの枠へ
+   * 写真が後乗せされる ── リロードのたびに画像が入れ替わって見える原因。
+   */
+  priorityCount?: number;
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -83,6 +94,7 @@ export function WorkGrid({
                     width={work.image.width}
                     height={work.image.height}
                     sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    priority={index < priorityCount}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   />
                 )}

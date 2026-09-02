@@ -25,7 +25,9 @@ export default async function OutputPage() {
       <section>
         <h2 className="text-lg font-bold">{t(DICT.output.talks)}</h2>
         <div className="mt-4">
-          <OutputGrid items={talks} {...gridLabels} />
+          {/* ファーストビューに入るのは Talks の 1 行目だけ。最大 3 列なので
+              3 件を先読みする。Articles は画面外なので遅延のままでよい。 */}
+          <OutputGrid items={talks} {...gridLabels} priorityCount={3} />
         </div>
       </section>
       <section className="mt-16">

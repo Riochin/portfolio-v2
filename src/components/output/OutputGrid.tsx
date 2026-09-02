@@ -77,11 +77,14 @@ export function OutputGrid({
   emptyLabel,
   moreLabel,
   lessLabel,
+  priorityCount = 0,
 }: {
   items: readonly OutputItem[];
   emptyLabel: string;
   moreLabel: string;
   lessLabel: string;
+  /** 先頭から何件を先読みするか。意味と理由は WorkGrid と同じ。 */
+  priorityCount?: number;
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -122,6 +125,7 @@ export function OutputGrid({
                   alt=""
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                  priority={index < priorityCount}
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
               )}

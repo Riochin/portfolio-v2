@@ -72,6 +72,10 @@ export default async function ExperiencePage() {
                     width={exp.image.width}
                     height={exp.image.height}
                     sizes="(max-width: 640px) 100vw, 176px"
+                    // 1 件目だけ先読みする。next/image の既定は lazy で、
+                    // 画面に映っているカードまで遅延にすると写真が後乗せに
+                    // なり、リロードのたびに読み込み直しているように見える。
+                    priority={groupIndex === 0 && index === 0}
                     className="photo-frame aspect-video w-full object-cover sm:absolute sm:inset-y-0 sm:left-0 sm:aspect-auto sm:h-full sm:max-h-[19.5rem] sm:w-44"
                   />
                 )}

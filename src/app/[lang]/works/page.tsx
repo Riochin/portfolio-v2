@@ -54,10 +54,13 @@ export default async function WorksPage() {
         <section key={group.category} className={index === 0 ? "" : "mt-16"}>
           <h2 className="text-lg font-bold">{group.heading}</h2>
           <div className="mt-6">
+            {/* ファーストビューに入るのは最初のセクションの 1 行目だけ。
+                最大 3 列なので 3 件を先読みし、以降は既定どおり遅延に任せる。 */}
             <WorkGrid
               items={group.items}
               moreLabel={t(DICT.common.showMore)}
               lessLabel={t(DICT.common.showLess)}
+              priorityCount={index === 0 ? 3 : 0}
             />
           </div>
         </section>
