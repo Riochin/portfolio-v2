@@ -14,6 +14,27 @@ import { getT } from "@/lib/i18n/server";
 export const generateMetadata = () =>
   buildPageMetadata({ path: "/about", title: DICT.pages.about });
 
+/**
+ * 段落の中の `**…**` を太字にする。
+ *
+ * 段落は Localized<string> のまま持ちたい ── 日英を必ず対にする型の制約は
+ * 葉が文字列であって初めて効くので、強調のためにデータを JSX にはしない。
+ * 記法は Markdown と同じ `**…**` 1 つだけを開く。これ以上必要になったら
+ * 自前で足さず、記事側の remark/rehype パイプラインに寄せること。
+ */
+function emphasize(text: string) {
+  // キャプチャ付き split なので、奇数番目が必ず `**…**` の中身になる。
+  return text.split(/\*\*(.+?)\*\*/g).map((part, index) =>
+    index % 2 === 1 ? (
+      <strong key={index} className="font-bold">
+        {part}
+      </strong>
+    ) : (
+      part
+    ),
+  );
+}
+
 /** 1 ブロックごとの出現ディレイ。Works / Output / Experience の一覧と同じ間隔。 */
 const STAGGER_MS = 60;
 
@@ -107,7 +128,7 @@ export default async function AboutPage() {
         style={revealDelay(1)}
       >
         {ABOUT.paragraphs.map((paragraph) => (
-          <p key={paragraph.en}>{t(paragraph)}</p>
+          <p key={paragraph.en}>{emphasize(t(paragraph))}</p>
         ))}
       </div>
 
