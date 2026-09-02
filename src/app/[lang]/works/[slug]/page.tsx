@@ -71,7 +71,7 @@ export default async function WorkDetailPage({
             share="morph"
             default="none"
           >
-            <div className="mb-8 overflow-hidden rounded-xl border border-border">
+            <div className="photo-frame mb-8 overflow-hidden rounded-xl">
               <Image
                 src={work.image.src}
                 alt={t(work.image.alt)}

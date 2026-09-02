@@ -24,7 +24,7 @@ export default async function AboutPage() {
           height={ABOUT.photo.height}
           priority
           sizes="(max-width: 640px) 160px, 200px"
-          className="h-40 w-40 shrink-0 rounded-full border border-border object-cover"
+          className="photo-frame h-40 w-40 shrink-0 rounded-full object-cover"
         />
         <div className="space-y-4 leading-relaxed">
           {ABOUT.paragraphs.map((paragraph) => (

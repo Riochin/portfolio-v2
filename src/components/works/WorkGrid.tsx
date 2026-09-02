@@ -49,7 +49,7 @@ export function WorkGrid({ items }: { items: readonly WorkGridItem[] }) {
               share="morph"
               default="none"
             >
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border bg-gradient-to-br from-accent/25 to-accent/5">
+              <div className="photo-frame relative aspect-[16/10] overflow-hidden rounded-xl bg-gradient-to-br from-accent/25 to-accent/5">
                 {work.image && (
                   <Image
                     src={work.image.src}

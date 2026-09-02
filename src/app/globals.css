@@ -42,6 +42,16 @@ body {
   font-family: var(--font-sans);
 }
 
+/* --- 写真に枠線をつけない ---
+   写真は作品そのものなので、カードやチップと同じ border-border で縁取らない。
+   写真とそのラッパーには必ず photo-frame を付ける。あとから border ユーティリティ
+   が混ざっても効かないよう !important で潰しているが、これは「写真だ」と明示した
+   要素にしか当たらないので、素の img やカードの枠線には影響しない。
+   角の丸み(rounded-xl / rounded-full)と overflow-hidden は従来どおり呼び出し側で指定する。 */
+@utility photo-frame {
+  border: 0 !important;
+}
+
 /* --- Hero ロゴのフェード ---
    layoutId によるモーフ(framer が transform を制御)と衝突させないため、
    opacity は CSS アニメーションで独立して動かす。 */
