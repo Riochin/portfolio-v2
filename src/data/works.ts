@@ -411,7 +411,7 @@ export const WORKS = {
     awards: [
       {
         event: { ja: "JPHACKS Award Day", en: "JPHACKS Award Day" },
-        prize: { ja: "ファイナリスト", en: "Finalist" },
+        prize: { ja: "ファイナリスト", en: "Finalist Award" },
         rank: "finalist",
         date: "2025-10",
       },
@@ -424,16 +424,16 @@ export const WORKS = {
       },
       {
         event: { ja: "JPHACKS", en: "JPHACKS" },
-        prize: { ja: "SoftBank賞", en: "SoftBank Award" },
+        prize: { ja: "ソフトバンク株式会社賞", en: "SoftBank Award" },
         rank: "sponsor",
-        sponsor: { ja: "SoftBank", en: "SoftBank" },
+        sponsor: { ja: "ソフトバンク株式会社", en: "SoftBank" },
         date: "2025-10",
       },
       {
         event: { ja: "JPHACKS", en: "JPHACKS" },
-        prize: { ja: "Meek賞", en: "Meek Award" },
+        prize: { ja: "ミーク株式会社賞", en: "Meek Award" },
         rank: "sponsor",
-        sponsor: { ja: "Meek", en: "Meek" },
+        sponsor: { ja: "ミーク株式会社", en: "Meek" },
         date: "2025-10",
       },
     ],
@@ -701,8 +701,8 @@ export const WORKS = {
     stack: ["html", "css", "javascript", "python", "flask"],
     links: {
       repo: "https://github.com/Riochin/Apology_work",
-      article:
-        "https://www.canva.com/design/DAGtJnoMamk/s0gmp8D8HKnee9S7F40FiA/view",
+      slides:
+        "https://speakerdeck.com/riochin/gomennasai-dot-com-waffle-college-zu-ye-hatukason",
     },
     image: {
       src: "/works/gomen-nasai.webp",
@@ -746,8 +746,7 @@ export const WORKS = {
     },
     // 旧データの longDescription は tagline の言い換えしかなかったので本文は持たない
     body: [],
-    // 旧データの date は '2024.11 - 2025.12' だが、他の作品の並びから
-    // 2024.12 の誤記と判断した (要確認)。
+    // 旧データの date '2024.11 - 2025.12' は誤記。正しくは 2024.12 まで。
     category: "hackathon",
     period: { start: "2024-11", end: "2024-12" },
     stack: ["python", "fastapi", "aws", "dynamodb"],

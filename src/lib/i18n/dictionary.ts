@@ -32,12 +32,14 @@ export const DICT = {
     empty: { ja: "まだありません。", en: "Nothing here yet." },
   },
   works: {
-    awards: { ja: "受賞", en: "Awards" },
+    awards: { ja: "受賞歴", en: "Awards" },
     stack: { ja: "技術スタック", en: "Stack" },
     role: { ja: "担当", en: "Role" },
     related: { ja: "関連する経験", en: "Related experience" },
     back: { ja: "Works に戻る", en: "Back to Works" },
-    repo: { ja: "リポジトリ", en: "Repository" },
+    // 単一リポジトリではなく Organization のトップを指す作品があるので
+    // 「リポジトリ」とは名乗らない。
+    repo: { ja: "ソースコード", en: "Source code" },
     demo: { ja: "デモ", en: "Live demo" },
     article: { ja: "紹介記事", en: "Write-up" },
     slides: { ja: "スライド", en: "Slides" },
