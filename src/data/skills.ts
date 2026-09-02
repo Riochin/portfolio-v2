@@ -89,6 +89,7 @@ export const SKILLS = {
     category: "framework",
     icon: "framer",
   },
+  threejs: { label: "Three.js", category: "framework", icon: "threedotjs" },
   drizzle: { label: "Drizzle ORM", category: "framework", icon: "drizzle" },
 
   // インフラ
