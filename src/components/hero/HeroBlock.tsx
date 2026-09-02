@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { HeroBackground } from "./HeroBackground";
 import { HeroLiveCanvas } from "./HeroLiveCanvas";
+import { useMorphSettled } from "./morph";
 
 export function HeroBlock({
   onClick,
@@ -12,6 +13,7 @@ export function HeroBlock({
   live = false,
   still = false,
   underlay = null,
+  returning = false,
   onCapture,
   onRevealed,
   onFailed,
@@ -27,10 +29,17 @@ export function HeroBlock({
   still?: boolean;
   /** 全画面から戻ってきたときの下敷き。展開する直前に撮った 1 枚 */
   underlay?: string | null;
+  /** 全画面から戻ってきた回か。モーフが収まるまで Canvas を作らない */
+  returning?: boolean;
   onCapture?: (capture: () => string | null) => void;
   onRevealed?: () => void;
   onFailed?: () => void;
 }) {
+  // 縮んでいく途中で Canvas を作ると、全画面ぶんに引き伸ばされた bounding
+  // rect を測って、その大きさのまま固定されてしまう (絵だけが拡大され、
+  // 水平線も定位置から外れる)。収まるまでは下敷きの 1 枚で見せておく。
+  const [settled, markSettled] = useMorphSettled(returning);
+
   return (
     // 角丸はサイト共通のスケールから独立させ、この 1 箇所で決める。
     <div className="group relative h-full w-full [--hero-radius:0.1875rem]">
@@ -46,6 +55,7 @@ export function HeroBlock({
           onClick ? "cursor-pointer" : "cursor-default"
         }`}
         transition={{ type: "spring", stiffness: 200, damping: 26 }}
+        onLayoutAnimationComplete={markSettled}
       >
         {/* ホバーすると窓の中の空だけがゆっくり寄る。クリック後の全画面モーフと
             同じ向きの動きなので、次に何が起きるかの予告になる。枠は動かさない。
@@ -62,7 +72,7 @@ export function HeroBlock({
             className="absolute inset-0 h-full w-full object-cover"
           />
         )}
-        {live && (
+        {live && settled && (
           <HeroLiveCanvas
             mode={mode}
             onCapture={onCapture}
