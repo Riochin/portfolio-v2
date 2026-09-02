@@ -59,3 +59,49 @@
 .milkdown .ProseMirror {
   padding: 1.5rem 2rem 4rem;
 }
+
+/* 見出しの大きさ。
+   Crepe の既定は em 指定 (h1 が 2.625em) で、--crepe-base-font-size を
+   サイトと同じ 18px にしたぶん掛け算で 47px まで膨らむ。公開後の記事
+   (globals.css の .article-body) と同じ値に揃え直す ── 書いている最中と
+   公開後で見出しの大きさが違うと、階層の付け方を判断できない。
+
+   太さも 700 にする。Crepe の既定は 400 だが、このサイトの見出しは全て bold。 */
+.milkdown .ProseMirror h1,
+.milkdown .ProseMirror h2,
+.milkdown .ProseMirror h3,
+.milkdown .ProseMirror h4,
+.milkdown .ProseMirror h5,
+.milkdown .ProseMirror h6 {
+  font-weight: 700;
+}
+
+/* h1 は h2 と同じ見た目にする。スラッシュメニューからは外してあるが、
+   `# ` と打つ入力ルールまでは塞げない。公開側では rehypeDemoteH1 が h2 に
+   落とすので、書いている最中からそう見えていたほうが食い違わない。 */
+.milkdown .ProseMirror h1,
+.milkdown .ProseMirror h2 {
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  margin-top: 3rem;
+  /* 公開後と同じ罫。h1 も h2 に落ちるので同じ扱いにする。 */
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+  /* 罫の下に本文がくっつかないぶんの余白。公開側の .article-body h2 + * と揃える。 */
+  margin-bottom: 1.5rem;
+}
+
+/* h3 は 20px。理由は globals.css の .article-body h3 と同じ。 */
+.milkdown .ProseMirror h3 {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-top: 2.25rem;
+}
+
+.milkdown .ProseMirror h4,
+.milkdown .ProseMirror h5,
+.milkdown .ProseMirror h6 {
+  font-size: var(--text-base);
+  line-height: 1.6;
+  margin-top: 2rem;
+}

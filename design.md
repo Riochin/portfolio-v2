@@ -201,6 +201,19 @@ Markdown を情報源にする以上、**開いて保存しただけで本文が
 - 改名は実装しない。`public/articles/<slug>/` の画像も一緒に動かす必要があるので `git mv` に任せる
 - `SiteChrome` は studio でも隠さない。ルートレイアウトの Server Component が無条件に描いており、パスを知るには `headers()` が要る ── サイト全体が静的プリレンダリングから外れてしまう
 
+### 本文の画像
+
+Milkdown の既定は拡大率を **Markdown の alt 欄に**書き込む (`![1.00](...)`)。画像は url / alt / title の 3 枠しか無く、そこに src / ratio / caption を詰めた結果、alt の居場所が無い ── 開いて保存するだけで書いた説明が消えていた。`src/components/studio/imageBlockMarkdown.ts` でスキーマの ctx を差し替え、alt を残すようにした。
+
+- 等倍: `![説明](/articles/x/y.png "キャプション")` ── 標準の Markdown のまま
+- 縮小あり: `<img src alt title data-scale="0.45" />` ── 4 つ目の値が要るのでこのときだけ HTML。`rehype-raw` を通してあるので公開側でも描ける
+
+`extendSchema` は同じ id で新しいプラグインを作るため Crepe が積んでいるものと衝突する。スキーマを持つスライス (`imageBlockSchema.key`) を `ctx.update` で差し替えるほうが安全。
+
+**拡大縮小は比率を保った縮小**で、トリミングではない。エディタの img は width を持たない (auto) ので、ドラッグで高さを動かすと幅も比例して動く ── 実測で 400x200 に `height:100px` を与えると 200x100 になる。したがって倍率はそのまま「本文幅に対する幅の割合」として読め、公開側は `width: <割合>%` + 高さ auto で同じ見え方になる。`sizes` も割合に合わせて縮め、要らない大きさの画像を取りに行かせない。
+
+画像ブロックには alt の入力欄が無く、書けるのはキャプションだけ。alt が空のときは公開側でキャプションを alt に代える。
+
 ### 記事の OG 画像
 
 他のページの OG がワードマークを中央に据えた「表紙」なのに対し、記事は Zenn / Qiita のカードに構造を寄せる (外枠 → 白いカード → 左上に見出し → 下辺に名乗り)。`/output` の一覧ではこの画像が Zenn / Qiita のサムネイルと**同じグリッドに並ぶ**ので、作りが揃っていないとそこだけ浮くため。1200x630 なので既存の `aspect-[1200/630]` ともそのまま揃う。
@@ -225,11 +238,18 @@ shiki で**ライトとダークの 2 つを同時に焼く**。色は `--shiki-
 
 - ダークは **Dracula**
 - ライトは **rose-pine-dawn**。基本の文字が紫 (`#575279`)、キーワードが青 (`#286983`)、関数がピンク (`#b4637a`) と、このサイトのアクセントの取り合わせにそのまま乗る。catppuccin-latte も比べたが、キーワードが橙・文字列が緑になるので採らなかった
+- どちらも MIT。改変は許諾されているが、色の値を公開ページに焼き込んで配る以上は著作権表示が要るので、リポジトリ直下の `THIRD-PARTY-NOTICES.md` に置いた
 - ただし**背景だけはテーマの値を使わない**。rose-pine-dawn の地色 `#faf4ed` は暖色寄りで、ページの `#fbf3f5` に置くとそこだけ黄みがかって見える。サイトの `--surface` に差し替え、他のカードと同じく `--border` の枠を添える。ダークは Dracula の地色をそのまま使う (あの配色は自前の暗い面を前提に作られている)
 
 `react-markdown` は同期版の `<Markdown>` ではなく `MarkdownAsync` を使う。shiki の rehype プラグインが非同期で、同期版は内部で `runSync()` を呼ぶため例外になる。
 
-言語定義は `shiki` の既定 bundle (8MB 超) を丸ごと積まず、core に 13 言語だけ明示的に積む。正規表現エンジンも WASM (oniguruma) ではなく JS 実装を `forgiving` で使う。
+言語定義は `shiki` の既定 bundle (8MB 超) を丸ごと積まず、core に必要なものだけ明示的に積む。正規表現エンジンも WASM (oniguruma) ではなく JS 実装を `forgiving` で使う。
+
+**言語まわりで 2 回ハマった。どちらも「色が付かないだけでエラーは出ない」ので気付きにくい:**
+
+- **積んでいない言語は無着色になる。** `fallbackLanguage` で text に落ちるので本文は普通に出るが、書いた側からは「テーマが効いていない」ようにしか見えない (Java で踏んだ)。使いそうな言語は先に入れておく
+- **shiki の言語 ID は小文字固定。** ` ```Java ` のように書かれると引けない。書き手が気にすることではないので `rehypeLowercaseLang` で均す
+- **Crepe の CodeMirror は言語リストの既定が空** (`const { languages = [] } = config`)。`@codemirror/language-data` を渡さないと、エディタ側はどの言語も色が付かない ── テーマを差し替えても塗る対象が無い
 
 エディタ側の CodeMirror も同じ 2 つに揃える。ライト用の rose-pine-dawn は CodeMirror 向けの実装が無いので、同じ配色を `createTheme` で張り直した (`src/components/studio/rosePineDawnCodeMirror.ts`)。判定はマウント時の 1 回きり ── 差し替えには Compartment が要るが、書いている途中にテーマを切り替えるのは稀なので持ち込まない。
 

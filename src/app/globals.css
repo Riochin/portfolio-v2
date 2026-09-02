@@ -440,23 +440,48 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   margin-top: 1.25rem;
 }
 
+/* h1 の指定は置かない。本文の h1 は rehypeDemoteH1 が h2 に落とすので、
+   ここには届かない (記事ページの h1 はタイトルだけ)。 */
+/* 章の見出しには罫を敷く。記事は h2 で章立てするので、ここが本文の区切りになる。
+   色はカードの枠と同じ --border ── 新しい色を足さずに済ませる。 */
 .article-body h2 {
   margin-top: 3rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
   font-size: var(--text-lg);
   font-weight: 700;
   line-height: 1.5;
 }
 
+/* h3 だけ 20px。本文 (18px) と h2 (22px) の中間で、型スケールのトークンには
+   無い値だが、--text-base のままだと本文と同じ大きさになって見出しの段が
+   1 つ潰れる。h4 以下は本文と同じ大きさで、太字だけで区別する。 */
 .article-body h3 {
   margin-top: 2.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.article-body h4,
+.article-body h5,
+.article-body h6 {
+  margin-top: 2rem;
   font-size: var(--text-base);
   font-weight: 700;
   line-height: 1.6;
 }
 
-/* 見出しと最初の本文はひとかたまりに見せる。 */
-.article-body h2 + *,
-.article-body h3 + * {
+/* 見出しと最初の本文はひとかたまりに見せる。
+   h2 だけ広めなのは、下に罫があるぶん詰めると本文が罫にくっついて見えるため。 */
+.article-body h2 + * {
+  margin-top: 1.5rem;
+}
+
+.article-body h3 + *,
+.article-body h4 + *,
+.article-body h5 + *,
+.article-body h6 + * {
   margin-top: 0.75rem;
 }
 
@@ -586,7 +611,16 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   font-weight: 700;
 }
 
-/* 画像は MarkdownImage が next/image で描く。p に包まれるので余白は段落側に付く。 */
+/* 画像は MarkdownImage が next/image で描く。 */
 .article-body img {
   border-radius: var(--radius-xl);
+}
+
+/* キャプション付きの画像。studio で入れたキャプションはここに出る
+   (title 属性のままだとホバーしないと読めない)。 */
+.article-body figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--muted-foreground);
 }

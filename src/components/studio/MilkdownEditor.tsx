@@ -2,8 +2,13 @@
 
 import { Crepe } from "@milkdown/crepe";
 import { dracula } from "@uiw/codemirror-theme-dracula";
+import { languages } from "@codemirror/language-data";
 import { rosePineDawn } from "./rosePineDawnCodeMirror";
 import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import {
+  remarkImageBlockHtml,
+  configureAltPreservingImageBlock,
+} from "./imageBlockMarkdown";
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
 
 import "@milkdown/crepe/theme/common/style.css";
@@ -77,6 +82,12 @@ function CrepeEditor({ defaultValue, getSlug, onReady, onError }: Props) {
       root,
       defaultValue,
       featureConfigs: {
+        // 本文から h1 を出せなくする。記事ページの h1 はタイトルの 1 つだけで、
+        // 本文にもあると見出しが 2 つある形になるため。
+        // これはスラッシュメニューから消すだけなので、`# ` と打つ入力ルールは
+        // 残る ── そちらは milkdown-theme.css が h1 を h2 と同じ見た目にして、
+        // 公開側は rehypeDemoteH1 が h2 に落とすことで辻褄を合わせている。
+        [Crepe.Feature.BlockEdit]: { textGroup: { h1: null } },
         // 公開後と同じ配色にする ── ダークは Dracula、ライトは rose-pine-dawn
         // (lib/articles/highlighter.ts)。別のテーマだと仕上がりを想像しながら
         // 書けない。
@@ -85,6 +96,12 @@ function CrepeEditor({ defaultValue, getSlug, onReady, onError }: Props) {
         // Compartment が要るが、書いている途中にテーマを切り替えるのは稀なので
         // 持ち込まない (切り替えたらページを開き直せば追随する)。
         [Crepe.Feature.CodeMirror]: {
+          // 言語定義は自分で渡す。Crepe の既定は空リスト
+          // (`const { languages = [] } = config`) なので、渡さないと
+          // どの言語も色が付かない ── テーマを差し替えても塗る対象が無い。
+          // @codemirror/language-data は各言語を必要になってから読むので、
+          // 全部渡してもエディタの初期表示は重くならない。
+          languages,
           theme: document.documentElement.classList.contains("dark")
             ? dracula
             : rosePineDawn,
@@ -102,7 +119,13 @@ function CrepeEditor({ defaultValue, getSlug, onReady, onError }: Props) {
     // だけで全部の行が書き換わり diff が汚れる。
     crepe.editor.config((ctx) => {
       ctx.set(remarkStringifyOptionsCtx, { bullet: "-", rule: "-" });
+      // 画像の alt を潰さない書き出しに差し替える。
+      configureAltPreservingImageBlock(ctx);
     });
+
+    // HTML で書かれた画像を読み戻すための remark プラグイン。
+    // (Milkdown 本体のものは Markdown 記法の画像しか見ない)
+    crepe.editor.use(remarkImageBlockHtml);
 
     onReady({ getMarkdown: () => crepe.getMarkdown() });
     return crepe;

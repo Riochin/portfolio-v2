@@ -10,6 +10,8 @@ import { tags as t } from "@lezer/highlight";
  * 読める形が無いので、同じ配色を張り直す。
  *
  * 色は @shikijs/themes/rose-pine-dawn の値と揃えてある。
+ * 配色をそのまま書き写しているので、著作権表示は THIRD-PARTY-NOTICES.md に置いた
+ * (Rosé Pine / MIT)。
  */
 export const rosePineDawn = createTheme({
   theme: "light",
