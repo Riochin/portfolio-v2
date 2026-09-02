@@ -32,8 +32,8 @@ export const DICT = {
     output: { ja: "Output", en: "Output" },
   },
   output: {
-    talks: { ja: "Talks", en: "Talks" },
-    articles: { ja: "Articles", en: "Articles" },
+    talks: { ja: "登壇資料", en: "Talks" },
+    articles: { ja: "書いた記事", en: "Articles" },
     empty: { ja: "まだありません。", en: "Nothing here yet." },
   },
   works: {
