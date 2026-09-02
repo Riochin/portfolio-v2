@@ -1,10 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { HeroBackground } from "./HeroBackground";
 import { HeroSceneClient } from "./HeroSceneClient";
+
+// 押したまま動いた距離がこれを越えたら、閉じる合図ではなく見回しとみなす (px)
+const TAP_SLOP = 10;
 
 export function HeroFullscreen({
   mode,
@@ -27,6 +36,27 @@ export function HeroFullscreen({
   // 変形後の小さい bounding rect を測ってそのサイズで固定してしまう。
   // モーフ完了後にマウントすることで正しい全画面サイズで初期化させる。
   const [layoutSettled, setLayoutSettled] = useState(false);
+  // 指で空を見回している間も、離せば click は上がってくる。押した点から
+  // 動いたぶんを見て、なぞりだったときは閉じない。
+  const origin = useRef<{ x: number; y: number } | null>(null);
+  const dragged = useRef(false);
+
+  const handlePointerDown = useCallback((event: ReactPointerEvent) => {
+    origin.current = { x: event.clientX, y: event.clientY };
+    dragged.current = false;
+  }, []);
+
+  const handlePointerMove = useCallback((event: ReactPointerEvent) => {
+    const start = origin.current;
+    if (!start || dragged.current) return;
+    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > TAP_SLOP)
+      dragged.current = true;
+  }, []);
+
+  const handleClick = useCallback(() => {
+    if (dragged.current) return;
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     // onLayoutAnimationComplete が発火しないケースへの保険
@@ -37,7 +67,9 @@ export function HeroFullscreen({
   return (
     <motion.div
       layoutId="hero-block"
-      onClick={onClose}
+      onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
       onLayoutAnimationComplete={() => setLayoutSettled(true)}
       className="fixed inset-0 z-50 overflow-hidden bg-surface"
       transition={{ type: "spring", stiffness: 200, damping: 26 }}
