@@ -85,8 +85,12 @@ const fragmentShader = /* glsl */ `
     vec3 body = mix(uNear, uFar, pow(smoothstep(0.0, uFadeFar, dist), 1.5));
 
     // 浅い海の透明感は、波の起伏ごとに光の抜け方が違うことで出る。
-    // 山は明るく緑寄り、谷は少し沈ませて明暗を散らす
-    body += uShimmer * (height - 0.45) * uClarity * detail;
+    // 谷で uShimmer を「引く」と補色が抜けて黒ずむので、山は光を足し、
+    // 谷は色相を保ったまま倍率で軽く沈めるだけにする。
+    float crest = max(height - 0.45, 0.0);
+    float trough = max(0.45 - height, 0.0);
+    body *= 1.0 - trough * uClarity * 0.3 * detail;
+    body += uShimmer * crest * uClarity * detail;
 
     vec3 color = mix(body, uSky, fresnel * 0.85);
 

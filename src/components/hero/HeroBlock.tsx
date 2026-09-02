@@ -13,12 +13,13 @@ export function HeroBlock({
 }) {
   return (
     <div className="group relative h-full w-full">
-      {/* ホバーするとアクセントがブロックの外へ染み出す。ぼかしや
-          フェードは使わず、ベタ塗りの面を背面に置いて即座に出す。
+      {/* ホバーするとアクセントがブロックの中心から広がって外へ染み出す。
+          色は薄めずベタのまま、円形のクリップを広げることで表現する。
+          (半径 71% で角に届くので、余裕を見て 75%)
           キーボード操作でも同じ反応にするため focus-within も見る。 */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -inset-2 hidden rounded-[1.5rem] bg-accent group-hover:block group-focus-within:block"
+        className="pointer-events-none absolute -inset-1 rounded-[1.25rem] bg-accent [clip-path:circle(0%_at_50%_50%)] transition-[clip-path] duration-500 ease-out group-hover:[clip-path:circle(75%_at_50%_50%)] group-focus-within:[clip-path:circle(75%_at_50%_50%)] motion-reduce:transition-none"
       />
       <motion.button
         layoutId="hero-block"

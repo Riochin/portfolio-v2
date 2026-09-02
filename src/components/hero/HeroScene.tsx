@@ -10,6 +10,7 @@ import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
 import { Mountains } from "./Mountains";
 import { Ocean } from "./Ocean";
+import { VolumeClouds } from "./VolumeClouds";
 import {
   CAMERA,
   DAY_SKY,
@@ -41,7 +42,7 @@ function DayScene({ animated }: { animated: boolean }) {
         bottom={DAY_SKY.bottom}
         curve={DAY_SKY.curve}
       />
-      <CloudLayer animated={animated} />
+      <VolumeClouds animated={animated} />
       <Ocean palette={DAY_OCEAN} animated={animated} />
     </>
   );

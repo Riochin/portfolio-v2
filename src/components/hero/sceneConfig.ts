@@ -326,3 +326,40 @@ export const MOUNTAINS = {
     { z: -160, base: -22, height: 17, scale: 0.034, color: "#03040c", seed: 29 },
   ] as readonly MountainRidge[],
 } as const;
+
+// レイマーチングで描く雲の層。ポリゴンではなく密度関数として定義する。
+// VolumeClouds.tsx がピクセルごとに視線を進めながら積分する。
+export const VOLUME_CLOUDS = {
+  /** 雲の層の下端と上端(ワールド y) */
+  bottom: 420,
+  top: 600,
+  /** 大きいほど空が雲で埋まる 0..1 */
+  coverage: 0.3,
+  /** 雲の濃さ */
+  density: 1.1,
+  /** 視線方向の積分ステップ数。増やすほど綺麗だが重い */
+  steps: 44,
+  /** 太陽方向へのステップ数。陰影の精度 */
+  lightSteps: 4,
+  /** 1 ステップの上限。水平に近いレイのちらつきを抑える */
+  maxStep: 30,
+  /** 大きな塊のスケール。小さいほど雲が大きい */
+  scale: 0.0024,
+  /** 縁を削る細かいノイズのスケール */
+  detailScale: 0.009,
+  /** 縁を削る強さ。上げすぎると雲がちぎれて粒々になる */
+  erode: 0.22,
+  /** 積分を打ち切る距離。水平に近いレイが無限に伸びるのを防ぐ */
+  maxDistance: 9000,
+  /** この距離に向けて空の霞へ溶かす */
+  fadeDistance: 5000,
+  /** 雲が流れる向きと速さ */
+  wind: [1.6, 0, 0.6] as [number, number, number],
+  sunColor: "#fffaf0",
+  shadowColor: "#93b0cd",
+  haze: "#bcdcf2",
+  /** 視線方向を得るためだけの球の半径 */
+  domeRadius: 600,
+  /** 静止画キャプチャ時に使う固定の位相 */
+  stillTime: 40,
+} as const;
