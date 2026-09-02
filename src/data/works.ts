@@ -120,6 +120,116 @@ export const WORKS = {
     links: {},
   },
 
+  "buyer-ai-vs-seller-ai": {
+    title: { ja: "購入者AI vs 出品者AI", en: "Buyer AI vs Seller AI" },
+    tagline: {
+      ja: "値下げ交渉をまるごとAIに任せる ── 1つの購入者AIが、無数の出品者AIと同時に交渉する",
+      en: "Hand the haggling to the AIs — one buyer agent negotiating with countless seller agents at once",
+    },
+    body: [
+      {
+        ja: "フリマの値下げ交渉には「文章を考えるのがめんどくさい」「どのくらい値切れる相手なのかわからない」「できるだけ早く結論を出したい」というハードルがあります。そこを購入者側・出品者側それぞれのAIエージェントに任せてしまうモックアプリです。",
+        en: "Haggling on a marketplace has real hurdles: writing the message is a chore, you cannot tell how far a seller will bend, and you just want an answer quickly. This mock app hands the whole exchange to an AI agent on each side.",
+      },
+      {
+        ja: "希望価格と自分のAIの性格を決めて送り出すと、あとは出品者のAIとその場でやり取りし、合意できたら「お知らせ」に届きます。伝え方を気にせず、複数の出品者と同時に交渉できるのが一番の狙いです。",
+        en: "You set your target price and your agent's personality, then send it off; it trades offers with the seller's agent on the spot and drops a notification once they agree. The point is that you stop worrying about tone — and can negotiate with several sellers at the same time.",
+      },
+      {
+        ja: "AIエージェントのハッカソンらしく、作り方の側もAIに寄せました。Figma MCP を繋いだアイデアボードで壁打ちし、Claude Design で全く違う3案のモックアップを並べて検証してから、Claude Code で実装しています。",
+        en: "In the spirit of an AI agent hackathon, we leaned on AI for the making as well: bouncing ideas off a Figma-MCP-connected board, laying out three very different mockups in Claude Design to compare, and then writing the app with Claude Code.",
+      },
+    ],
+    category: "hackathon",
+    period: { start: "2026-08", end: "2026-09" },
+    stack: ["typescript", "nextjs", "react"],
+    links: {
+      demo: "https://mercari-ai-hack-teamg.vercel.app/",
+      slides:
+        "https://speakerdeck.com/riochin/kounyuusha-ai-vs-shuppinsha-ai-mercari-ai-agent-hackathon",
+    },
+    image: {
+      src: "/works/buyer-ai-vs-seller-ai.webp",
+      width: 1200,
+      height: 675,
+      alt: {
+        ja: "購入者AI vs 出品者AI のキービジュアル",
+        en: "Key visual of Buyer AI vs Seller AI",
+      },
+    },
+    awards: [
+      {
+        event: {
+          ja: "Mercari AI Agent Hackathon",
+          en: "Mercari AI Agent Hackathon",
+        },
+        prize: { ja: "優秀賞", en: "Excellence Award" },
+        rank: "excellence",
+        date: "2026-09",
+      },
+    ],
+    featured: true,
+  },
+
+  nemmy: {
+    title: { ja: "Nemmy", en: "Nemmy" },
+    tagline: {
+      ja: "せーので、「おやすみなさい」── 友達と一緒に睡眠習慣をつくるiOSアプリ",
+      en: "Say goodnight together — an iOS app that builds a sleep habit with friends",
+    },
+    body: [
+      {
+        ja: "「寝るきっかけが生まれない」「睡眠習慣が続かず諦めてしまう」という課題に、友達と睡眠習慣を共有するという手段で応えたiOSアプリ。ロック画面から、いま何人が一緒に寝ているのかがわかります。",
+        en: "An iOS app that answers two problems — nothing prompts you to go to bed, and a sleep habit never sticks — by sharing that habit with friends. From the lock screen you can see how many of them are already asleep.",
+      },
+      {
+        ja: "就寝目標を決めると、達成できていないときはコンテンツを制限。1日1つの出来事を投稿してその日をふりかえり、友達の投稿にはスタンプを送れます。背景は時間帯に合わせて夜明けまで変わっていきます。",
+        en: "Set a bedtime goal and the app restricts content while you are missing it. You post one moment from the day to look back on, send stamps to your friends' posts, and watch the background shift with the hour all the way to dawn.",
+      },
+      {
+        ja: "チームでは、星空の美しい発光を Metal で描き、睡眠の深さと時間を HealthKit から取得しています。インフラは Terraform で組み、AWS の費用は月450円に収めました。",
+        en: "As a team, we drew the glowing starfield with Metal and pulled sleep depth and duration from HealthKit. The infrastructure was defined in Terraform, and we kept the AWS bill to ¥450 a month.",
+      },
+    ],
+    category: "hackathon",
+    period: { start: "2026-08", end: "2026-08" },
+    stack: ["swift", "swiftui", "go", "postgresql", "aws", "terraform"],
+    links: {
+      slides: "https://speakerdeck.com/riochin/nemmy-the-hack-2026",
+    },
+    image: {
+      src: "/works/nemmy.webp",
+      width: 1200,
+      height: 675,
+      alt: {
+        ja: "Nemmy のキービジュアル",
+        en: "Key visual of Nemmy",
+      },
+    },
+    awards: [
+      {
+        event: {
+          ja: "THE HACK 2026 大阪本戦",
+          en: "THE HACK 2026 Osaka Final",
+        },
+        prize: { ja: "サイバーエージェント賞", en: "CyberAgent Award" },
+        rank: "sponsor",
+        sponsor: { ja: "サイバーエージェント", en: "CyberAgent" },
+        date: "2026-08",
+      },
+      {
+        event: {
+          ja: "THE HACK 2026 東京予選",
+          en: "THE HACK 2026 Tokyo Qualifier",
+        },
+        prize: { ja: "最優秀賞", en: "Grand Prize" },
+        rank: "grand",
+        date: "2026-08",
+      },
+    ],
+    featured: true,
+  },
+
   begit: {
     title: { ja: "BeGit;", en: "BeGit;" },
     tagline: {
