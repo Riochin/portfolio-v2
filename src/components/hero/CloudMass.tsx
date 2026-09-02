@@ -12,9 +12,9 @@ function hash(n: number) {
   return x - Math.floor(x);
 }
 
-// 高さ t(0=雲底, 1=雲頂)における塔の太さ(0..1)。
-// 裾から「肩」までは徐々に絞り、肩から上はドーム状に丸めて雲頂の頭を作る。
-// これで直線的な円錐ではなく入道雲らしい輪郭になる。
+// 高さ t(0=下端, 1=上端)における塊の太さ(0..1)。
+// 下から「肩」までは徐々に絞り、肩から上はドーム状に丸める。
+// 平たい雲は shoulderRadius を 1 に近づけて円盤状にする。
 function radiusAt(t: number, mass: CloudMass) {
   let radius: number;
   if (t <= mass.shoulder) {

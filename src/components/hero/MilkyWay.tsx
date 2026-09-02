@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import * as THREE from "three";
+import { MILKY_WAY } from "./sceneConfig";
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -52,8 +53,11 @@ export function MilkyWay() {
   );
 
   return (
-    <mesh position={[6, 18, -40]} rotation={[0.2, -0.15, 1.05]}>
-      <planeGeometry args={[110, 34]} />
+    <mesh
+      position={[...MILKY_WAY.position]}
+      rotation={[...MILKY_WAY.rotation]}
+    >
+      <planeGeometry args={[320, 90]} />
       <shaderMaterial
         uniforms={uniforms}
         vertexShader={vertexShader}

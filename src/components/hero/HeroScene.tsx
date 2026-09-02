@@ -5,29 +5,44 @@ import { Canvas } from "@react-three/fiber";
 import { Stars, Clouds } from "@react-three/drei";
 import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
-import { CloudMassCloud } from "./Cumulonimbus";
+import { CloudMassCloud } from "./CloudMass";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
+import { Mountains } from "./Mountains";
+import { Ocean } from "./Ocean";
 import {
   CAMERA,
+  CLOUD_LAYER,
   CLOUD_LIMIT,
-  CUMULONIMBUS,
+  DAY_OCEAN,
   DAY_SKY,
   STARS,
   NIGHT_SKY,
   NIGHT_BG,
 } from "./sceneConfig";
 
+function CloudLayer({ animated }: { animated: boolean }) {
+  return (
+    // 粒の色をそのまま出したいので、光源に依存しない Basic マテリアルにする
+    <Clouds material={THREE.MeshBasicMaterial} limit={CLOUD_LIMIT}>
+      {CLOUD_LAYER.map((mass) => (
+        <CloudMassCloud key={mass.seed} mass={mass} animated={animated} />
+      ))}
+    </Clouds>
+  );
+}
+
 function DayScene({ animated }: { animated: boolean }) {
   return (
     <>
-      <GradientSky top={DAY_SKY.top} mid={DAY_SKY.mid} bottom={DAY_SKY.bottom} />
-      {/* 粒の色をそのまま出したいので、光源に依存しない Basic マテリアルにする */}
-      <Clouds material={THREE.MeshBasicMaterial} limit={CLOUD_LIMIT}>
-        {CUMULONIMBUS.map((mass) => (
-          <CloudMassCloud key={mass.seed} mass={mass} animated={animated} />
-        ))}
-      </Clouds>
+      <GradientSky
+        top={DAY_SKY.top}
+        mid={DAY_SKY.mid}
+        bottom={DAY_SKY.bottom}
+        curve={DAY_SKY.curve}
+      />
+      <CloudLayer animated={animated} />
+      <Ocean palette={DAY_OCEAN} animated={animated} />
     </>
   );
 }
@@ -51,6 +66,7 @@ function NightScene({ animated }: { animated: boolean }) {
         fade={STARS.fade}
         speed={animated ? STARS.speed : 0}
       />
+      <Mountains />
     </>
   );
 }
