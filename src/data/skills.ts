@@ -44,7 +44,13 @@ export const SKILLS = {
     featured: true,
     icon: "python",
   },
-  java: { label: "Java", category: "language", featured: true },
+  // simple-icons は商標の都合で Java のアイコンを配っていないので OpenJDK で代用する
+  java: {
+    label: "Java",
+    category: "language",
+    featured: true,
+    icon: "openjdk",
+  },
   go: { label: "Go", category: "language", featured: true, icon: "go" },
   rust: { label: "Rust", category: "language", icon: "rust" },
   swift: { label: "Swift", category: "language", icon: "swift" },
