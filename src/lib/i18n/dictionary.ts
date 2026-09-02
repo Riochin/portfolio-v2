@@ -62,7 +62,9 @@ export const DICT = {
     hackathon: { ja: "ハッカソンで開発したもの", en: "Built at hackathons" },
   },
   about: {
-    skills: { ja: "使っている技術", en: "Skills" },
+    /** 「使っている」ではなく「勉強している」。習得済みの一覧ではなく、
+     *  いま手を動かして覚えている最中のものを並べる枠なので。 */
+    skills: { ja: "勉強している技術", en: "Currently learning" },
     /** 上位再生曲なので「好きな曲」とは名乗らない。 */
     tracks: { ja: "よく聴いている曲", en: "On repeat" },
   },
@@ -83,5 +85,10 @@ export const DICT = {
       en: "Show the sky scene fullscreen",
     },
     closeFullscreen: { ja: "全画面表示を閉じる", en: "Close fullscreen" },
+    expandPhoto: {
+      ja: "プロフィール写真を拡大表示",
+      en: "Enlarge the profile photo",
+    },
+    closePhoto: { ja: "拡大表示を閉じる", en: "Close the enlarged photo" },
   },
 } as const satisfies Record<string, Record<string, DictNode>>;
