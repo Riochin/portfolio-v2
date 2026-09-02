@@ -14,7 +14,7 @@ export function HeroBlock({
   return (
     // 角丸はサイト共通のスケールから独立させ、この 1 箇所で決める。
     // 外枠(-inset-1)と同心にするため、そちらは +0.25rem した値を使う。
-    <div className="group relative h-full w-full [--hero-radius:0.25rem]">
+    <div className="group relative h-full w-full [--hero-radius:0.1875rem]">
       {/* ホバーするとアクセントがブロックの中心から広がって外へ染み出す。
           色は薄めずベタのまま、円を拡大することで表現する。
           clip-path のアニメーションは毎フレーム再ペイントが走ってカクつくため、
