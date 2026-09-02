@@ -55,6 +55,8 @@ export type WorkLinks = {
 /** 作品の記述用シェイプ。slug はレコードのキーから来るので持たない。 */
 export type WorkEntry = {
   readonly title: Localized<string>;
+  /** 受賞一覧のように行が詰まる場所で使う短縮形。無ければ title を使う。 */
+  readonly shortTitle?: Localized<string>;
   /** 一覧で見せる 1 行説明 (旧 description)。 */
   readonly tagline: Localized<string>;
   /** 詳細ページの本文 (旧 longDescription)。段落ごとに両言語を持つ。 */

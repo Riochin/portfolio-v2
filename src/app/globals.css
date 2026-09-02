@@ -2,6 +2,14 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* 縦に余裕が無い画面 (横向きの端末など)。
+   ヒーローはブロックを画面のちょうど中央に据えるので、上下には必ず同じだけ
+   空く。下に居るもの (テーマ切替 + About への導線) の方が厚いため、その倍を
+   空けられない高さになると導線がボタンに乗る。31rem は「ブロックが下限の
+   9rem まで縮んでもまだ収まる」境目 (9rem + --hero-reserve の 22rem)。
+   ここを下回ったときだけ、中央を諦めて上の余りをブロックに回す。 */
+@custom-variant short (@media (height < 31rem));
+
 :root {
   --background: #fbf3f5;
   --surface: #ffffff;
@@ -34,6 +42,33 @@
      真円にしたいもの(プロフィール写真・アイコンボタン)は rounded-full のままで
      この値には追随しない。Hero ブロックも独立(HeroBlock.tsx の --hero-radius)。 */
   --radius-xl: 0.1875rem;
+}
+
+/* --- 文字サイズ ---
+   Tailwind の既定スケール (本文 16px) はモバイルで小さく感じたので、1 段ずつ
+   持ち上げた自前のスケールに差し替える。クラス名 (text-sm / text-lg …) は
+   全部そのままなので、大きさを調整したくなったらこの数値だけ触ればよい。
+
+   行間は既定の --text-*--line-height (比率で持っている) をそのまま使うので、
+   文字を大きくしたぶん行間も一緒に広がる。ここで上書きする必要はない。
+
+   3xl / 4xl は据え置き。使っているのはワードマーク (font-logo の筆記体) だけで、
+   本文の読みやすさとは別の都合 ── ヘッダー行の高さ (MobileMenu の HEADER_ROW)
+   ── で決まっているため。 */
+@theme {
+  --text-xs: 0.8125rem; /* 13px ← 12px。日付・技術チップ */
+  --text-sm: 1rem; /* 16px ← 14px。補助テキスト・キャプション */
+  --text-base: 1.125rem; /* 18px ← 16px。本文 (body が着る) */
+  --text-lg: 1.375rem; /* 22px ← 18px。セクション見出し */
+  --text-xl: 1.5rem; /* 24px ← 20px */
+  --text-2xl: 1.75rem; /* 28px ← 24px。ページ見出し */
+}
+
+/* ヒーローは 1 画面で閉じるようにしてあるので、指で引っ張ったときの跳ね返りが
+   入ると土台ごと動いて見える。下層のページでも「端で跳ねる」必要はないため、
+   引っ張って更新ごと全ページで止める。 */
+html {
+  overscroll-behavior: none;
 }
 
 body {
@@ -179,11 +214,28 @@ html[data-vt="theme"]::view-transition-new(theme-icon) {
     backwards;
 }
 
-/* 長さは ChromeThemeToggle の EXIT_MS と揃える(消えきってから畳むため) */
+/* 曲線は入場の ease-out を裏返さない。あれを退場に当てると前半で消えきって
+   しまい (300ms のうち 150ms 時点で opacity 0.04)、フェードではなくハード
+   カットに見える。テーマアイコンのモーフと同じ標準曲線に揃える。
+   delay を含めた総尺は ChromeThemeToggle の EXIT_MS と揃える
+   (消えきってから畳むため)。 */
 .chrome-toggle-out {
-  animation: chrome-toggle-out 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: chrome-toggle-out 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  /* モバイルではヘッダーの backdrop-filter の下に居る。合成のされ方によって
+     子の opacity が無視されることがあるので、自前のレイヤーに追い出す。 */
+  will-change: opacity;
   /* 消えかけの 1 枚は押させない */
   pointer-events: none;
+}
+
+/* モバイルでヒーローへ戻る導線はメニューの中のワードマークだけなので、退場は
+   必ずオーバーレイの幕引き (MobileMenu の fade = 0.28s) と重なる。幕がまだ
+   濃いうちにボタンだけ先に消えると、フェードではなく「抜けた」ように見える。
+   幕が引けるのを待ってから落とす。 */
+@media (width < 48rem) {
+  .chrome-toggle-out {
+    animation-delay: 150ms;
+  }
 }
 
 /* 退場中はヒーローの下部中央のボタンと一瞬だけ同居する。両方が theme-icon を
@@ -199,8 +251,75 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   }
 
   /* 退場は「消えてから畳む」の順序があるので、動きを消すのではなく一瞬で
-     終わらせる。animation: none にすると素のまま EXIT_MS だけ居座る。 */
+     終わらせる。animation: none にすると素のまま EXIT_MS だけ居座る。
+     モバイルの待ち時間もここで畳む(素のまま居座るのは同じなので)。 */
   .chrome-toggle-out {
+    animation-duration: 1ms;
+    animation-delay: 0s;
+  }
+}
+
+/* --- プロフィール写真の拡大 ---
+   framer-motion ではなく CSS で行う。理由はテーマ切替ボタンと同じで、
+   rAF が止まる裏タブで幕が opacity:0 のまま取り残されると、写真も本文も
+   見えないただの膜が画面に残ってしまうため。
+   幕はフェード、写真はそれに合わせて少しだけ寄る。閉じるときは
+   ProfilePhoto 側がこの長さぶん待ってから外す。 */
+@keyframes photo-lightbox-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes photo-lightbox-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes photo-lightbox-zoom-in {
+  from {
+    transform: scale(0.85);
+  }
+}
+
+@keyframes photo-lightbox-zoom-out {
+  to {
+    transform: scale(0.85);
+  }
+}
+
+.photo-lightbox-in {
+  animation: photo-lightbox-in 250ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* 長さは ProfilePhoto の EXIT_MS と揃える(消えきってから外すため) */
+.photo-lightbox-out {
+  animation: photo-lightbox-out 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  /* 消えかけの幕は押させない */
+  pointer-events: none;
+}
+
+.photo-lightbox-in .photo-lightbox-figure {
+  animation: photo-lightbox-zoom-in 250ms cubic-bezier(0.22, 1, 0.36, 1)
+    backwards;
+}
+
+.photo-lightbox-out .photo-lightbox-figure {
+  animation: photo-lightbox-zoom-out 200ms cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-lightbox-in,
+  .photo-lightbox-in .photo-lightbox-figure {
+    animation: none;
+  }
+
+  /* 退場は「消えてから外す」の順序があるので、動きを消すのではなく
+     一瞬で終わらせる。chrome-toggle-out と同じ扱い。 */
+  .photo-lightbox-out,
+  .photo-lightbox-out .photo-lightbox-figure {
     animation-duration: 1ms;
   }
 }

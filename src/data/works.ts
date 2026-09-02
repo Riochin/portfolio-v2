@@ -333,6 +333,10 @@ export const WORKS = {
       ja: "突き(ラッシュ)の速さ比べか？",
       en: "Rush Speed Contest?",
     },
+    shortTitle: {
+      ja: "突きの速さ比べか？",
+      en: "Rush Speed Contest?",
+    },
     tagline: {
       ja: "Apple Watchのセンサーデータを使ったリアルタイム対戦ゲーム",
       en: "A real-time fighting game using Apple Watch sensor data",
@@ -404,8 +408,8 @@ export const WORKS = {
     links: { repo: "https://github.com/jphacks/tk_a_2505" },
     image: {
       src: "/works/hinan.webp",
-      width: 640,
-      height: 420,
+      width: 1200,
+      height: 675,
       alt: { ja: "HiNan! のスクリーンショット", en: "Screenshot of HiNan!" },
     },
     awards: [

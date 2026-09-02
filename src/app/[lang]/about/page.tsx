@@ -1,7 +1,7 @@
 import { Fragment } from "react";
-import Image from "next/image";
 import { PageShell } from "@/components/layout/PageShell";
 import { SkillIcon } from "@/components/skills/SkillIcon";
+import { ProfilePhoto } from "@/components/about/ProfilePhoto";
 import { TrackGrid } from "@/components/about/TrackGrid";
 import { ABOUT } from "@/data/about";
 import { SITE } from "@/data/site";
@@ -64,14 +64,11 @@ export default async function AboutPage() {
         className="reveal-rise flex flex-col items-center text-center"
         style={revealDelay(0)}
       >
-        <Image
-          src={ABOUT.photo.src}
+        <ProfilePhoto
+          photo={ABOUT.photo}
           alt={t(ABOUT.photo.alt)}
-          width={ABOUT.photo.width}
-          height={ABOUT.photo.height}
-          priority
-          sizes="160px"
-          className="photo-frame h-40 w-40 rounded-full object-cover"
+          expandLabel={t(DICT.aria.expandPhoto)}
+          closeLabel={t(DICT.aria.closePhoto)}
         />
         <h1 className="mt-6 text-2xl font-bold">{SITE.name}</h1>
         {/* 下線は連絡先のメールリンクと同じ作り。名前のすぐ下で色しか変わらないと

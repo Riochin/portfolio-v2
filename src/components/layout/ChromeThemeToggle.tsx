@@ -5,8 +5,10 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import { stripLocale } from "@/lib/i18n/paths";
 
-/** globals.css の .chrome-toggle-out と同じ長さ。消えきってから器を畳む。 */
-const EXIT_MS = 300;
+/** globals.css の .chrome-toggle-out と同じ長さ。消えきってから器を畳む。
+    モバイルはメニューの幕を待つぶん 150ms 遅れて始まるので、その分も見込む。
+    PC ではそのぶん透明なまま居座るが、pointer-events は切ってあるので害はない。 */
+const EXIT_MS = 450;
 
 /**
  * サイト共通のテーマ切替ボタン。ヒーロー(トップ)だけは page 側が下部中央に

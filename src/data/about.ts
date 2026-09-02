@@ -76,16 +76,19 @@ export const ABOUT = {
 
   paragraphs: [
     {
-      ja: "2024年12月にハッカソンに初参加したことからWeb開発の楽しさに目覚めました。（ハッカソン楽しい！）",
-      en: "My first hackathon in December 2024 opened my eyes to how fun web development is. (Hackathons are the best!)",
+      ja: "2024年12月、人生初のハッカソンでWeb開発の楽しさに目覚めました！（ハッカソン楽しい！）",
+      en: "In December 2024 I went to my first ever hackathon, and that was it — I was hooked on web development. (Hackathons are so much fun!)",
     },
     {
-      ja: "プロダクトを作ること自体が大好きで、作りたいものに必要であればデザインからインフラまでフルスタックに触っています。",
-      en: "What I love is building products themselves, so I reach for whatever a project needs — from design all the way through to infrastructure.",
+      // 「わかりやすさ」の対象はあえて絞らない。発表も SNS の投稿も
+      // ページもコードも同じこだわりなので、EN も "easy to use" や
+      // "easy to read" に落とさず "easy to understand" のままにしてある。
+      ja: "プロダクトを作ること自体が大好きで、作りたいものに必要であればデザインからインフラまでフルスタックに触っています。なかでも「わかりやすくすること」には強いこだわりがあります。",
+      en: "What I love is building products themselves, so I reach for whatever a project needs — from design all the way through to infrastructure. Above all, I care about making things easy to understand.",
     },
     {
-      ja: "また、同じくらいチームでのものづくりが好きです。ハッカソンやインターンで、人と話しながら自分のアイデアが磨かれていく瞬間がとても好きです。",
-      en: "I love making things with other people just as much. In hackathons and internships, the moment when an idea of mine gets sharpened by talking it through with someone is what I enjoy most.",
+      ja: "ひとりでつくるのも好きですが、誰かとつくるのはもっと好きです❗️😸",
+      en: "I love building things on my own, but I love building them with other people even more❗️😸",
     },
   ] satisfies readonly Localized<string>[],
 } as const;

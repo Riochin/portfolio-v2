@@ -14,6 +14,11 @@ type DictNode = Localized<string>;
  * 以前はページタイトルが metadata.title と opengraph-image.tsx に二重に書かれていた。
  */
 export const DICT = {
+  /** ページをまたいで同じ意味で使う文言。 */
+  common: {
+    showMore: { ja: "もっとみる", en: "Show more" },
+    showLess: { ja: "閉じる", en: "Show less" },
+  },
   nav: {
     about: { ja: "About me", en: "About me" },
     works: { ja: "Works", en: "Works" },
@@ -43,8 +48,10 @@ export const DICT = {
     demo: { ja: "デモ", en: "Live demo" },
     article: { ja: "紹介記事", en: "Write-up" },
     slides: { ja: "スライド", en: "Slides" },
-    showMore: { ja: "もっとみる", en: "Show more" },
-    showLess: { ja: "閉じる", en: "Show less" },
+  },
+  experience: {
+    /** 経験カードから外部記事へ飛ばすリンクのラベル。 */
+    report: { ja: "参加体験記", en: "Write-up" },
   },
   /**
    * 作品の出自の見出し。キーは WorkCategory と同じにしてあるので、
@@ -55,7 +62,9 @@ export const DICT = {
     hackathon: { ja: "ハッカソンで開発したもの", en: "Built at hackathons" },
   },
   about: {
-    skills: { ja: "使っている技術", en: "Skills" },
+    /** 「使っている」ではなく「勉強している」。習得済みの一覧ではなく、
+     *  いま手を動かして覚えている最中のものを並べる枠なので。 */
+    skills: { ja: "勉強している技術", en: "Currently learning" },
     /** 上位再生曲なので「好きな曲」とは名乗らない。 */
     tracks: { ja: "よく聴いている曲", en: "On repeat" },
   },
@@ -76,5 +85,10 @@ export const DICT = {
       en: "Show the sky scene fullscreen",
     },
     closeFullscreen: { ja: "全画面表示を閉じる", en: "Close fullscreen" },
+    expandPhoto: {
+      ja: "プロフィール写真を拡大表示",
+      en: "Enlarge the profile photo",
+    },
+    closePhoto: { ja: "拡大表示を閉じる", en: "Close the enlarged photo" },
   },
 } as const satisfies Record<string, Record<string, DictNode>>;

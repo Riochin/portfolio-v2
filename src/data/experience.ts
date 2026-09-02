@@ -8,8 +8,8 @@ export const EXPERIENCES = {
   "tsuda-university": {
     organization: { ja: "津田塾大学", en: "Tsuda University" },
     position: {
-      ja: "情報科学科",
-      en: "Department of Information Science",
+      ja: "津田塾大学 学芸学部 情報科学科",
+      en: "Tsuda University, College of Liberal Arts, Department of Information Science",
     },
     period: { start: "2024-04", end: null },
     kind: "education",
@@ -34,7 +34,7 @@ export const EXPERIENCES = {
   "jtp-internship": {
     organization: { ja: "JTP株式会社", en: "JTP Co., Ltd." },
     position: {
-      ja: "JTP サマーインターンシップ",
+      ja: "JTP サマーインターン",
       en: "JTP Summer Internship",
     },
     period: { start: "2024-08", end: "2024-08" },
@@ -70,12 +70,12 @@ export const EXPERIENCES = {
     },
     highlights: [
       {
-        ja: "卒業ハッカソンで「ごめんなさい.com」を開発し、最優秀賞&日本総研賞をW受賞しました",
-        en: 'Developed "gomen-nasai.com" and won both the Best Award and the Japan Research Institute Award at the graduation hackathon',
+        ja: "5ヶ月間のブートキャンプで、Flaskを使用したWebアプリケーション開発の基礎を学びました",
+        en: "Learned the fundamentals of web application development using Flask in a five-month bootcamp",
       },
       {
-        ja: "Flaskを使用したWebアプリケーション開発の基礎を学びました",
-        en: "Learned the fundamentals of web application development using Flask",
+        ja: "卒業ハッカソンで「ごめんなさい.com」を開発し、最優秀賞&日本総研賞をW受賞しました",
+        en: 'Developed "gomen-nasai.com" and won both the Best Award and the Japan Research Institute Award at the graduation hackathon',
       },
     ],
     stack: ["python", "flask"],
@@ -117,8 +117,12 @@ export const EXPERIENCES = {
     },
     highlights: [
       {
-        ja: "渡航型プログラムにインドチームのエンジニアとして参加し、女性向け匿名通話アプリ「Ma-ango」の企画・モックアップ開発に携わりました",
-        en: 'Joined an overseas program as an engineer on the India team, working on the planning and mockup development of "Ma-ango", an anonymous calling app for women',
+        ja: "渡航型アイデアソンにインドチームのエンジニアとして参加しました",
+        en: "Joined an overseas ideathon as an engineer on the India team",
+      },
+      {
+        ja: "女性向け匿名通話アプリ「Ma-ango」の企画・モックアップ開発に携わりました",
+        en: 'Worked on the planning and mockup development of "Ma-ango", an anonymous calling app for women',
       },
     ],
     stack: ["figma"],
@@ -127,7 +131,7 @@ export const EXPERIENCES = {
   "rakuten-internship": {
     organization: { ja: "楽天グループ株式会社", en: "Rakuten Group, Inc." },
     position: {
-      ja: "楽天グループ 就業型インターンシップ",
+      ja: "楽天グループ 就業型インターン",
       en: "Rakuten Group Work-based Internship",
     },
     period: { start: "2025-08", end: "2025-10" },
@@ -147,17 +151,34 @@ export const EXPERIENCES = {
         en: "Worked on a PoC for an internal AI agent tool in the AI & Data Division",
       },
       {
-        ja: "初めてのフルタイムエンジニアインターンシップを経験しました",
+        ja: "はじめてのフルタイムエンジニアインターンを経験しました",
         en: "Gained my first full-time engineering internship experience",
       },
     ],
-    stack: ["python", "nextjs"],
+    stack: ["python", "typescript"],
+  },
+
+  "cyberagent-tech-lounge": {
+    organization: { ja: "株式会社サイバーエージェント", en: "CyberAgent, Inc." },
+    position: { ja: "CA Tech Lounge", en: "CA Tech Lounge" },
+    period: { start: "2025-10", end: null },
+    kind: "program",
+    highlights: [
+      {
+        ja: "サイバーエージェントが運営するコミュニティスペースに、バックエンド会員として所属しています",
+        en: "Participating in CyberAgent's community space as a backend member",
+      },
+      {
+        ja: "Slackの盛り上げや部活動の企画をおこない、2026年7月に Lounge Award をいただきました",
+        en: "Kept the community Slack lively and organized club activities, receiving the Lounge Award in July 2026",
+      },
+    ],
   },
 
   "google-swe-internship": {
     organization: { ja: "グーグル合同会社", en: "Google Japan" },
     position: {
-      ja: "Google STEP インターンシップ",
+      ja: "Google STEP インターン",
       en: "Google STEP Internship",
     },
     period: { start: "2025-11", end: "2026-02" },
@@ -173,8 +194,8 @@ export const EXPERIENCES = {
     },
     highlights: [
       {
-        ja: "Google Mapsのサーバーサイド開発に携わりました",
-        en: "Worked on server-side development for Google Maps",
+        ja: "GEO/UGC/Notification Team にて、Google Mapsのサーバーサイド開発に携わりました",
+        en: "Worked on server-side development for Google Maps on the GEO/UGC/Notification Team",
       },
       {
         ja: "コードレビューを受けながら、16週間にわたり実践的なエンジニア経験を積みました",
@@ -209,12 +230,13 @@ export const EXPERIENCES = {
       },
     ],
     stack: ["go"],
+    url: "https://zenn.dev/riochin/articles/6b4099bd6cce6d",
   },
 
   "cygames-5days": {
     organization: { ja: "株式会社Cygames", en: "Cygames, Inc." },
     position: {
-      ja: "Cygames エンジニアコース（サマー）",
+      ja: "Cygames エンジニアコース（サマーインターン）",
       en: "Cygames Engineer Course (Summer)",
     },
     period: { start: "2026-07", end: "2026-07" },
@@ -231,7 +253,7 @@ export const EXPERIENCES = {
   "mixi-internship": {
     organization: { ja: "株式会社MIXI", en: "MIXI, Inc." },
     position: {
-      ja: "DIVE INTO MIXI 2026（就業型インターンシップ）",
+      ja: "DIVE INTO MIXI 2026（就業型インターン）",
       en: "DIVE INTO MIXI 2026 (Work-based Internship)",
     },
     period: { start: "2026-07", end: "2026-08" },
@@ -247,8 +269,12 @@ export const EXPERIENCES = {
     },
     highlights: [
       {
-        ja: "mixi2 事業部に配属され、新規機能のアイデア出しから仕様書の作成、実装までフルスタックで担当しました",
-        en: "Assigned to the mixi2 team, working full-stack on a new feature from ideation through spec writing to implementation",
+        ja: "mixi2 開発チームに配属され、2ヶ月間勤務しました",
+        en: "Assigned to the mixi2 team for a two-month placement",
+      },
+      {
+        ja: "新規機能のアイデア出しから仕様書の作成、実装までフルスタックで担当させていただきました",
+        en: "Worked full-stack on a new feature, from ideation through spec writing to implementation",
       },
     ],
     stack: ["flutter", "go", "typescript"],

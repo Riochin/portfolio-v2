@@ -55,7 +55,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       className={`${zenMaruGothic.variable} ${logoCursive.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col text-base">
         <ThemeProvider>
           <SiteChrome />
           {children}

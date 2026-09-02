@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { PageShell } from "@/components/layout/PageShell";
 import { getExperiencesByYear, getSkills } from "@/data";
@@ -43,7 +44,7 @@ export default async function ExperiencePage() {
               揃えていたが、写真の無いカードまで一番高いカードに引き伸ばされ、
               中身に対して間延びして見えたためやめた。
               写真のあるカードは写真が高さいっぱいに伸びるので余白は出ない。 */}
-          <ul className="mt-4 space-y-3">
+          <ul className="mt-4 space-y-5">
             {group.experiences.map((exp, index) => (
               <li
                 key={exp.slug}
@@ -71,13 +72,38 @@ export default async function ExperiencePage() {
                     width={exp.image.width}
                     height={exp.image.height}
                     sizes="(max-width: 640px) 100vw, 176px"
+                    // 1 件目だけ先読みする。next/image の既定は lazy で、
+                    // 画面に映っているカードまで遅延にすると写真が後乗せに
+                    // なり、リロードのたびに読み込み直しているように見える。
+                    priority={groupIndex === 0 && index === 0}
                     className="photo-frame aspect-video w-full object-cover sm:absolute sm:inset-y-0 sm:left-0 sm:aspect-auto sm:h-full sm:max-h-[19.5rem] sm:w-44"
                   />
                 )}
                 <div className={`min-w-0 p-4 ${exp.image ? "sm:ml-44" : ""}`}>
                   {/* 見出しは所属ではなくプログラム名。
-                        「株式会社◯◯」が並ぶより何をやったかで拾い読みできる。 */}
-                  <h3 className="font-bold">{t(exp.position)}</h3>
+                        「株式会社◯◯」が並ぶより何をやったかで拾い読みできる。
+                        体験記などの外部記事はその右端に。absolute で右上に
+                        浮かせると長い見出しの下に潜るので、同じ行に並べて
+                        shrink-0 で押し出す (見出しが折り返して逃げる)。
+                        カードごと <a> にはしない ── URL を持つカードと
+                        持たないカードでクリック可否が変わると迷わせるため。 */}
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h3 className="font-bold">{t(exp.position)}</h3>
+                    {exp.url && (
+                      <a
+                        href={exp.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 text-sm text-accent transition-opacity hover:opacity-70"
+                      >
+                        {t(DICT.experience.report)}
+                        <ExternalLink
+                          size={14}
+                          className="ml-1 inline-block align-baseline opacity-60"
+                        />
+                      </a>
+                    )}
+                  </div>
                   {/* 期間は見出しの右ではなく下。同じ行に置くと狭い幅で
                         見出しの折り返しが増えるため。 */}
                   <p className="mt-0.5 text-sm text-muted-foreground">
