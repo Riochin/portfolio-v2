@@ -1,9 +1,10 @@
 "use client";
 
 import { Cloud } from "@react-three/drei";
-import { useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
 import * as THREE from "three";
-import { CLOUD_HAZE, SUN, type CloudMass } from "./sceneConfig";
+import { CLOUD_DRIFT, CLOUD_HAZE, SUN, type CloudMass } from "./sceneConfig";
 
 // 静止画キャプチャと実シーンでシルエットが食い違うと、ポスターと Canvas を
 // 差し替えた瞬間に絵が飛ぶ。だから形は seed から決定的に作り、Math.random は
@@ -278,9 +279,33 @@ export function CloudMassCloud({
   animated: boolean;
 }) {
   const bands = useMemo(() => buildBands(mass), [mass]);
+  const drift = useRef<THREE.Group>(null);
+  // 流した距離。clock.elapsedTime ではなく delta の積算で持つ。ブロックの
+  // Canvas は画面外・タブ非表示で frameloop が止まるので、止まっているあいだに
+  // 進んだことにしたくない(ShootingStar と同じ流儀)
+  const shift = useRef(0);
+
+  // <Clouds> は毎フレーム塊の group の matrixWorld を分解し直しているので、
+  // group をひとつ動かすだけで粒はまとめて付いてくる。粒には触らない。
+  useFrame((_, delta) => {
+    const group = drift.current;
+    if (!animated || !group) return;
+
+    const span = CLOUD_DRIFT.wrap * 2;
+    shift.current = (shift.current + delta * CLOUD_DRIFT.speed) % span;
+    // 塊の元の位置に足してから ±wrap の帯へ丸め、その差を group に持たせる。
+    // 塊ごとに折り返す位置が違うので、丸めるのは group の offset ではなく
+    // ワールドの x のほう。
+    // 開いているのは -wrap の側(帯は (-wrap, +wrap])。逆にすると x=+1540 に
+    // 置いた塊が t=0 で左端へ飛び、静止画ポスターと食い違う
+    const x = mass.position[0] + shift.current;
+    const wrapped =
+      CLOUD_DRIFT.wrap - ((((CLOUD_DRIFT.wrap - x) % span) + span) % span);
+    group.position.x = wrapped - mass.position[0];
+  });
 
   return (
-    <>
+    <group ref={drift}>
       {bands.map((band) => (
         <Cloud
           key={band.seed}
@@ -297,6 +322,6 @@ export function CloudMassCloud({
           fade={mass.fade}
         />
       ))}
-    </>
+    </group>
   );
 }
