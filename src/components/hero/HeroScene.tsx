@@ -7,10 +7,14 @@ import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
 import { Birds } from "./Birds";
 import { CloudMassCloud } from "./CloudMass";
+import { Contrail } from "./Contrail";
+import { FishingLights } from "./FishingLights";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
+import { NavLights } from "./NavLights";
 import { Ocean } from "./Ocean";
 import { ShootingStar } from "./ShootingStar";
+import { Ship } from "./Ship";
 import { StarField } from "./StarField";
 import {
   CAMERA,
@@ -23,7 +27,9 @@ import {
   QUALITY,
   NIGHT_SKY,
   NIGHT_BG,
+  SHOOTING_STAR_CADENCE,
   type Quality,
+  type ShootingStarCadence,
 } from "./sceneConfig";
 
 function CloudLayer({ animated }: { animated: boolean }) {
@@ -58,6 +64,8 @@ function DayScene({
       />
       <CloudLayer animated={animated} />
       <Birds animated={animated} />
+      <Contrail animated={animated} />
+      <Ship animated={animated} />
       <Ocean
         palette={DAY_OCEAN}
         animated={animated}
@@ -70,9 +78,11 @@ function DayScene({
 function NightScene({
   animated,
   quality,
+  cadence,
 }: {
   animated: boolean;
   quality: Quality;
+  cadence: ShootingStarCadence;
 }) {
   return (
     <>
@@ -85,7 +95,9 @@ function NightScene({
       />
       <MilkyWay />
       <StarField animated={animated} />
-      <ShootingStar animated={animated} />
+      <ShootingStar animated={animated} cadence={cadence} />
+      <NavLights animated={animated} />
+      <FishingLights animated={animated} />
       <Ocean
         palette={NIGHT_OCEAN}
         animated={animated}
@@ -99,12 +111,30 @@ function NightScene({
 // three の DefaultLoadingManager を見ているので Canvas の外でも読める。
 // 実際に外へ置いているのは、Canvas の中だと Ocean のテクスチャ待ちで
 // Suspense に巻き込まれ、肝心の読み込み中に値が流れなくなるため。
-function AssetProgress({ onProgress }: { onProgress: (value: number) => void }) {
+function AssetProgress({
+  onProgress,
+}: {
+  onProgress: (value: number) => void;
+}) {
   const { progress } = useProgress();
 
   useEffect(() => {
     onProgress(progress / 100);
   }, [progress, onProgress]);
+
+  return null;
+}
+
+// 画枠ごとの基準の向き。Canvas の camera prop は作られるときにしか読まれない
+// ので、比が切り替わったとき (端末を回した、窓の幅をまたいだ) のために、
+// ここで持ち直す。interactive のときは CameraRig が同じことをするので出さない。
+function CameraFraming({ yaw }: { yaw: number }) {
+  useFrame(({ camera }) => {
+    if (camera.rotation.y === yaw) return;
+    // 見上げ角(X)を保ったまま左右(Y)を回すため YXZ 順に固定する
+    camera.rotation.order = "YXZ";
+    camera.rotation.set(CAMERA.rotation[0], yaw, 0);
+  });
 
   return null;
 }
@@ -142,7 +172,9 @@ export default function HeroScene({
   mode,
   animated = true,
   interactive = true,
+  yaw = 0,
   quality = QUALITY.full,
+  cadence = SHOOTING_STAR_CADENCE.full,
   paused = false,
   onAssetProgress,
   onAssetsReady,
@@ -154,7 +186,11 @@ export default function HeroScene({
   animated?: boolean;
   /** ポインタで視点を振れるようにするか。ヒーローブロックでは切る */
   interactive?: boolean;
+  /** 画枠ごとの基準の向き(rad)。HERO_FRAMING の yaw をそのまま渡す */
+  yaw?: number;
   quality?: Quality;
+  /** 流れ星の出現の間隔。ブロック常設は目の端で光り続けないよう長く取る */
+  cadence?: ShootingStarCadence;
   /** 描画を止める。画面外やタブ非表示のとき用。
       ただし onReady は useFrame で拾うので、初回フレームより前に止めてはいけない */
   paused?: boolean;
@@ -184,7 +220,7 @@ export default function HeroScene({
         frameloop={paused ? "never" : "always"}
         camera={{
           position: [...CAMERA.position],
-          rotation: [...CAMERA.rotation],
+          rotation: [CAMERA.rotation[0], yaw, 0],
           fov: CAMERA.fov,
           near: CAMERA.near,
           far: CAMERA.far,
@@ -222,10 +258,14 @@ export default function HeroScene({
         // 全画面では変数が解決できず、border-radius は初期値(0)に戻る
         className={`h-full w-full rounded-[var(--hero-radius)]${interactive ? " touch-none" : " pointer-events-none"}`}
       >
-        {interactive && <CameraRig />}
+        {interactive ? <CameraRig yaw={yaw} /> : <CameraFraming yaw={yaw} />}
         <Suspense fallback={null}>
           {mode === "dark" ? (
-            <NightScene animated={animated} quality={quality} />
+            <NightScene
+              animated={animated}
+              quality={quality}
+              cadence={cadence}
+            />
           ) : (
             <DayScene animated={animated} quality={quality} />
           )}

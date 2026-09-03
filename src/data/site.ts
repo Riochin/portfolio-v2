@@ -26,7 +26,7 @@ export const SITE = {
   /** handle のリンク先。名乗りをクリックしたら X の本人に飛ぶ。 */
   handleUrl: `https://x.com/${X_USER}`,
   /** 公開する連絡先。About の連絡先セクションが mailto: にして読む。 */
-  email: "118029.ichikama@gmail.com",
+  email: "hello@riochin.dev",
   description: {
     ja: "Riochin のポートフォリオサイト",
     en: "Portfolio of Rio Ichikawa",

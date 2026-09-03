@@ -7,9 +7,10 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { useHeroFraming } from "./framing";
 import { HeroSceneClient, useHeroSceneLoaded } from "./HeroSceneClient";
 import { HeroLoadingProgress, OPEN_DURATION } from "./HeroLoadingProgress";
-import { QUALITY } from "./sceneConfig";
+import { QUALITY, SHOOTING_STAR_CADENCE } from "./sceneConfig";
 
 // 進捗の各段の上限。実測で次の段へ入るまで、数字はここへ漸近する。
 const CEILING = {
@@ -78,6 +79,7 @@ export function HeroLiveCanvas({
   const [withProgress] = useState(() => !shownOnce);
   const containerRef = useRef<HTMLDivElement>(null);
   const quality = useBlockQuality();
+  const framing = useHeroFraming();
 
   // 進捗を出す回はシャッターが開き始めてから、出さない回は描けた時点で見せる
   const revealed = withProgress ? finished : ready;
@@ -157,7 +159,9 @@ export function HeroLiveCanvas({
         <HeroSceneClient
           mode={mode}
           interactive={false}
+          yaw={framing.yaw}
           quality={quality}
+          cadence={SHOOTING_STAR_CADENCE.block}
           paused={ready && !(onScreen && pageVisible)}
           onAssetProgress={handleAssetProgress}
           onAssetsReady={handleAssetsReady}

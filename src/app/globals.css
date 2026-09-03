@@ -10,6 +10,18 @@
    ここを下回ったときだけ、中央を諦めて上の余りをブロックに回す。 */
 @custom-variant short (@media (height < 31rem));
 
+/* ヒーローを 4:3 で組む画面。手に持った端末の縦向きがこれにあたる。
+
+   three の fov は垂直基準なので、枠の比を詰めても縦の見え方は動かず、横だけが
+   切られる。切れたぶんは sceneConfig の HERO_FRAMING が yaw で取り戻すので、
+   ここの条件と framing.ts の UPRIGHT_QUERY は必ず同じ 1 本にする。
+
+   横向き (short) を外すのは、そちらは高さの予算 (--hero-reserve) がほとんどを
+   食っていて、比を縦に詰めると幅まで道連れで縮むため。667x375 だと 16:9 の
+   140px 幅が 4:3 では 105px になる。狭いほうの画面でこそ大きく見せたいので、
+   縦に余裕のある向きだけを 4:3 にする。48rem は md、31rem は short と同じ境目。 */
+@custom-variant upright (@media (width < 48rem) and (height >= 31rem));
+
 :root {
   --background: #fbf3f5;
   --surface: #ffffff;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTexture } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Water } from "three-stdlib";
@@ -29,12 +29,18 @@ export function Ocean({
 }) {
   const normals = useTexture(OCEAN.normalMap);
   const ref = useRef<Water>(null);
+  const maxAnisotropy = useThree((state) =>
+    state.gl.capabilities.getMaxAnisotropy(),
+  );
 
   const water = useMemo(() => {
     // useTexture が返すテクスチャは共有物なので、複製してから設定する
     const map = normals.clone();
     map.wrapS = THREE.RepeatWrapping;
     map.wrapT = THREE.RepeatWrapping;
+    // 水平線際はテクセルが視線方向にだけ極端に潰れる。等方のミップだと
+    // そこだけ何段も粗いレベルを引いてしまうので、異方性を上げて素直に取る
+    map.anisotropy = Math.min(OCEAN.anisotropy, maxAnisotropy);
     map.needsUpdate = true;
 
     const mesh = new Water(new THREE.PlaneGeometry(OCEAN.size, OCEAN.size), {
@@ -51,6 +57,17 @@ export function Ocean({
     // 水平に近い視点だとほぼ全面が鏡になり水の色が出ない。下げて色を出す
     mesh.material.onBeforeCompile = (shader) => {
       shader.fragmentShader = shader.fragmentShader
+        // 遠い波を寝かせる。水平線際では 1 画素が海面の広い面積を覆うので、
+        // そこに高周波の法線が残っていると (a) 法線そのものがエイリアスし、
+        // (b) その法線でずらす反射のサンプル位置が毎フレーム跳ねる。結果、
+        // 水平線に沿って灰色の帯がちらつく。距離で真上へ寄せると、どちらも
+        // 元から消える——遠い海ほど鏡のように静かになるのは実際の見え方にも合う。
+        .replace(
+          "vec3 surfaceNormal = normalize( noise.xzy * vec3( 1.5, 1.0, 1.5 ) );",
+          `vec3 surfaceNormal = normalize( noise.xzy * vec3( 1.5, 1.0, 1.5 ) );
+           float flatten = 1.0 - exp( -length( eye - worldPosition.xyz ) / ${OCEAN.flatten.toFixed(1)} );
+           surfaceNormal = normalize( mix( surfaceNormal, vec3( 0.0, 1.0, 0.0 ), flatten ) );`,
+        )
         .replace("float rf0 = 0.3;", `float rf0 = ${OCEAN.reflectance.toFixed(3)};`)
         // 反射側に足される定数。夜はこれが効いて海が灰色に浮くので下げる
         .replace("vec3( 0.1 ) +", `vec3( ${palette.ambient.toFixed(3)} ) +`)
@@ -92,7 +109,7 @@ export function Ocean({
     // 静止画キャプチャでも波が出るよう、初期位相をずらしておく
     mesh.material.uniforms.time.value = OCEAN.stillTime;
     return mesh;
-  }, [normals, palette, reflectionSize]);
+  }, [normals, palette, reflectionSize, maxAnisotropy]);
 
   useEffect(() => {
     const { geometry, material } = water;

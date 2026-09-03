@@ -105,27 +105,42 @@ export function HeroSection({
           なくその余白の中に据える。上下が非対称になるぶん倍を取らずに済み、
           天の余白を pt、地を pb とすると h <= 100dvh - 14.5rem - pt。
           md 以上は pt が 0 なので 14.5rem、モバイルはヘッダーぶん 3.875rem を
-          足して 18.5rem (端数は切り上げ)。 */}
+          足して 18.5rem (端数は切り上げ)。
+
+          ここに出てくる数はどれもブロック以外の高さなので、ブロックの比を
+          16:9 から 4:3 へ変えても動かない。高さで頭を押さえられている画面では
+          h = 100dvh - 22rem がそのまま出て、上下に 11rem ずつ残る ── 比を
+          変えても等号は成り立ったままで、22rem / 18.5rem / 14.5rem は据え置き。
+          比が効くのは幅のほうで、幅で決まる高さ (w * 3/4) が予算を超えたときに
+          初めて下の max-w が働く。iPhone SE (375x667) は short ではないので
+          予算は 100dvh - 22rem = 315px、幅は 375 - px-6 の 48 = 327px、
+          4:3 の高さは 245px で予算の内に収まる。 */}
       <div className="relative w-full max-w-3xl [--hero-reserve:22rem] max-md:short:[--hero-reserve:18.5rem] md:short:[--hero-reserve:14.5rem]">
         {/* 挨拶文は水平線より下、海の上に重ねる。空には雲が湧くので、字が乗る
             のは面の落ち着いた水側がいい。
 
             水平線の高さはカメラから出る。画面の中央からの隔たりは
             tan(pitch) / (2 * tan(fov/2)) で、既定 (pitch 0.055 / fov 55) なら
-            ブロックの上から 55.3%。字の中心はその下の 61% に置く (top を 22%
+            ブロックの上から 55.3%。この式に比が入っていないのは、three の fov が
+            垂直基準で、枠を 16:9 から 4:3 へ詰めても縦の見え方が動かないため。
+            画枠を変えても水平線は 55.3% のままなので、この 22% も据え置ける
+            (fov を触ったときだけ動く。55→62 なら 54.6%)。
+            字の中心はその下の 61% に置く (top を 22%
             にすると、下辺との中点がちょうど 61%)。字の高さの半分が 3% ほどな
             ので、上辺と水平線の間はまだ空く。ポインタ追従で pitch は ±0.12
             振れ、上を向ききると水平線が 67% まで下がって字を越すが、それは
             見回している間だけの一瞬で、据わりの良さを取った。
             sceneConfig の CAMERA か POINTER_LOOK を触ったらここも計算し直す。
 
-            色はテーマによらず白。下は昼も夜も空の写真なので、
-            白い雲に負けないよう暗い影を敷いて拾わせる。
+            色はテーマによらず白。昼は海面に日のギラつきの帯が出て白と
+            白がぶつかるので、輪郭を拾わせる影は残す。ただし下向きの
+            オフセットを持たせると字だけが絵から浮いて「貼り付けた」ように
+            見えるので、中心対称の淡いハロー 1 本だけにする。
             狭い幅ではブロックも小さいので、字を一回り落として左右に逃げを作り、
             それでも入らなければ折り返させる (中央揃えなので 2 行でも崩れない)。
             pointer-events-none にして、文字の上でもブロックを押せるようにする。 */}
         {!isExpanded && (
-          <h1 className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 flex items-center justify-center px-4 text-center text-sm font-medium tracking-[0.2em] text-white [text-shadow:0_1px_3px_rgb(0_0_0/0.55),0_0_14px_rgb(0_0_0/0.45)] md:text-base">
+          <h1 className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 flex items-center justify-center px-4 text-center text-sm font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-base">
             {/* 1 文字ずつ span に割ると読み上げが文字単位になりうるので、
                 支援技術には素の 1 文として渡し、見た目側は隠す。 */}
             <span className="sr-only">{labels.welcome}</span>
@@ -144,11 +159,17 @@ export function HeroSection({
             </span>
           </h1>
         )}
-        {/* 16/9 は幅からしか高さを決めないので、低い画面 (横向きの端末など) では
+        {/* aspect は幅からしか高さを決めないので、低い画面 (横向きの端末など) では
             ブロックだけで画面を越えてしまう。残り高さから逆算した幅で頭を押さえ、
             比を保ったまま縮ませる。max() は予算が尽きたときに幅が 0 や負に
-            なって消えないための下限。 */}
-        <div className="mx-auto aspect-[16/9] w-full max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*16/9)]">
+            なって消えないための下限。max-w の係数は必ず aspect と同じ比にする
+            (ここが食い違うと、高さで押さえた側の枠だけが別の比になる)。
+
+            upright (狭い縦長の画面) だけ 4:3 に詰める。横長の枠を縦長の画面に
+            置くと、絵が細い帯になって主役の入道雲の背丈が出ない。比を変えても
+            縦の見え方は動かず横だけが切れるので、切れたぶんはカメラの yaw で
+            取り戻す ── その対は sceneConfig の HERO_FRAMING が持っている。 */}
+        <div className="mx-auto aspect-[16/9] w-full max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*16/9)] upright:aspect-[4/3] upright:max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*4/3)]">
           {!isExpanded && (
             <HeroBlock
               onClick={prefersReducedMotion || !shown ? undefined : expand}

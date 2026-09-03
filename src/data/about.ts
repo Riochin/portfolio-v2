@@ -14,8 +14,10 @@ const GRADE = academicYear(EXPERIENCES["tsuda-university"].period.start);
  * この形なら段落数のずれが構造的に起きない。
  *
  * 事実は段落ではなく「ラベル: 値」で持ち、置き場所で 2 つに分ける。
- * facts は写真の横 ── 名前とセットで一目に入る枠なので、増やすと写真の下に
- * はみ出してブロックが崩れる。ここは 2 行までに抑えること。
+ * facts は名前のすぐ下 ── 写真・名前と一続きの中央揃えの塊なので、
+ * 項目を増やすほど本文が下に押し出される。ここは 2 項目までに抑えること。
+ * 値の改行はそのまま出る (dd 側の whitespace-pre-line) ので、所属のように
+ * 単位で読ませたいものは行を分けて書く。
  * sections は本文の下 ── 見出し付きで独立して置くので、行数の制約がない。
  */
 export const ABOUT = {
@@ -29,12 +31,16 @@ export const ABOUT = {
   facts: [
     {
       label: { ja: "所属", en: "Affiliation" },
+      // 大学 → 学部学科 → 研究室 と、大きい単位から 1 行ずつ。
+      // 1 行に詰めると読み手が区切りを探すことになるうえ、幅次第で
+      // 折り返し位置が変わって「どこで切れるか」が固定できない。
       value: {
-        ja: `津田塾大学 学芸学部 情報科学科 ${GRADE}年 / 栗原研究室`,
-        // EN は 1 行だと写真の幅を大きく超えるので、学科と学部の間で折る。
-        // 改行を活かすため dd 側に whitespace-pre-line を置いてある。
-        en: `Kurihara Lab, Department of Information Science,
-College of Liberal Arts, Tsuda University (year ${GRADE})`,
+        ja: `津田塾大学 ${GRADE}年
+学芸学部 情報科学科
+栗原研究室`,
+        en: `Tsuda University, Year ${GRADE}
+College of Liberal Arts, Department of Information Science
+Kurihara Lab`,
       },
     },
     {
@@ -56,10 +62,7 @@ College of Liberal Arts, Tsuda University (year ${GRADE})`,
           ja: "クラウドインフラ（AWS、Cloudflare）",
           en: "Cloud infrastructure (AWS, Cloudflare)",
         },
-        {
-          ja: "UI/UX（インタラクション、モーション）",
-          en: "UI/UX (interaction and motion)",
-        },
+        { ja: "UI/UX（インタラクション）", en: "UI/UX (interaction)" },
       ],
     },
   ] satisfies readonly ProfileSection[],
@@ -87,7 +90,7 @@ College of Liberal Arts, Tsuda University (year ${GRADE})`,
       // ページもコードも同じこだわりなので、EN も "easy to use" や
       // "easy to read" に落とさず "easy to understand" のままにしてある。
       // `**…**` は About ページ側で <strong> に開かれる強調記法 (本文ではない)。
-      ja: "プロダクトをつくること自体が大好きで、つくりたいものに必要であればデザインからインフラまでフルスタックに触っています。**「わかりやすくする」**ことに強いこだわりがあります。",
+      ja: "プロダクトをつくること自体が大好きで、つくりたいものに必要であればデザインからインフラまでフルスタックに触ります。**「わかりやすくする」**ことに強いこだわりがあります。",
       en: "What I love is building products themselves, so I reach for whatever a project needs — from design all the way through to infrastructure. Above all, I care about making things **easy to understand**.",
     },
     {
