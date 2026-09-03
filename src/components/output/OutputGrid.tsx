@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import type { OutputItem } from "@/lib/output/types";
+import { useCollapseMotion } from "@/lib/useCollapseMotion";
 
 /**
  * 画面には出さない。サムネイルが OGP なので見れば出典は分かるが、
@@ -110,9 +111,20 @@ export function OutputGrid({
   const [expanded, setExpanded] = useState(
     () => expandedBySection.get(sectionKey) ?? false,
   );
+  // 畳む側だけ手順を付ける。WorkGrid と同じ扱いで、幅で残る件数は変わらない。
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const collapse = useCollapseMotion(buttonRef);
   const toggle = () => {
-    expandedBySection.set(sectionKey, !expanded);
-    setExpanded(!expanded);
+    if (!expanded) {
+      // 開く側は今までどおり。1 件ずつ reveal-rise で出す手応えを残す。
+      expandedBySection.set(sectionKey, true);
+      setExpanded(true);
+      return;
+    }
+    collapse(PREVIEW_COUNT, () => {
+      expandedBySection.set(sectionKey, false);
+      setExpanded(false);
+    });
   };
 
   if (items.length === 0) {
@@ -207,6 +219,7 @@ export function OutputGrid({
           }
         >
           <button
+            ref={buttonRef}
             type="button"
             onClick={toggle}
             aria-expanded={expanded}

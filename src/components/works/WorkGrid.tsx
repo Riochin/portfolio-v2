@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, ViewTransition } from "react";
+import { useRef, useState, ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { isReturningFromWorkDetail } from "./WorksHistoryBridge";
 import { workImageTransitionName } from "./workImageTransition";
+import { useCollapseMotion } from "@/lib/useCollapseMotion";
 
 /**
  * 一覧タイル 1 件分。
@@ -89,9 +90,26 @@ export function WorkGrid({
   const [expanded, setExpanded] = useState(
     () => expandedBySection.get(sectionKey) ?? false,
   );
+  // 畳む側だけ手順を付ける (消えるぶんが薄くなる -> 畳む -> 入ってきたぶんが
+  // 降りる)。視点をボタンに固定するのもこの中。
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const collapse = useCollapseMotion(buttonRef);
   const toggle = () => {
-    expandedBySection.set(sectionKey, !expanded);
-    setExpanded(!expanded);
+    if (!expanded) {
+      // 開く側は今までどおり。1 件ずつ reveal-rise で出す手応えを残す。
+      expandedBySection.set(sectionKey, true);
+      setExpanded(true);
+      return;
+    }
+    // 1 列では 3 件しか残らない (4 件目以降は max-sm:hidden で伏せる)。
+    // どこから先が消えるかは押した時点の幅で決まる。
+    const keepCount = window.matchMedia("(width < 40rem)").matches
+      ? MOBILE_PREVIEW_COUNT
+      : PREVIEW_COUNT;
+    collapse(keepCount, () => {
+      expandedBySection.set(sectionKey, false);
+      setExpanded(false);
+    });
   };
 
   // 戻ってきたときに出現アニメを止める範囲は「マウントした時点で画面に在った
@@ -199,6 +217,7 @@ export function WorkGrid({
           }
         >
           <button
+            ref={buttonRef}
             type="button"
             onClick={toggle}
             aria-expanded={expanded}

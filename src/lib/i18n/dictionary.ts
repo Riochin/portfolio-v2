@@ -17,7 +17,7 @@ export const DICT = {
   /** ページをまたいで同じ意味で使う文言。 */
   common: {
     showMore: { ja: "もっとみる", en: "Show more" },
-    showLess: { ja: "閉じる", en: "Show less" },
+    showLess: { ja: "とじる", en: "Show less" },
   },
   nav: {
     about: { ja: "About me", en: "About me" },
@@ -42,6 +42,11 @@ export const DICT = {
    */
   blog: {
     back: { ja: "Output に戻る", en: "Back to Output" },
+    /** 末尾のページャの行き先。上部の back と役割が違うので言い分ける
+     *  ── 上は読み始める前の離脱口、下は読み終えたあとの次の一手。
+     *  行き先は /output だが「Output」とは名乗らない。読み終えた直後に
+     *  誘いたいのは同じ「読みもの」なので、記事の側から呼ぶ。 */
+    otherArticles: { ja: "ほかの記事も見る", en: "See other articles" },
     draft: { ja: "下書き", en: "Draft" },
   },
   works: {
@@ -50,6 +55,8 @@ export const DICT = {
     role: { ja: "担当", en: "Role" },
     related: { ja: "関連する経験", en: "Related experience" },
     back: { ja: "Works に戻る", en: "Back to Works" },
+    /** 末尾のページャの行き先。blog.otherArticles と同じ理由で back とは別語。 */
+    otherWorks: { ja: "ほかの作品も見る", en: "See other works" },
     // 単一リポジトリではなく Organization のトップを指す作品があるので
     // 「リポジトリ」とは名乗らない。
     repo: { ja: "ソースコード", en: "Source code" },
@@ -84,6 +91,7 @@ export const DICT = {
   },
   aria: {
     mainNav: { ja: "メインナビゲーション", en: "Main navigation" },
+    pager: { ja: "前後のページ", en: "Previous and next pages" },
     openMenu: { ja: "メニューを開く", en: "Open menu" },
     closeMenu: { ja: "メニューを閉じる", en: "Close menu" },
     themeToggle: { ja: "テーマを切り替え", en: "Toggle theme" },

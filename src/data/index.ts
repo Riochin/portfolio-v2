@@ -2,6 +2,7 @@ import { WORKS, type WorkSlug } from "./works";
 import { EXPERIENCES, type ExperienceSlug } from "./experience";
 import { SKILLS, type Skill, type SkillSlug } from "./skills";
 import { compareStartDesc, comparePeriodDesc, yearOf } from "@/lib/date";
+import { neighborsAt, type Neighbors } from "@/lib/neighbors";
 import type { Year } from "@/lib/date";
 import type {
   Award,
@@ -105,6 +106,25 @@ const WORKS_BY_CATEGORY: readonly WorkCategoryGroup[] = WORK_CATEGORY_ORDER.map(
 /** 出自で束ねた作品 (各塊の中は getWorks() と同じ新しい順)。 */
 export function getWorksByCategory(): readonly WorkCategoryGroup[] {
   return WORKS_BY_CATEGORY;
+}
+
+/**
+ * 一覧の表示順 (カテゴリの塊を並べたまま平らにしたもの)。
+ *
+ * ALL_WORKS ではなくこちらを詳細ページのページャがたどる。一覧が出自ごとに
+ * 区切られているので、制作期間の降順そのままだと ◀▶ が読者の見た並びと
+ * ずれる。カテゴリの境目は跨ぐ ── 端から端まで途切れずに回れる方を採った。
+ */
+const WORKS_IN_LIST_ORDER: readonly Work[] = WORKS_BY_CATEGORY.flatMap(
+  (group) => group.works,
+);
+
+/** 一覧の表示順で見た前後の作品。◀ が一覧で 1 つ上、▶ が 1 つ下。 */
+export function getWorkNeighbors(slug: string): Neighbors<Work> {
+  return neighborsAt(
+    WORKS_IN_LIST_ORDER,
+    WORKS_IN_LIST_ORDER.findIndex((work) => work.slug === slug),
+  );
 }
 
 export function getWorksByExperience(slug: ExperienceSlug): readonly Work[] {

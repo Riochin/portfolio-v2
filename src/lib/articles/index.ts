@@ -2,6 +2,7 @@ import "server-only";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { parseArticleFile } from "./frontmatter";
+import { neighborsAt, type Neighbors } from "@/lib/neighbors";
 import type { Article } from "./types";
 
 /**
@@ -82,4 +83,20 @@ export function getPublishedArticleSlugs(): string[] {
 
 export function getArticleBySlug(slug: string): Article | undefined {
   return all().find((article) => article.slug === slug);
+}
+
+/**
+ * 公開日の新しい順で見た前後の記事。詳細ページ末尾のページャが使う。
+ *
+ * 母集団を公開済みに絞ってあるので、下書きは findIndex が -1 になり前後なしで
+ * 返る。下書きから公開記事へ渡る道も、公開記事から下書きへ迷い込む道も
+ * 生えない ── URL を知っている本人だけが読める、という下書きの扱いを保つ。
+ */
+export function getArticleNeighbors(slug: string): Neighbors<Article> {
+  const published = getPublishedArticles();
+
+  return neighborsAt(
+    published,
+    published.findIndex((article) => article.slug === slug),
+  );
 }
