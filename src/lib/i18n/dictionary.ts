@@ -17,7 +17,7 @@ export const DICT = {
   /** ページをまたいで同じ意味で使う文言。 */
   common: {
     showMore: { ja: "もっとみる", en: "Show more" },
-    showLess: { ja: "閉じる", en: "Show less" },
+    showLess: { ja: "とじる", en: "Show less" },
   },
   nav: {
     about: { ja: "About me", en: "About me" },
