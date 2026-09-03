@@ -12,6 +12,7 @@ import {
   getArticleNeighbors,
   getArticleSlugs,
 } from "@/lib/articles";
+import { ARTICLES_ANCHOR } from "@/lib/output/config";
 import { formatYearMonthDay } from "@/lib/date";
 import { DICT } from "@/lib/i18n/dictionary";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
@@ -123,7 +124,13 @@ export default async function ArticlePage({
         next={toPagerLink(next)}
         ariaLabel={t(DICT.aria.pager)}
         back={
-          <Link href={localePath(locale, "/output")} className={PAGER_BACK_LINK}>
+          // 頂上ではなく「書いた記事」の見出しへ着地させる。/output は
+          // 登壇資料が先頭にあり、「記事」と名乗って着地が Talks から
+          // 始まると噛み合わないため。
+          <Link
+            href={`${localePath(locale, "/output")}#${ARTICLES_ANCHOR}`}
+            className={PAGER_BACK_LINK}
+          >
             {t(DICT.blog.otherArticles)}
           </Link>
         }

@@ -1,6 +1,7 @@
 import { PageShell } from "@/components/layout/PageShell";
 import { OutputGrid } from "@/components/output/OutputGrid";
 import { getOutputItems } from "@/lib/output";
+import { ARTICLES_ANCHOR } from "@/lib/output/config";
 import { DICT } from "@/lib/i18n/dictionary";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getT } from "@/lib/i18n/server";
@@ -36,7 +37,10 @@ export default async function OutputPage() {
           />
         </div>
       </section>
-      <section className="mt-16">
+      {/* scroll-mt は #articles で飛んできたときの着地位置。モバイルは固定
+          ヘッダー (3.875rem) が上に乗るので、その下に見出しが出る高さまで
+          逃がす。md 以上はヘッダーが無いので、本文の天の余白ぶんだけ。 */}
+      <section id={ARTICLES_ANCHOR} className="mt-16 scroll-mt-24 md:scroll-mt-16">
         <h2 className="text-lg font-bold">{t(DICT.output.articles)}</h2>
         <div className="mt-4">
           <OutputGrid sectionKey="articles" items={articles} {...gridLabels} />
