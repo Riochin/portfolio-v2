@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { SkillIcon } from "@/components/skills/SkillIcon";
 import { ProfilePhoto } from "@/components/about/ProfilePhoto";
@@ -92,31 +91,39 @@ export default async function AboutPage() {
           closeLabel={t(DICT.aria.closePhoto)}
         />
         <h1 className="mt-6 text-2xl font-bold">{SITE.name}</h1>
-        {/* 下線は連絡先のメールリンクと同じ作り。名前のすぐ下で色しか変わらないと
-            リンクだと気づけないので、常時下線を引いておく。 */}
+        {/* サイト内で外部リンクに使っているアクセント + hover で薄くする形。
+            下線も残すのは、色だけだと名前の直下の 1 行が「肩書きの類」に
+            見えてリンクだと気づかれないため。 */}
         <a
           href={SITE.handleUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-1 text-sm text-muted-foreground underline underline-offset-4 hover:text-accent"
+          className="mt-1 text-sm text-accent underline underline-offset-4 transition-opacity hover:opacity-70"
         >
           {SITE.handle}
         </a>
-        {/* ラベル列は auto、値列は残り全部。ラベルが伸びても値の頭が揃う。
-            中央に置くのは表全体 (w-fit + mx-auto 相当の items-center) で、
-            中身は text-left のまま。ラベルと値をそれぞれ中央揃えにすると
-            2 行の頭が揃わなくなる。max-w-full は EN の長い所属名ではみ出さず
-            折り返させるため。 */}
-        <dl className="mt-6 grid w-fit max-w-full grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-left text-sm leading-relaxed">
+        {/* 幅で並べ方を変える。モバイルはラベルを値の上に積んで、写真・名前と
+            同じ中心線に乗せる ── 狭い幅で 2 カラムにすると、ラベル列に取られた
+            分だけ値が折り返し、中心線も列の境目の分ずれる。md 以上はラベル列
+            (auto) + 値列 (残り) に戻す。ラベルが伸びても値の頭が揃い、中央には
+            表全体を置く (md:w-fit + 親の items-center) 形。
+
+            md で切るのは、ヘッダーとナビが入れ替わる境目に揃えるため。
+            ここだけ sm で切ると、1 カラムのページに 2 カラムの表が出る幅ができる。
+
+            折り返しを幅任せにしないので、値の改行はどちらの並びでもそのまま出す
+            (whitespace-pre-line)。切れる位置はデータ側が決める。 */}
+        <dl className="mt-6 grid gap-y-4 text-sm leading-relaxed md:w-fit md:max-w-full md:grid-cols-[auto_1fr] md:gap-x-4 md:gap-y-2 md:text-left">
           {ABOUT.facts.map((fact) => (
-            <Fragment key={fact.label.en}>
-              <dt className="whitespace-nowrap text-muted-foreground">
+            // md では contents にして、dt/dd を dl のグリッドに直接並べる。
+            <div key={fact.label.en} className="md:contents">
+              <dt className="text-muted-foreground md:whitespace-nowrap">
                 {t(fact.label)}
               </dt>
-              {/* 値に入れた改行をそのまま出す。EN の所属名は自動折り返しに
-                  任せると切れる位置が幅次第で変わるため。 */}
-              <dd className="whitespace-pre-line">{t(fact.value)}</dd>
-            </Fragment>
+              <dd className="mt-1 whitespace-pre-line md:mt-0">
+                {t(fact.value)}
+              </dd>
+            </div>
           ))}
         </dl>
       </div>
