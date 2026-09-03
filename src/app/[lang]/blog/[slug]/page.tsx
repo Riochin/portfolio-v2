@@ -1,9 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Pencil } from "lucide-react";
+import {
+  DetailPager,
+  PAGER_BACK_LINK,
+} from "@/components/layout/DetailPager";
 import { PageShell } from "@/components/layout/PageShell";
 import { ArticleBody } from "@/components/blog/ArticleBody";
-import { getArticleBySlug, getArticleSlugs } from "@/lib/articles";
+import {
+  getArticleBySlug,
+  getArticleNeighbors,
+  getArticleSlugs,
+} from "@/lib/articles";
 import { formatYearMonthDay } from "@/lib/date";
 import { DICT } from "@/lib/i18n/dictionary";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
@@ -59,6 +67,16 @@ export default async function ArticlePage({
 
   const { locale, t } = await getT();
 
+  // 記事は 1 本しか無いうちは前後が両方 undefined になり、ページャは中央の
+  // 「ほかの記事も見る」だけになる。タイトルに t() を通さないのは、
+  // 記事だけ日本語単言語だから (lib/articles/types.ts)。
+  const { prev, next } = getArticleNeighbors(slug);
+  const toPagerLink = (neighbor: typeof prev) =>
+    neighbor && {
+      href: localePath(locale, `/blog/${neighbor.slug}`),
+      label: neighbor.title,
+    };
+
   return (
     <PageShell>
       <article>
@@ -99,6 +117,17 @@ export default async function ArticlePage({
 
         <ArticleBody markdown={article.markdown} />
       </article>
+
+      <DetailPager
+        prev={toPagerLink(prev)}
+        next={toPagerLink(next)}
+        ariaLabel={t(DICT.aria.pager)}
+        back={
+          <Link href={localePath(locale, "/output")} className={PAGER_BACK_LINK}>
+            {t(DICT.blog.otherArticles)}
+          </Link>
+        }
+      />
     </PageShell>
   );
 }

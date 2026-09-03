@@ -2,6 +2,10 @@ import { ViewTransition } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import {
+  DetailPager,
+  PAGER_BACK_LINK,
+} from "@/components/layout/DetailPager";
 import { PageShell } from "@/components/layout/PageShell";
 import { BackToWorksLink } from "@/components/works/BackToWorksLink";
 import { workImageTransitionName } from "@/components/works/workImageTransition";
@@ -9,6 +13,7 @@ import {
   getExperienceBySlug,
   getSkills,
   getWorkBySlug,
+  getWorkNeighbors,
   getWorkSlugs,
 } from "@/data";
 import type { WorkLinks } from "@/data/types";
@@ -55,6 +60,15 @@ export default async function WorkDetailPage({
   const related = work.relatedExperience
     ? getExperienceBySlug(work.relatedExperience)
     : undefined;
+
+  // 一覧が詰まる場所と同じ選び方で短縮形を優先する (受賞一覧と揃えた)。
+  // ページャの枠は狭く、長いタイトルは truncate で切れてしまうため。
+  const { prev, next } = getWorkNeighbors(slug);
+  const toPagerLink = (neighbor: typeof prev) =>
+    neighbor && {
+      href: localePath(locale, `/works/${neighbor.slug}`),
+      label: t(neighbor.shortTitle ?? neighbor.title),
+    };
 
   return (
     <PageShell>
@@ -178,6 +192,20 @@ export default async function WorkDetailPage({
           </section>
         )}
       </article>
+
+      <DetailPager
+        prev={toPagerLink(prev)}
+        next={toPagerLink(next)}
+        ariaLabel={t(DICT.aria.pager)}
+        back={
+          <BackToWorksLink
+            href={localePath(locale, "/works")}
+            className={PAGER_BACK_LINK}
+          >
+            {t(DICT.works.otherWorks)}
+          </BackToWorksLink>
+        }
+      />
     </PageShell>
   );
 }
