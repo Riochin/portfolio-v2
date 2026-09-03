@@ -283,71 +283,6 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   }
 }
 
-/* --- プロフィール写真の拡大 ---
-   framer-motion ではなく CSS で行う。理由はテーマ切替ボタンと同じで、
-   rAF が止まる裏タブで幕が opacity:0 のまま取り残されると、写真も本文も
-   見えないただの膜が画面に残ってしまうため。
-   幕はフェード、写真はそれに合わせて少しだけ寄る。閉じるときは
-   ProfilePhoto 側がこの長さぶん待ってから外す。 */
-@keyframes photo-lightbox-in {
-  from {
-    opacity: 0;
-  }
-}
-
-@keyframes photo-lightbox-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes photo-lightbox-zoom-in {
-  from {
-    transform: scale(0.85);
-  }
-}
-
-@keyframes photo-lightbox-zoom-out {
-  to {
-    transform: scale(0.85);
-  }
-}
-
-.photo-lightbox-in {
-  animation: photo-lightbox-in 250ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-/* 長さは ProfilePhoto の EXIT_MS と揃える(消えきってから外すため) */
-.photo-lightbox-out {
-  animation: photo-lightbox-out 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  /* 消えかけの幕は押させない */
-  pointer-events: none;
-}
-
-.photo-lightbox-in .photo-lightbox-figure {
-  animation: photo-lightbox-zoom-in 250ms cubic-bezier(0.22, 1, 0.36, 1)
-    backwards;
-}
-
-.photo-lightbox-out .photo-lightbox-figure {
-  animation: photo-lightbox-zoom-out 200ms cubic-bezier(0.22, 1, 0.36, 1)
-    forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .photo-lightbox-in,
-  .photo-lightbox-in .photo-lightbox-figure {
-    animation: none;
-  }
-
-  /* 退場は「消えてから外す」の順序があるので、動きを消すのではなく
-     一瞬で終わらせる。chrome-toggle-out と同じ扱い。 */
-  .photo-lightbox-out,
-  .photo-lightbox-out .photo-lightbox-figure {
-    animation-duration: 1ms;
-  }
-}
-
 /* --- Works グリッドの出現 ---
    framer-motion ではなく CSS で行う。variants を使うと SSR の HTML に
    opacity:0 が焼き込まれ、JS が失敗したとき一覧が永久に見えなくなるため。
@@ -397,10 +332,13 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   }
 }
 
-/* --- Works: 一覧タイル <-> 詳細 hero のモーフ ---
+/* --- 画像のモーフ ---
    ViewTransition の share="morph" が付ける .morph クラスを狙う。
-   戻りは同じペアが逆向きに走るので、進む/戻るで別の指定は要らない
-   (ブラウザの戻るボタンも同じ経路を通る)。 */
+   Works の一覧タイル <-> 詳細 hero と、About のプロフィール写真の拡大が
+   これを共有していて、どこで押しても同じ速さ・同じ曲線で膨らむ。
+   戻りは同じペアが逆向きに走るので、進む/戻る (閉じる) に別の指定は要らない
+   (ブラウザの戻るボタンも同じ経路を通る)。
+   幕やページの出入りは root のクロスフェードがまかなう。 */
 ::view-transition-group(.morph) {
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
