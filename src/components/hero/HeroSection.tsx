@@ -119,13 +119,15 @@ export function HeroSection({
             見回している間だけの一瞬で、据わりの良さを取った。
             sceneConfig の CAMERA か POINTER_LOOK を触ったらここも計算し直す。
 
-            色はテーマによらず白。下は昼も夜も空の写真なので、
-            白い雲に負けないよう暗い影を敷いて拾わせる。
+            色はテーマによらず白。昼は海面に日のギラつきの帯が出て白と
+            白がぶつかるので、輪郭を拾わせる影は残す。ただし下向きの
+            オフセットを持たせると字だけが絵から浮いて「貼り付けた」ように
+            見えるので、中心対称の淡いハロー 1 本だけにする。
             狭い幅ではブロックも小さいので、字を一回り落として左右に逃げを作り、
             それでも入らなければ折り返させる (中央揃えなので 2 行でも崩れない)。
             pointer-events-none にして、文字の上でもブロックを押せるようにする。 */}
         {!isExpanded && (
-          <h1 className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 flex items-center justify-center px-4 text-center text-sm font-medium tracking-[0.2em] text-white [text-shadow:0_1px_3px_rgb(0_0_0/0.55),0_0_14px_rgb(0_0_0/0.45)] md:text-base">
+          <h1 className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 flex items-center justify-center px-4 text-center text-sm font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-base">
             {/* 1 文字ずつ span に割ると読み上げが文字単位になりうるので、
                 支援技術には素の 1 文として渡し、見た目側は隠す。 */}
             <span className="sr-only">{labels.welcome}</span>

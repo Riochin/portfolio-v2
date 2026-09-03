@@ -28,15 +28,22 @@ const vertexShader = /* glsl */ `
   varying vec3 vColor;
 
   void main() {
-    // またたき。暗い星ほど、低い星ほど大きく振れる (aTwinkle に畳んである)
-    float flicker = 1.0 + aTwinkle * sin(time * aRate + aPhase);
+    // またたき。振れ幅は星ごとの事情 (高さ・明るさ・当たり外れ) を
+    // aTwinkle に畳んである。単一の sin だと空のあちこちで同じ拍が
+    // 揃って見えるので、整数比にならない 2 つの和で周期を潰す。
+    // 係数の和が 1 なので、振れ幅は aTwinkle をそのまま上限に取る
+    float wave = 0.62 * sin(time * aRate + aPhase)
+               + 0.38 * sin(time * aRate * 1.618 + aPhase * 2.7);
+    float flicker = 1.0 + aTwinkle * wave;
     vColor = aColor * flicker;
 
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    // 瞬きは粒の大きさにも効かせるが、輝度と同じだけ振ると「点滅する丸」に
+    // なる。主役は明るさの側なので、こちらは平方根で半分に均す。
     // 下限は倍率を掛けたあとに当てる。水面の鏡像は小さなバッファへ焼くので、
     // 先に下限を取ってから縮めると 1px を切って均され、海から星が消える。
     // 暗い星はサイズではなく色の側で暗くしてあるので、下限で潰れはしない
-    gl_PointSize = max(aSize * flicker * heightScale, 1.0);
+    gl_PointSize = max(aSize * sqrt(flicker) * heightScale, 1.0);
     gl_Position = projectionMatrix * mv;
   }
 `;
@@ -60,8 +67,17 @@ const fragmentShader = /* glsl */ `
 
 function useStarGeometry() {
   return useMemo(() => {
-    const { count, size, falloff, dimmest, bandBias, saturation, twinkle } =
-      STARS;
+    const {
+      count,
+      size,
+      falloff,
+      dimmest,
+      bandBias,
+      saturation,
+      twinkle,
+      twinkleShare,
+      twinkleCalm,
+    } = STARS;
 
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
@@ -122,10 +138,16 @@ function useStarGeometry() {
 
       phases[i] = Math.random() * Math.PI * 2;
       rates[i] = STARS.twinkleSpeed * (0.6 + Math.random() * 0.9);
-      // 低いところほど大気の層を長く通るので瞬きが強い。
-      // 明るい星は視直径のぶん平均されて瞬きにくい
+      // 低いところほど大気の層を長く通るので瞬きが強い。ここは素直に効かせる。
+      // 明るさの側は逆で、視直径のぶん均されるのは面積を持つ惑星の話。
+      // 恒星はどれだけ明るくても点光源なので、実際いちばん派手に瞬くのは
+      // 一番明るいシリウス。暗い星をわずかに強くする程度に留める
       const low = 1 - THREE.MathUtils.smoothstep(dir.y, 0.05, 0.55);
-      twinkles[i] = twinkle * (0.3 + 0.7 * (1 - lum)) * (0.35 + 0.65 * low);
+      // 全部を振ると空が砂嵐になる。強く瞬くのは一部だけにして、
+      // 残りは同じ式のまま振れ幅を落とす
+      const share = Math.random() < twinkleShare ? 1 : twinkleCalm;
+      twinkles[i] =
+        twinkle * (0.6 + 0.4 * (1 - lum)) * (0.35 + 0.65 * low) * share;
     }
 
     const geometry = new THREE.BufferGeometry();
