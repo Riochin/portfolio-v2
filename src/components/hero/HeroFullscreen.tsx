@@ -8,6 +8,7 @@ import {
 } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
+import { useHeroFraming } from "./framing";
 import { HeroBackground } from "./HeroBackground";
 import { HeroSceneClient } from "./HeroSceneClient";
 import { useMorphSettled } from "./morph";
@@ -31,6 +32,9 @@ export function HeroFullscreen({
   closeLabel: string;
 }) {
   const [canvasReady, setCanvasReady] = useState(false);
+  // ブロックと同じ基準の向きで開く。ここだけ正面に戻すと、モーフの下敷きに
+  // 敷いたブロックの 1 枚と、その上に出てくる Canvas とで絵が横へずれる。
+  const framing = useHeroFraming();
   const handleReady = useCallback(() => setCanvasReady(true), []);
   // モーフ中に作ると、変形後の小さい bounding rect のまま固定されてしまう。
   // 収まってからマウントして、正しい全画面サイズで初期化させる。
@@ -91,7 +95,11 @@ export function HeroFullscreen({
           transition={{ duration: 0.8 }}
         >
           {/* ブロック側で先に読み込んであれば、チャンクは取得済み */}
-          <HeroSceneClient mode={mode} onReady={handleReady} />
+          <HeroSceneClient
+            mode={mode}
+            yaw={framing.yaw}
+            onReady={handleReady}
+          />
         </motion.div>
       )}
       <motion.button

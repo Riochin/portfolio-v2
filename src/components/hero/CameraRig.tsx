@@ -20,9 +20,10 @@ const rubber = (value: number) => {
 
 // ポインタの位置に追従してカメラの向きだけを動かす。
 // 位置は動かさないので、空を見回しているような視差だけが得られる。
-export function CameraRig() {
+// yaw は画枠ごとの基準の向き (HERO_FRAMING)。振れ幅はそこを中心に取る。
+export function CameraRig({ yaw = 0 }: { yaw?: number }) {
   // 実際に適用中の角度。ポインタ目標値へ毎フレーム減衰させて追いつかせる
-  const current = useRef({ yaw: 0, pitch: CAMERA.rotation[0] });
+  const current = useRef({ yaw, pitch: CAMERA.rotation[0] });
   // 指でなぞって溜めた向き。マウスの pointer と同じ -1..1 の意味に揃えてある
   // (押し込んでいる間だけ ±LIMIT まで溢れる)。
   // used は一度でも指で触ったか——触った後にマウス扱いの絶対座標へ戻ると、
@@ -102,7 +103,7 @@ export function CameraRig() {
     const x = touched ? rubber(touch.current.x) : state.pointer.x;
     const y = touched ? rubber(touch.current.y) : state.pointer.y;
 
-    const targetYaw = -x * POINTER_LOOK.yaw;
+    const targetYaw = yaw - x * POINTER_LOOK.yaw;
     const targetPitch = CAMERA.rotation[0] + y * POINTER_LOOK.pitch;
 
     // 指は一気に置いていくので、マウスの慣性のままだと遅れが鈍さになる

@@ -9,6 +9,43 @@ export const CAMERA = {
   far: 40000,
 } as const;
 
+// ヒーローの画枠。three の fov は垂直基準なので、比を変えても縦の見え方は
+// 一切動かず、横だけが切られる (= 横方向にズームインする)。fov 55 での
+// 水平半画角は atan(ratio * tan(27.5°))。
+//
+//   16:9  ±42.8°
+//   4:3   ±34.8°
+//   1:1   ±27.5°
+//
+// 主役は CLOUD_LAYER の先頭の入道雲。カメラ (z=12) から見て峰が方位 +29.6°、
+// 右の裾は近い側で +37.8° にある。16:9 はその裾がぎりぎり収まる画角で、
+// 比だけ 4:3 に詰めると裾が切れ、峰も右端に貼り付く。yaw を右へ振って戻す。
+//
+// fov は上げない。上げれば横は戻るが、垂直基準なので縦まで一緒に広がって
+// 主役が小さくなり、水平線 tan(pitch)/(2*tan(fov/2)) も 55.3% から動く
+// (55→62 で 54.6%)。yaw なら主役の大きさも水平線の位置もそのままで、
+// 画角の中の居場所だけが変わる。HeroSection の挨拶文の位置もそのまま生きる。
+export const HERO_FRAMING = {
+  /** 既定。md 以上と、縦に余裕の無い画面 (globals.css の upright を参照) */
+  wide: { ratio: [16, 9], yaw: 0, poster: "" },
+  /** 狭い縦長の画面。yaw -0.12 (6.9°) で峰が NDC 0.60、右の裾が 0.86 に入る */
+  narrow: { ratio: [4, 3], yaw: -0.12, poster: "-narrow" },
+} as const satisfies Record<string, HeroFraming>;
+
+export type HeroFramingName = keyof typeof HERO_FRAMING;
+
+export type HeroFraming = {
+  /** 画枠の比。CSS の aspect と Canvas の実寸の両方がここから決まる */
+  ratio: readonly [number, number];
+  /** カメラの基準 yaw (rad)。負で右を向く */
+  yaw: number;
+  /** /public/hero-{mode}{poster}.webp の接尾辞 */
+  poster: string;
+};
+
+/** ヒーローを narrow で組む画面。globals.css の @custom-variant upright と対 */
+export const UPRIGHT_QUERY = "(width < 48rem) and (height >= 31rem)";
+
 /** 空の球の半径。水面の反射が届く範囲を覆う大きさが要る */
 export const SKY_RADIUS = 12000;
 
@@ -293,6 +330,8 @@ export const CLOUD_LAYER: readonly CloudMass[] = [
   // 視界の外まで続ける袖。fov 55 度に POINTER_LOOK.yaw ぶんを足すと、
   // 視線を振り切ったとき z=-300 の面で x=±800 あたりまで見える。そこまで
   // 雲を置かないと、振った先で band がぷつりと切れる。
+  // narrow の画枠は水平半画角が狭く (±34.8°)、yaw を右へ 0.12 振っても
+  // 届くのは +750 / -430 まで。ここより外へは出ないので足す必要はない。
   // 端は基本ほとんど見えないので、粒は中央より減らして負荷を抑える。
   cumulus(211, [-360, 42, -300], [26, 20, 16], {
     segments: 101,

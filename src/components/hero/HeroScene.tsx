@@ -103,12 +103,30 @@ function NightScene({
 // three の DefaultLoadingManager を見ているので Canvas の外でも読める。
 // 実際に外へ置いているのは、Canvas の中だと Ocean のテクスチャ待ちで
 // Suspense に巻き込まれ、肝心の読み込み中に値が流れなくなるため。
-function AssetProgress({ onProgress }: { onProgress: (value: number) => void }) {
+function AssetProgress({
+  onProgress,
+}: {
+  onProgress: (value: number) => void;
+}) {
   const { progress } = useProgress();
 
   useEffect(() => {
     onProgress(progress / 100);
   }, [progress, onProgress]);
+
+  return null;
+}
+
+// 画枠ごとの基準の向き。Canvas の camera prop は作られるときにしか読まれない
+// ので、比が切り替わったとき (端末を回した、窓の幅をまたいだ) のために、
+// ここで持ち直す。interactive のときは CameraRig が同じことをするので出さない。
+function CameraFraming({ yaw }: { yaw: number }) {
+  useFrame(({ camera }) => {
+    if (camera.rotation.y === yaw) return;
+    // 見上げ角(X)を保ったまま左右(Y)を回すため YXZ 順に固定する
+    camera.rotation.order = "YXZ";
+    camera.rotation.set(CAMERA.rotation[0], yaw, 0);
+  });
 
   return null;
 }
@@ -146,6 +164,7 @@ export default function HeroScene({
   mode,
   animated = true,
   interactive = true,
+  yaw = 0,
   quality = QUALITY.full,
   cadence = SHOOTING_STAR_CADENCE.full,
   paused = false,
@@ -159,6 +178,8 @@ export default function HeroScene({
   animated?: boolean;
   /** ポインタで視点を振れるようにするか。ヒーローブロックでは切る */
   interactive?: boolean;
+  /** 画枠ごとの基準の向き(rad)。HERO_FRAMING の yaw をそのまま渡す */
+  yaw?: number;
   quality?: Quality;
   /** 流れ星の出現の間隔。ブロック常設は目の端で光り続けないよう長く取る */
   cadence?: ShootingStarCadence;
@@ -191,7 +212,7 @@ export default function HeroScene({
         frameloop={paused ? "never" : "always"}
         camera={{
           position: [...CAMERA.position],
-          rotation: [...CAMERA.rotation],
+          rotation: [CAMERA.rotation[0], yaw, 0],
           fov: CAMERA.fov,
           near: CAMERA.near,
           far: CAMERA.far,
@@ -229,7 +250,7 @@ export default function HeroScene({
         // 全画面では変数が解決できず、border-radius は初期値(0)に戻る
         className={`h-full w-full rounded-[var(--hero-radius)]${interactive ? " touch-none" : " pointer-events-none"}`}
       >
-        {interactive && <CameraRig />}
+        {interactive ? <CameraRig yaw={yaw} /> : <CameraFraming yaw={yaw} />}
         <Suspense fallback={null}>
           {mode === "dark" ? (
             <NightScene
