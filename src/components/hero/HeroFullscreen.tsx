@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
@@ -11,10 +12,13 @@ import { X } from "lucide-react";
 import { useHeroFraming } from "./framing";
 import { HeroBackground } from "./HeroBackground";
 import { HeroSceneClient } from "./HeroSceneClient";
+import { useIdleVisible } from "./idle";
 import { useMorphSettled } from "./morph";
 
 // 押したまま動いた距離がこれを越えたら、閉じる合図ではなく見回しとみなす (px)
 const TAP_SLOP = 10;
+// これだけ操作が途切れたら、閉じるボタンを引っ込めて空だけにする (ms)
+const IDLE_DELAY = 3000;
 
 export function HeroFullscreen({
   mode,
@@ -44,17 +48,48 @@ export function HeroFullscreen({
   const origin = useRef<{ x: number; y: number } | null>(null);
   const dragged = useRef(false);
 
-  const handlePointerDown = useCallback((event: ReactPointerEvent) => {
-    origin.current = { x: event.clientX, y: event.clientY };
-    dragged.current = false;
-  }, []);
+  // 閉じるボタンは操作が途切れたら引っ込む。狙って近づいた先が消えないよう、
+  // ポインタが乗っている間とフォーカスが当たっている間は出したままにする
+  // (opacity 0 のまま focus が回ると、押せるものの居場所が分からなくなる)。
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [closeVisible, notifyActivity] = useIdleVisible(
+    IDLE_DELAY,
+    hovered || focused,
+  );
 
-  const handlePointerMove = useCallback((event: ReactPointerEvent) => {
-    const start = origin.current;
-    if (!start || dragged.current) return;
-    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > TAP_SLOP)
-      dragged.current = true;
-  }, []);
+  const handlePointerDown = useCallback(
+    (event: ReactPointerEvent) => {
+      origin.current = { x: event.clientX, y: event.clientY };
+      dragged.current = false;
+      notifyActivity();
+    },
+    [notifyActivity],
+  );
+
+  const handlePointerMove = useCallback(
+    (event: ReactPointerEvent) => {
+      notifyActivity();
+      const start = origin.current;
+      if (!start || dragged.current) return;
+      if (
+        Math.hypot(event.clientX - start.x, event.clientY - start.y) > TAP_SLOP
+      )
+        dragged.current = true;
+    },
+    [notifyActivity],
+  );
+
+  // ポインタを動かさない操作の受け口。ルートの pointer 系だけだと、
+  // ホイールを回しているだけ・キーだけ触っているときに消えてしまう。
+  useEffect(() => {
+    window.addEventListener("keydown", notifyActivity);
+    window.addEventListener("wheel", notifyActivity, { passive: true });
+    return () => {
+      window.removeEventListener("keydown", notifyActivity);
+      window.removeEventListener("wheel", notifyActivity);
+    };
+  }, [notifyActivity]);
 
   const handleClick = useCallback(() => {
     if (dragged.current) return;
@@ -102,18 +137,35 @@ export function HeroFullscreen({
           />
         </motion.div>
       )}
-      <motion.button
-        type="button"
-        onClick={onClose}
-        aria-label={closeLabel}
+      {/* 入場の間合いは外側が持つ。内側にも delay を持たせると、引っ込んだ
+          あと呼び戻すたびに 0.4 秒待つことになって手応えが鈍る。 */}
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ delay: 0.4 }}
-        className="absolute right-6 top-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-colors hover:bg-black/40"
+        className="absolute right-6 top-6 z-20"
       >
-        <X size={22} />
-      </motion.button>
+        <motion.button
+          type="button"
+          onClick={onClose}
+          aria-label={closeLabel}
+          onPointerEnter={() => setHovered(true)}
+          onPointerLeave={() => setHovered(false)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          animate={{ opacity: closeVisible ? 1 : 0 }}
+          // 呼べばすぐ出て、引くときはゆっくり。消えるのに気を取られない
+          transition={{ duration: closeVisible ? 0.2 : 0.6 }}
+          // 見えていない間に hover を拾わせない。この位置を押したぶんは
+          // 親へ抜けて、どこを押しても閉じるのと同じ扱いになる。
+          className={`flex h-12 w-12 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-colors hover:bg-black/40 ${
+            closeVisible ? "" : "pointer-events-none"
+          }`}
+        >
+          <X size={22} />
+        </motion.button>
+      </motion.div>
     </motion.div>
   );
 }
