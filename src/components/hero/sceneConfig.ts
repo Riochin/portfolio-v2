@@ -817,9 +817,9 @@ export type ShootingStarCadence = {
 
 export const SHOOTING_STAR_CADENCE = {
   /** 全画面表示 */
-  full: { interval: [6, 20] },
+  full: { interval: [14, 34] },
   /** ブロック常設 */
-  block: { interval: [25, 60] },
+  block: { interval: [50, 110] },
 } as const satisfies Record<string, ShootingStarCadence>;
 
 // 漁火。水平線のすぐ上に灯る船団で、昼の SHIP と対になる。星と同じ加算の
