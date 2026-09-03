@@ -7,10 +7,14 @@ import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
 import { Birds } from "./Birds";
 import { CloudMassCloud } from "./CloudMass";
+import { Contrail } from "./Contrail";
+import { FishingLights } from "./FishingLights";
 import { GradientSky } from "./GradientSky";
 import { MilkyWay } from "./MilkyWay";
+import { NavLights } from "./NavLights";
 import { Ocean } from "./Ocean";
 import { ShootingStar } from "./ShootingStar";
+import { Ship } from "./Ship";
 import { StarField } from "./StarField";
 import {
   CAMERA,
@@ -60,6 +64,8 @@ function DayScene({
       />
       <CloudLayer animated={animated} />
       <Birds animated={animated} />
+      <Contrail animated={animated} />
+      <Ship animated={animated} />
       <Ocean
         palette={DAY_OCEAN}
         animated={animated}
@@ -90,6 +96,8 @@ function NightScene({
       <MilkyWay />
       <StarField animated={animated} />
       <ShootingStar animated={animated} cadence={cadence} />
+      <NavLights animated={animated} />
+      <FishingLights animated={animated} />
       <Ocean
         palette={NIGHT_OCEAN}
         animated={animated}
