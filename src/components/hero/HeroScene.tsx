@@ -23,7 +23,9 @@ import {
   QUALITY,
   NIGHT_SKY,
   NIGHT_BG,
+  SHOOTING_STAR_CADENCE,
   type Quality,
+  type ShootingStarCadence,
 } from "./sceneConfig";
 
 function CloudLayer({ animated }: { animated: boolean }) {
@@ -70,9 +72,11 @@ function DayScene({
 function NightScene({
   animated,
   quality,
+  cadence,
 }: {
   animated: boolean;
   quality: Quality;
+  cadence: ShootingStarCadence;
 }) {
   return (
     <>
@@ -85,7 +89,7 @@ function NightScene({
       />
       <MilkyWay />
       <StarField animated={animated} />
-      <ShootingStar animated={animated} />
+      <ShootingStar animated={animated} cadence={cadence} />
       <Ocean
         palette={NIGHT_OCEAN}
         animated={animated}
@@ -143,6 +147,7 @@ export default function HeroScene({
   animated = true,
   interactive = true,
   quality = QUALITY.full,
+  cadence = SHOOTING_STAR_CADENCE.full,
   paused = false,
   onAssetProgress,
   onAssetsReady,
@@ -155,6 +160,8 @@ export default function HeroScene({
   /** ポインタで視点を振れるようにするか。ヒーローブロックでは切る */
   interactive?: boolean;
   quality?: Quality;
+  /** 流れ星の出現の間隔。ブロック常設は目の端で光り続けないよう長く取る */
+  cadence?: ShootingStarCadence;
   /** 描画を止める。画面外やタブ非表示のとき用。
       ただし onReady は useFrame で拾うので、初回フレームより前に止めてはいけない */
   paused?: boolean;
@@ -225,7 +232,11 @@ export default function HeroScene({
         {interactive && <CameraRig />}
         <Suspense fallback={null}>
           {mode === "dark" ? (
-            <NightScene animated={animated} quality={quality} />
+            <NightScene
+              animated={animated}
+              quality={quality}
+              cadence={cadence}
+            />
           ) : (
             <DayScene animated={animated} quality={quality} />
           )}

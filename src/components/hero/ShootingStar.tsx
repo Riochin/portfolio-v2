@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { SHOOTING_STAR, STAR_RADIUS } from "./sceneConfig";
+import {
+  SHOOTING_STAR,
+  STAR_RADIUS,
+  type ShootingStarCadence,
+} from "./sceneConfig";
 
 // 星より少しだけ内側に置く。奥行きの前後は renderOrder で決めているので
 // 見た目には効かないが、星と同じ球の上に乗っているほうが考えやすい
@@ -46,32 +50,44 @@ type Flight = {
   tangent: THREE.Vector3;
   /** 横切る角度 */
   length: number;
+  /** この 1 本の明るさ。並と大物で大きく変わる */
+  intensity: number;
 };
 
 const UP = new THREE.Vector3(0, 1, 0);
 
-function interval() {
-  const { minInterval, maxInterval } = SHOOTING_STAR;
-  return minInterval + Math.random() * (maxInterval - minInterval);
+/** [下限, 上限] のあいだから 1 つ引く */
+function pick([min, max]: readonly [number, number]) {
+  return min + Math.random() * (max - min);
 }
 
-/** 出発点と進行方向を引き直す */
+function interval(cadence: ShootingStarCadence) {
+  // 間隔は用途ごとに決まるが、続けざまに 2 本出ないよう下限で押さえる
+  return Math.max(SHOOTING_STAR.minInterval, pick(cadence.interval));
+}
+
+/** 出発点と進行方向、それにこの 1 本の顔つきを引き直す */
 function spawn(flight: Flight) {
   const {
-    minElevation,
-    maxElevation,
-    minAzimuth,
-    maxAzimuth,
-    minTilt,
-    maxTilt,
-    minLength,
-    maxLength,
+    azimuth: azimuthRange,
+    elevationAtLeft,
+    elevationAtRight,
+    tilt,
+    rareChance,
+    rare,
+    common,
   } = SHOOTING_STAR;
 
   // カメラは -z を向いている。azimuth は正が画面の右
-  const azimuth = minAzimuth + Math.random() * (maxAzimuth - minAzimuth);
-  const elevation =
-    minElevation + Math.random() * (maxElevation - minElevation);
+  const azimuth = pick(azimuthRange);
+  // 天の川は右上がりに空を横切る。出発点の高さも方位に合わせて上げていけば、
+  // 左右へばらしても帯のあたりから離れない
+  const across =
+    (azimuth - azimuthRange[0]) / (azimuthRange[1] - azimuthRange[0]);
+  const elevation = pick([
+    THREE.MathUtils.lerp(elevationAtLeft[0], elevationAtRight[0], across),
+    THREE.MathUtils.lerp(elevationAtLeft[1], elevationAtRight[1], across),
+  ]);
   const horizontal = Math.cos(elevation);
   flight.start.set(
     horizontal * Math.sin(azimuth),
@@ -83,28 +99,40 @@ function spawn(flight: Flight) {
   // start × UP が画面の右で、UP × start だと左になるので向きに注意
   const east = new THREE.Vector3().crossVectors(flight.start, UP).normalize();
   const north = new THREE.Vector3().crossVectors(east, flight.start);
-  // 真下(-north)を 0 として、右(+east)へ tilt だけ傾けて落とす。
-  // 幅を持たせてあるので、毎回わずかに違う角度で落ちる
-  const tilt = minTilt + Math.random() * (maxTilt - minTilt);
+  // 真下(-north)を 0 として、出てきた側へ傾けて落とす。右から出れば右下、
+  // 左から出れば左下。幅を持たせてあるので、毎回わずかに違う角度で落ちる
+  const lean = pick(tilt) * (azimuth < 0 ? -1 : 1);
   flight.tangent
     .copy(north)
-    .multiplyScalar(-Math.cos(tilt))
-    .addScaledVector(east, Math.sin(tilt))
+    .multiplyScalar(-Math.cos(lean))
+    .addScaledVector(east, Math.sin(lean))
     .normalize();
 
-  flight.length = minLength + Math.random() * (maxLength - minLength);
+  // 並と大物。毎回同じ明るさ・同じ長さで出るのが一番の既視感なので、
+  // ここは組で引く。長さだけ伸ばしても、細い光が長く伸びるだけになる
+  const grade = Math.random() < rareChance ? rare : common;
+  flight.length = pick(grade.length);
+  flight.intensity = pick(grade.intensity);
   flight.elapsed = 0;
   flight.active = true;
 }
 
-export function ShootingStar({ animated }: { animated: boolean }) {
+/** 板 1 枚ぶん。飛んでいない間は自分の間隔を数えて次の 1 本を待つ */
+function Streak({
+  animated,
+  cadence,
+}: {
+  animated: boolean;
+  cadence: ShootingStarCadence;
+}) {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
 
   const uniforms = useMemo(
     () => ({
       color: { value: new THREE.Color(SHOOTING_STAR.color) },
-      intensity: { value: SHOOTING_STAR.intensity },
+      // 1 本ごとに引き直すので、ここは飛び始めるまでの置き
+      intensity: { value: 1 },
       fade: { value: 0 },
     }),
     [],
@@ -112,11 +140,12 @@ export function ShootingStar({ animated }: { animated: boolean }) {
 
   const flight = useRef<Flight>({
     active: false,
-    wait: interval(),
+    wait: interval(cadence),
     elapsed: 0,
     start: new THREE.Vector3(),
     tangent: new THREE.Vector3(),
     length: 0,
+    intensity: 1,
   });
 
   // 毎フレーム 4 頂点を世界座標で書き直す。回転を組むより、頭と尾の位置から
@@ -153,13 +182,14 @@ export function ShootingStar({ animated }: { animated: boolean }) {
         return;
       }
       spawn(f);
+      material.uniforms.intensity.value = f.intensity;
     }
 
     f.elapsed += delta;
     const t = f.elapsed / SHOOTING_STAR.duration;
     if (t >= 1) {
       f.active = false;
-      f.wait = interval();
+      f.wait = interval(cadence);
       mesh.visible = false;
       return;
     }
@@ -232,5 +262,27 @@ export function ShootingStar({ animated }: { animated: boolean }) {
         blendDst={THREE.OneFactor}
       />
     </mesh>
+  );
+}
+
+/**
+ * 流れ星。板を SHOOTING_STAR.count 枚ぶん並べ、それぞれが自分の間隔で待つ。
+ * 1 本が飛んでいる間ももう 1 本は数え続けているので、間隔を縮めずに出会う
+ * 回数だけが増える。
+ */
+export function ShootingStar({
+  animated,
+  cadence,
+}: {
+  animated: boolean;
+  /** 1 枚ぶんの出現の間隔。ブロック常設と全画面で変える */
+  cadence: ShootingStarCadence;
+}) {
+  return (
+    <>
+      {Array.from({ length: SHOOTING_STAR.count }, (_, index) => (
+        <Streak key={index} animated={animated} cadence={cadence} />
+      ))}
+    </>
   );
 }

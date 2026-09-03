@@ -9,7 +9,7 @@ import {
 } from "react";
 import { HeroSceneClient, useHeroSceneLoaded } from "./HeroSceneClient";
 import { HeroLoadingProgress, OPEN_DURATION } from "./HeroLoadingProgress";
-import { QUALITY } from "./sceneConfig";
+import { QUALITY, SHOOTING_STAR_CADENCE } from "./sceneConfig";
 
 // 進捗の各段の上限。実測で次の段へ入るまで、数字はここへ漸近する。
 const CEILING = {
@@ -158,6 +158,7 @@ export function HeroLiveCanvas({
           mode={mode}
           interactive={false}
           quality={quality}
+          cadence={SHOOTING_STAR_CADENCE.block}
           paused={ready && !(onScreen && pageVisible)}
           onAssetProgress={handleAssetProgress}
           onAssetsReady={handleAssetsReady}
