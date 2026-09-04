@@ -24,46 +24,72 @@ const CHAR_STAGGER_MS = 40;
  */
 const WORD = /[A-Za-z0-9'’]+|[\s\S]/gu;
 
-/** 1 文字ずつ結像させる。読み上げには素の 1 文を渡し、こちらは隠す */
+/**
+ * 1 文字ずつ結像させる。読み上げには素の 1 文を渡し、こちらは隠す。
+ *
+ * セリフの中の改行 (lines.ts の Line を参照) は `<br>` ではなく、行ごとの
+ * ブロックで送る。`<br>` で送ると、親 (p) に掛けた text-balance が丸ごと
+ * 効かなくなる ── ブラウザの均し込みは強制改行を含むブロックを諦めるので、
+ * 指定が書いてあるのに一度も働かない。375px で実測すると、改行のある 8 本の
+ * うち 1 本が 286 / 319 / 67px に割れて、3 行目に「した。」だけが残っていた。
+ * 行を別のブロックにすると各行が独立して均され、同じ文が 286 / 202 / 185px に
+ * なって 8 本すべてから孤児が消える。字は落とさない (落としても孤児は別の
+ * セリフに移るだけで、消えはしない)。
+ *
+ * text-wrap は継承するので、balance は親から降ってくる。ここでは持たない。
+ * 行間も変わらない ── 余白を持たないブロックが縦に並ぶ間隔は、同じ
+ * line-height の `<br>` と同じ。
+ */
 function Chars({ text }: { text: string }) {
   // 遅れは「文の頭から何文字目か」で決まる。語ごとの開始位置を先に
-  // 数えてから組む ── 描く途中で外の数を書き換えない
-  const words: { word: string; at: number }[] = [];
+  // 数えてから組む ── 描く途中で外の数を書き換えない。
+  //
+  // 行に切っても番号は文の頭から通しで数える。行ごとに 0 に戻すと、
+  // 2 行目が 1 行目と同時に光り出して、一続きの声に聞こえなくなる。
+  // 改行そのものにも 1 文字ぶん送らせる (`<br>` を 1 字として数えていた
+  // 頃と同じ間合いを保つため)。
+  const lines: { word: string; at: number }[][] = [];
   let at = 0;
-  for (const word of text.match(WORD) ?? []) {
-    words.push({ word, at });
-    at += [...word].length;
+  for (const line of text.split("\n")) {
+    const words: { word: string; at: number }[] = [];
+    for (const word of line.match(WORD) ?? []) {
+      words.push({ word, at });
+      at += [...word].length;
+    }
+    at += 1;
+    lines.push(words);
   }
 
   return (
-    <span aria-hidden>
-      {words.map(({ word, at: start }, w) =>
-        // セリフの中の改行はそこで送る (lines.ts の Line を参照)
-        word === "\n" ? (
-          <br key={w} />
-        ) : // 空白は素のテキストのまま置く。ここが唯一の折り返しどころに
-        // なり、行末に来たぶんは消えてくれる。拾った文字をそのまま返すのは、
-        // 俳句の句切れに使う全角スペースを半角に潰さないため
-        /\s/.test(word) ? (
-          word
-        ) : (
-          <span key={w} className="whitespace-nowrap">
-            {[...word].map((char, c) => (
-              <span
-                key={c}
-                className="hero-welcome-char"
-                style={
-                  {
-                    "--char-delay": `${(start + c) * CHAR_STAGGER_MS}ms`,
-                  } as CSSProperties
-                }
-              >
-                {char}
+    <span aria-hidden className="block">
+      {lines.map((words, l) => (
+        <span key={l} className="block">
+          {words.map(({ word, at: start }, w) =>
+            // 空白は素のテキストのまま置く。ここが唯一の折り返しどころに
+            // なり、行末に来たぶんは消えてくれる。拾った文字をそのまま返すのは、
+            // 俳句の句切れに使う全角スペースを半角に潰さないため
+            /\s/.test(word) ? (
+              word
+            ) : (
+              <span key={w} className="whitespace-nowrap">
+                {[...word].map((char, c) => (
+                  <span
+                    key={c}
+                    className="hero-welcome-char"
+                    style={
+                      {
+                        "--char-delay": `${(start + c) * CHAR_STAGGER_MS}ms`,
+                      } as CSSProperties
+                    }
+                  >
+                    {char}
+                  </span>
+                ))}
               </span>
-            ))}
-          </span>
-        ),
-      )}
+            ),
+          )}
+        </span>
+      ))}
     </span>
   );
 }
