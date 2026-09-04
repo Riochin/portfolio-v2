@@ -21,9 +21,9 @@ import {
   type ScriptKey,
   STATE,
   WISHES,
-  WISHES_WITHOUT_FOLLOWUP,
   WISH_FOLLOWUP,
   WISH_MISSES,
+  WISH_OPENERS,
   type Line,
 } from "./lines";
 
@@ -79,11 +79,16 @@ const FOLLOWUP_RATE = 0.5;
 /**
  * 冒頭の反応がクールダウンを飛び越えてよい期限。
  *
- * 0:03 の挨拶は読み終わるまで 4.5 秒ほどかかるので、0:08 の鳥 / 流れ星は
- * 本来ならクールダウンに弾かれる。名乗った直後に世界を指させることが
- * 「解説者ではなく隣にいる人」の正体なので、ここだけ通す。
+ * 0:03 の挨拶を読み終えて黙り始めるのが 0:08 あたりなので、0:15 の鳥 /
+ * 流れ星は本来ならクールダウンに弾かれる。名乗った直後に世界を指させる
+ * ことが「解説者ではなく隣にいる人」の正体なので、ここだけ通す。
+ *
+ * 18 秒に置いてあるのは、0〜18 秒に湧きうる出来事が鳥 (15 秒固定) と
+ * 流れ星 (14〜15 秒) しか無いため ── 船 [20, 60]・飛行機雲 [25, 70]・
+ * 夜行便 [30, 80]・漁火 [25, 70] はどれもここまで届かない。1 回きりの
+ * 通行証を、冒頭の 1 本以外に横取りされることがない。
  */
-const OPENING_MS = 12_000;
+const OPENING_MS = 18_000;
 
 /** 夜行便を呼び戻すまで。NAV_LIGHTS.duration が [150, 230] 秒なのでまだ飛んでいる */
 const RECALL_MS = 60_000;
@@ -99,7 +104,7 @@ const QUIET_MAX_MS = 300_000;
 /** 節目 (MILESTONES) にぶつかって言えなかったとき、粘る猶予 */
 const MILESTONE_WINDOW_MS = 30_000;
 
-/** 時間で進むほうを見に行く間隔。0:03 と 0:08 の噛み合わせを崩さない細かさ */
+/** 時間で進むほうを見に行く間隔。0:03 と 0:15 の噛み合わせを崩さない細かさ */
 const TICK_MS = 250;
 
 /**
@@ -295,8 +300,12 @@ export function useNarration(mode: "light" | "dark") {
 
     // ── 反応 ──────────────────────────────────────────────
     const reactions = REACTIONS[mode];
-    const drawWish = bag(WISHES.length);
+    // 袋に入れるのは願い事のほうだけ。先頭の「おっ流れ星！！！」は 1 本目の
+    // 決め打ち専用なので抽選には回さない (lines.ts の WISH_OPENERS)
+    const drawWish = bag(WISHES.length - WISH_OPENERS);
     const drawMiss = bag(WISH_MISSES.length);
+    /** この全画面で、まだ 1 本目の流れ星を言えていない */
+    let firstStar = true;
     let openingUsed = false;
     let nextMilestone = 0;
 
@@ -322,15 +331,27 @@ export function useNarration(mode: "light" | "dark") {
     };
 
     const shootingStar = () => {
+      const now = opening();
+
+      // 1 本目は決め打つ。まず驚いて、願い事はその次から ── この順が崩れると
+      // いきなり願い事から始まる回ができて、何に驚いているのか分からない。
+      // 倒すのは言えたときだけ。黙らせてある間に降った 1 本や、クールダウンに
+      // 弾かれた 1 本では消費しないので、誰でも必ず一度はここを通る
+      if (firstStar) {
+        const said = say(t(WISHES[0]), { now });
+        if (said) {
+          firstStar = false;
+          if (now) openingUsed = true;
+        }
+        return said;
+      }
+
       // 願い事を言えずに終わる回。続きの一言は付けない
       if (Math.random() < WISH_MISS_RATE)
         return react(t(WISH_MISSES[drawMiss()]));
-      const at = drawWish();
-      // 「おっ流れ星！！！」は願い事ではないので、続きの一言は付かない
-      const wished = at >= WISHES_WITHOUT_FOLLOWUP;
-      const then =
-        wished && Math.random() < FOLLOWUP_RATE ? t(WISH_FOLLOWUP) : undefined;
-      const now = opening();
+      // 袋は願い事だけなので、引いた番号を出だしのぶんだけ後ろへずらす
+      const at = drawWish() + WISH_OPENERS;
+      const then = Math.random() < FOLLOWUP_RATE ? t(WISH_FOLLOWUP) : undefined;
       const said = say(t(WISHES[at]), { now, then });
       if (said && now) openingUsed = true;
       return said;
@@ -341,7 +362,7 @@ export function useNarration(mode: "light" | "dark") {
       // 見ていない間に起きたことに反応しても、戻ったときには何も残っていない
       if (hiddenAt) return;
 
-      // 冒頭の 1 回 (0:08) は率を掛けずに必ず言う。名乗った直後に世界を
+      // 冒頭の 1 回 (0:15) は率を掛けずに必ず言う。名乗った直後に世界を
       // 指させることが「解説者ではなく隣にいる人」の正体なので、ここを
       // 3〜4 割の抽選に任せると、昼の来訪者の 3 人に 2 人が取りこぼす
       const first = opening();

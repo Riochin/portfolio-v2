@@ -534,12 +534,12 @@ export const BIRDS = {
   /** 群れと群れの間隔(秒)と、最初の 1 群が出るまで。どちらも「枠に鳥が
       入ってくるまで」の秒数。群れは画角の外で組まれるので、そこから縁まで
       飛ぶ助走のぶんは Birds.tsx が待ちから先に引く。
-      firstGap の 8 は台本の 0:08 (昼=鳥への反応) と噛み合わせた値で、
+      firstGap の 15 は台本の 0:15 (昼=鳥への反応) と噛み合わせた値で、
       夜の SHOOTING_STAR_CADENCE.full.firstGap と対になる。
       gap のほうは前の群れが渡り切ってから数え始めるので、鳥が見えてから
       次に見えるまでは、そのあいだの渡り (16〜25 秒) だけ長くなる */
   gap: [10, 40] as [number, number],
-  firstGap: 8,
+  firstGap: 15,
   /** 飛ぶ高さ。雲の頭(最大 160 あたり)より上を通す */
   altitude: [140, 205] as [number, number],
   /** 奥行き。雲の帯より手前に置く。奥だと雲に紛れて見えない */
@@ -845,11 +845,15 @@ export type ShootingStarCadence = {
 };
 
 export const SHOOTING_STAR_CADENCE = {
-  /** 全画面表示。1 本目だけ 8 秒に決め打つ——昼は BIRDS.firstGap = 8 で
+  /** 全画面表示。1 本目だけ 15 秒に決め打つ——昼は BIRDS.firstGap = 15 で
       必ず鳥が出るのに、夜は interval 任せだと 1 本目が確定せず、冒頭の
       体験が昼夜で揃わない。2 本目からは interval に戻るので、出現率を
-      下げてある方針は後半にそのまま残る (ShootingStar.tsx 参照) */
-  full: { interval: [14, 34], firstGap: 8 },
+      下げてある方針は後半にそのまま残る (ShootingStar.tsx 参照)。
+      2 枚目は interval [14, 34] から引くので、20 回に 1 回ほど 1 本目が
+      14〜15 秒に出る。そこは揃えない——揃えるには 2 枚目にも下限を持たせる
+      ことになり、interval の意味が板ごとに変わる。語り側は「最初に降った
+      1 本」しか見ていないので、どちらが先でもセリフは決め打ちのままになる */
+  full: { interval: [14, 34], firstGap: 15 },
   /** ブロック常設。ページを読んでいる横なので、1 本目も待たせたまま */
   block: { interval: [50, 110] },
 } as const satisfies Record<string, ShootingStarCadence>;
