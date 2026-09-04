@@ -148,7 +148,7 @@ type ExperienceEntry = {
 
 外部のデザイナーからの指摘 (2026-09):「海だけで『で、誰？』になる」「クリックの意図が読めない」「シンプルだが単調」。
 
-問題はコンセプトの不在ではなく**未宣言**。あの空は心象風景 (実在しない、いつか行きたい海) だが、その一行がどこにも書かれていないので綺麗な背景にしか見えない。出現率を下げてある流れ星も、待つ理由が無いので誰も出会わない。
+問題はコンセプトの不在ではなく**未宣言**。あの空は心象風景 (どこにも実在しない海) だが、その一行がどこにも書かれていないので綺麗な背景にしか見えない。出現率を下げてある流れ星も、待つ理由が無いので誰も出会わない。
 
 **世界観が主、プロフィールが従。**トップでは名乗らず、全画面に入った人にだけ人格が現れる ── 遠くの灯りに近づくと人がいる、という漁火と同じ構造を歓迎の設計にする。
 
@@ -156,10 +156,12 @@ type ExperienceEntry = {
 
 | | ja | en |
 |---|---|---|
-| ライト | ようこそ、いつか行きたい海へ。 | Welcome to the sea I hope to see someday. |
-| ダーク | ようこそ、いつか行きたい夜の海へ。 | Welcome to the night sea I hope to see someday. |
+| ライト | ようこそ、どこにもない海へ。 | Welcome to a sea that is nowhere. |
+| ダーク | ようこそ、どこにもない夜の海へ。 | Welcome to a night sea that is nowhere. |
 
 `Welcome to my portfolio` が悪いのは「ようこそ」ではなく行き先。作品集に招かれても嬉しくないが、海に招かれたら嬉しい。
+
+**この一行だけは、日本語ページでも en を出す。**トップの文字は意味を運ぶ前に絵の一部で、仮名と漢字は字面の濃さがまちまちなぶん、水平線の上で「文章」として立ってしまう。ラテン字なら字の高さが揃って白い帯のまま馴染む。日本語で来た人がこの海の出自を母語で読めないのは損だが、全画面に入れば Riochin が日本語で語り直す (0:20 の種明かし) ので、トップは絵に徹してよい。上の表の ja は原文として残すだけで画面には出ない。
 
 全画面への誘いは `近づいてみる` / `Come closer`。About 導線は `About me` のまま据え置く ── 一度は `私のことも、少しだけ` を当てたが、世界の言葉を 1 画面に 2 つ並べると誘いが 2 つあるように読めて、主役の `近づいてみる` が埋もれた。行き先の名前は名前のままでいい。
 
@@ -202,7 +204,7 @@ type ExperienceEntry = {
 | 0:00 | *(黙っている)* | |
 | 0:03 | こんにちは、Riochin です！ | Hi, I'm Riochin! |
 | 0:08 | *(昼=鳥 / 夜=流れ星 への反応)* | |
-| 0:20 | この海は、どこにもありません。いつかこんな景色を見てみたくて、つくりました。 | This sea doesn't exist anywhere. I made it because I want to see something like it someday. |
+| 0:20 | この海には、モチーフがありません。いつかこんな景色を見てみたくて、つくりました。 | This sea isn't based on any real place. I made it because I want to see something like it someday. |
 | 0:33 | 私がうるさかったら、右上のボタンで黙ります！ | If I'm talking too much, the button up there will shut me up! |
 | 1:30 | まだ見ててくれてるんですね！！うれしいです。 | You're still here!! That makes me really happy. |
 | 2:30 | ここ、けっこう静かですよね。 | It's quiet here, isn't it. |

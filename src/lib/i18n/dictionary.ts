@@ -89,19 +89,25 @@ export const DICT = {
      *
      * `Welcome to my portfolio` が悪いのは「ようこそ」ではなく行き先で、
      * 作品集に招かれても嬉しくないが、海に招かれたら嬉しい。あの空は
-     * 「いつか行きたい海」の心象風景だが、その一行がどこにも書かれて
-     * いないと、ただの綺麗な背景にしか見えない。
+     * 実在しない海の心象風景だが、その一行がどこにも書かれていないと、
+     * ただの綺麗な背景にしか見えない。
+     *
+     * **ロケールによらず en を出す。**ここだけは日本語ページでも英語のまま。
+     * 消費側 (page.tsx) が t() を通さず `.en` を直に読むので、下の ja は
+     * 画面には出ない ── 型 (Localized) が両言語を要求するので置いてあり、
+     * 意味の原文としては生きている。英語だけにする理由と、文書の lang と
+     * ずれるぶんの手当ては page.tsx 側のコメントに書いた。
      *
      * 2 本とも描画側 (HeroSection) に渡して CSS で選ばせる。next-themes の
      * 解決はクライアントでしか効かないので、ここで 1 本に絞れない。
      */
     welcomeLight: {
-      ja: "ようこそ、いつか行きたい海へ。",
-      en: "Welcome to the sea I hope to see someday.",
+      ja: "ようこそ、どこにもない海へ。",
+      en: "Welcome to a sea that is nowhere.",
     },
     welcomeDark: {
-      ja: "ようこそ、いつか行きたい夜の海へ。",
-      en: "Welcome to the night sea I hope to see someday.",
+      ja: "ようこそ、どこにもない夜の海へ。",
+      en: "Welcome to a night sea that is nowhere.",
     },
     /** 全画面への誘い。UI の言葉 (「全画面表示」) は使わず、所作で言う。 */
     closer: { ja: "近づいてみる", en: "Come closer" },

@@ -24,8 +24,18 @@ export default async function Home() {
       <HeroSection
         aboutHref={localePath(locale, "/about")}
         labels={{
-          welcomeLight: t(DICT.hero.welcomeLight),
-          welcomeDark: t(DICT.hero.welcomeDark),
+          // 挨拶文だけは日本語ロケールでも en を出すので、t() を通さない。
+          // ここは意味を運ぶ前に絵の一部で、仮名と漢字は字面の濃さがまちまちな
+          // ぶん水平線の上で「文章」として立ってしまうが、ラテン字なら字の高さが
+          // 揃って白い帯のまま馴染む。日本語で来た人がこの海の出自を母語で
+          // 読めないのは損だが、全画面に入れば Riochin が日本語で語り直す
+          // (narration の reveal) ので、トップは絵に徹してよい。
+          //
+          // t() を外したぶん、文書の lang (ja) と中身がずれる。日本語の音で
+          // 英文を読み上げられないよう、HeroSection の h1 に lang="en" を
+          // 立ててある ── ここを t() に戻すときは、あちらも対で外すこと。
+          welcomeLight: DICT.hero.welcomeLight.en,
+          welcomeDark: DICT.hero.welcomeDark.en,
           closer: t(DICT.hero.closer),
           about: t(DICT.nav.about),
           expand: t(DICT.aria.expandHero),

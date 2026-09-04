@@ -244,20 +244,26 @@ export function HeroSection({
             狭い幅ではブロックも小さいので、字を一回り落として左右に逃げを作り、
             それでも入らなければ折り返させる (中央揃えなので 2 行でも崩れない)。
 
-            日本語は 17 字ぶんが 1 行に載るかどうかの瀬戸際にある。字 (1em) と
-            字間 (0.2em) で 1 字 1.2em なので、text-xs (このサイトでは 13px) なら
-            17 字で 265px ── 使える幅は 画面幅 - 80px (ページの px-6 と h1 の
-            px-4) だから、345px から上は 1 行で持つ。ここを text-sm (16px) に
-            上げると必要な幅が 326px になり、375px の画面で「へ。」だけが 2 行目に
-            残る。英語は 46 字あってどのみち折り返すが、単語のまとまりで折れる
-            (WORD の説明を参照)。
+            ここに来る文はロケールによらず英語 (page.tsx の labels を参照)。
+            30 字を超えて狭い画面では折り返すが、単語のまとまりで折れるので
+            読める (WORD の説明を参照)。日本語を出していた頃は 17 字ぶんが
+            1 行に載るかどうかの瀬戸際で、字 (1em) と字間 (0.2em) の 1 字 1.2em
+            から text-xs (このサイトでは 13px) で 265px、使える幅 (画面幅 -
+            ページの px-6 と h1 の px-4 で 80px) から 345px 以上なら 1 行、と
+            見積もっていた ── ja に戻すならこの計算に戻ること。
             pointer-events-none にして、文字の上でもブロックを押せるようにする。
+
+            lang は文書 (ja) とずれるので h1 で立て直す。読み上げに日本語の音で
+            英文を読ませないため。t() に戻すときは対で外すこと。
 
             明暗の 2 本を同じ 1 マスに重ね、grid で両方を中央に置く。flex だと
             2 本が横に並ぶので、ここだけ grid にしてある。見せる側を選ぶのは
             CSS で、どちらが出ても行の位置は動かない (Welcome の説明も参照)。 */}
         {!isExpanded && (
-          <h1 className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 grid place-items-center px-4 text-center text-xs font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-sm">
+          <h1
+            lang="en"
+            className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 grid place-items-center px-4 text-center text-xs font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-sm"
+          >
             <Welcome
               text={labels.welcomeLight}
               shown={shown}
