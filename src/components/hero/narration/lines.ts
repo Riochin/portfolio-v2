@@ -150,11 +150,15 @@ export const WISHES = [
   { ja: "おっ流れ星！！！", en: "Ooh, a shooting star!!!" },
   { ja: "めっっちゃ楽しく過ごせますように！", en: "I hope every day is super fun!" },
   { ja: "健康に暮らせますように！", en: "I hope everyone stays healthy!" },
+  {
+    ja: "次のハッカソンも、うまくいきますように！",
+    en: "I hope the next hackathon goes well too!",
+  },
   { ja: "朝起きれますように！", en: "I hope I can get up in the morning!" },
   { ja: "夜ちゃんと寝れますように！", en: "I hope I actually sleep tonight!" },
   {
-    ja: "今日書いたコードが動きますように！",
-    en: "I hope the code I wrote today just works!",
+    ja: "美味しいものいっぱい食べられますように！",
+    en: "I hope I get to eat lots of good food!",
   },
 ] as const satisfies readonly Line[];
 
