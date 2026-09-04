@@ -49,8 +49,8 @@ export const GREETING = {
 export const SCRIPT_LINES = {
   /** 0:20 種明かし。一度きりだから価値があるので、再訪では出さない */
   reveal: {
-    ja: "この海は、どこにもありません。\nいつかこんな景色を見てみたくて、つくりました。",
-    en: "This sea doesn't exist anywhere.\nI made it because I want to see something like it someday.",
+    ja: "この海には、モチーフがありません。\nいつかこんな景色を見てみたくて、つくりました。",
+    en: "This sea isn't based on any real place.\nI made it because I want to see something like it someday.",
   },
   /** 0:33 静かにするボタンの案内。種明かしより後ろに置く ── 先に出すと
       「これからうるさくします」の予告になる。再訪では雑音なので出さない */

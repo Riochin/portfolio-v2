@@ -204,7 +204,7 @@ type ExperienceEntry = {
 | 0:00 | *(黙っている)* | |
 | 0:03 | こんにちは、Riochin です！ | Hi, I'm Riochin! |
 | 0:08 | *(昼=鳥 / 夜=流れ星 への反応)* | |
-| 0:20 | この海は、どこにもありません。いつかこんな景色を見てみたくて、つくりました。 | This sea doesn't exist anywhere. I made it because I want to see something like it someday. |
+| 0:20 | この海には、モチーフがありません。いつかこんな景色を見てみたくて、つくりました。 | This sea isn't based on any real place. I made it because I want to see something like it someday. |
 | 0:33 | 私がうるさかったら、右上のボタンで黙ります！ | If I'm talking too much, the button up there will shut me up! |
 | 1:30 | まだ見ててくれてるんですね！！うれしいです。 | You're still here!! That makes me really happy. |
 | 2:30 | ここ、けっこう静かですよね。 | It's quiet here, isn't it. |
