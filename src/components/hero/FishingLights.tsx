@@ -3,6 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { emitHeroEvent } from "./heroEvents";
 import { FISHING_LIGHTS } from "./sceneConfig";
 
 // 灯りは点(gl_Points)ではなく板で描く。gl_PointSize はピクセル単位で効くので、
@@ -183,6 +184,11 @@ export function FishingLights({ animated }: { animated: boolean }) {
       aPhase.needsUpdate = true;
       aRate.needsUpdate = true;
       instance.instanceMatrix.needsUpdate = true;
+
+      // 灯った瞬間をそのまま出来事にする。船団の方位 (azimuth) はどちらの
+      // 画枠でも枠の中に収まる範囲から引いているので、鳥や船のように
+      // 「枠に入るのを待つ」必要がない
+      emitHeroEvent({ type: "fishingLights" });
     }
 
     fleet.elapsed += dt;

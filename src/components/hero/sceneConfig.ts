@@ -822,12 +822,17 @@ export const SHOOTING_STAR = {
 export type ShootingStarCadence = {
   /** 待ちの [下限, 上限]。SHOOTING_STAR.minInterval より短くはならない */
   interval: readonly [number, number];
+  /** 1 本目までの秒数を決め打つなら。省略すると 1 本目も interval から引く */
+  firstGap?: number;
 };
 
 export const SHOOTING_STAR_CADENCE = {
-  /** 全画面表示 */
-  full: { interval: [14, 34] },
-  /** ブロック常設 */
+  /** 全画面表示。1 本目だけ 8 秒に決め打つ——昼は BIRDS.firstGap = 8 で
+      必ず鳥が出るのに、夜は interval 任せだと 1 本目が確定せず、冒頭の
+      体験が昼夜で揃わない。2 本目からは interval に戻るので、出現率を
+      下げてある方針は後半にそのまま残る (ShootingStar.tsx 参照) */
+  full: { interval: [14, 34], firstGap: 8 },
+  /** ブロック常設。ページを読んでいる横なので、1 本目も待たせたまま */
   block: { interval: [50, 110] },
 } as const satisfies Record<string, ShootingStarCadence>;
 

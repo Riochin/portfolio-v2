@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { emitHeroEvent } from "./heroEvents";
 import {
   SHOOTING_STAR,
   STAR_RADIUS,
@@ -121,9 +122,15 @@ function spawn(flight: Flight) {
 function Streak({
   animated,
   cadence,
+  fallingRef,
+  firstGap,
 }: {
   animated: boolean;
   cadence: ShootingStarCadence;
+  /** 今この瞬間に降っている本数。板どうしで共有して数える */
+  fallingRef: RefObject<number>;
+  /** この板の 1 本目までの秒数。省略すると間隔から引く */
+  firstGap?: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
@@ -140,7 +147,7 @@ function Streak({
 
   const flight = useRef<Flight>({
     active: false,
-    wait: interval(cadence),
+    wait: firstGap ?? interval(cadence),
     elapsed: 0,
     start: new THREE.Vector3(),
     tangent: new THREE.Vector3(),
@@ -167,13 +174,20 @@ function Streak({
     const material = materialRef.current;
     if (!mesh || !material) return;
 
+    const f = flight.current;
+
     // 静止画を焼くときは出さない。止まった光の筋がポスターに残ってしまう
     if (!animated) {
       mesh.visible = false;
+      // 降っている途中で切り替わったら、同時本数の数えも戻しておく。
+      // 置いたままにすると、以降ずっと 1 本多く数えることになる
+      if (f.active) {
+        f.active = false;
+        f.wait = interval(cadence);
+        fallingRef.current -= 1;
+      }
       return;
     }
-
-    const f = flight.current;
 
     if (!f.active) {
       f.wait -= delta;
@@ -183,6 +197,10 @@ function Streak({
       }
       spawn(f);
       material.uniforms.intensity.value = f.intensity;
+      // 出るのは一瞬で、しかも方位は枠の内側から引いている。鳥や船と違って
+      // 「枠に入るのを待つ」必要がないので、降り始めをそのまま出来事にする
+      fallingRef.current += 1;
+      emitHeroEvent({ type: "shootingStar", concurrent: fallingRef.current });
     }
 
     f.elapsed += delta;
@@ -190,6 +208,7 @@ function Streak({
     if (t >= 1) {
       f.active = false;
       f.wait = interval(cadence);
+      fallingRef.current -= 1;
       mesh.visible = false;
       return;
     }
@@ -278,10 +297,22 @@ export function ShootingStar({
   /** 1 枚ぶんの出現の間隔。ブロック常設と全画面で変える */
   cadence: ShootingStarCadence;
 }) {
+  // 今この瞬間に降っている本数。板どうしで 1 つを数える (2 本同時には
+  // 専用の反応があるので、降り始めた 1 本にこの数を添えて外へ流す)
+  const fallingRef = useRef(0);
+
   return (
     <>
       {Array.from({ length: SHOOTING_STAR.count }, (_, index) => (
-        <Streak key={index} animated={animated} cadence={cadence} />
+        <Streak
+          key={index}
+          animated={animated}
+          cadence={cadence}
+          fallingRef={fallingRef}
+          // 1 本目の時刻を決め打つのは 1 枚目だけ。残りは既定の間隔のまま
+          // 待たせるので、2 本目以降の出方は変わらない
+          firstGap={index === 0 ? cadence.firstGap : undefined}
+        />
       ))}
     </>
   );

@@ -3,6 +3,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { emitHeroEvent, inFrame } from "./heroEvents";
 import { BIRDS } from "./sceneConfig";
 
 // 遠くの鳥は数ピクセルにしかならない。テクスチャを貼ると等倍で潰れて
@@ -75,6 +76,8 @@ type Flock = {
   flying: boolean;
   /** 次の群れが出るまでの残り秒。flying の間は使わない */
   wait: number;
+  /** 枠に入ったことをもう知らせたか。1 群れにつき 1 回だけ流す */
+  told: boolean;
   count: number;
   x: number;
   y: number;
@@ -101,6 +104,7 @@ export function Birds({ animated }: { animated: boolean }) {
     flock: {
       flying: false,
       wait: BIRDS.firstGap,
+      told: false,
       count: 0,
       x: 0,
       y: 0,
@@ -149,6 +153,7 @@ export function Birds({ animated }: { animated: boolean }) {
       flock.speed = between(BIRDS.speed);
       flock.x = -BIRDS.span;
       flock.flying = true;
+      flock.told = false;
 
       for (let i = 0; i < flock.count; i++) {
         const gap = BIRDS.spacing * (0.75 + 0.5 * random());
@@ -194,6 +199,12 @@ export function Birds({ animated }: { animated: boolean }) {
     instance.count = flock.count;
     instance.instanceMatrix.needsUpdate = true;
 
+    // 群れは画角のずっと外 (x=-span) で組まれ、枠に入るまで十数秒かかる。
+    // 外へ知らせるのは先頭が枠に入ってから (heroEvents の inFrame 参照)
+    if (!flock.told && inFrame(flock, frame.camera)) {
+      flock.told = true;
+      emitHeroEvent({ type: "bird", flock: flock.count });
+    }
   });
 
   // 静止画キャプチャは animated=false で焼く。ここで出さないことで、
