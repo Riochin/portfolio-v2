@@ -38,8 +38,8 @@ export const GREETING = {
   first: { ja: "こんにちは、Riochin です！", en: "Hi, I'm Riochin!" },
   /** 再訪 (localStorage に記録がある) */
   returning: {
-    ja: "おかえりなさい！また来てくれて嬉しいです。",
-    en: "Welcome back! I'm so glad you came again.",
+    ja: "おかえりなさい！\nまた来てくれて嬉しいです。",
+    en: "Welcome back!\nI'm so glad you came again.",
   },
   /** 同じセッションで 2 回目に全画面へ入った */
   again: { ja: "また来てくれた！", en: "You came back in!" },
@@ -59,8 +59,8 @@ export const SCRIPT_LINES = {
     en: "If I'm talking too much, the button up there will shut me up!",
   },
   stillHere: {
-    ja: "まだ見ててくれてるんですね！！うれしいです。",
-    en: "You're still here!! That makes me really happy.",
+    ja: "まだ見ててくれてるんですね！！\nうれしいです。",
+    en: "You're still here!!\nThat makes me really happy.",
   },
   /** 2:30。ここだけ「！」が無い ── 元気だった人が一段声を落とすので、
       静けさが効く。意図的に守ること */
@@ -123,8 +123,8 @@ export const REACTIONS = {
   },
   dark: {
     navLights: {
-      ja: "おっ、夜行フライト！どんな人が乗ってるんだろう・・・",
-      en: "Ooh, a red-eye! I wonder who's on board...",
+      ja: "おっ、夜行フライト！\nどんな人が乗ってるんだろう・・・",
+      en: "Ooh, a red-eye!\nI wonder who's on board...",
     },
   },
 } as const;
@@ -175,8 +175,8 @@ export const WISHES_WITHOUT_FOLLOWUP = 1;
  */
 export const WISH_MISSES = [
   {
-    ja: "……あっ、願い事って言うと叶わないんだっけ？",
-    en: "...oh wait. Doesn't saying it out loud break it?",
+    ja: "……あっ、\n願い事って言うと叶わないんだっけ？",
+    en: "...oh wait.\nDoesn't saying it out loud break it?",
   },
   {
     ja: "願い事！！……言い忘れちゃった！",
