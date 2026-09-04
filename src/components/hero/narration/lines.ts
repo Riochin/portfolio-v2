@@ -47,12 +47,12 @@ export const GREETING = {
 
 /** 台本の各行。0:03 の挨拶だけは GREETING が持つ */
 export const SCRIPT_LINES = {
-  /** 0:20 種明かし。一度きりだから価値があるので、再訪では出さない */
+  /** 0:30 種明かし。一度きりだから価値があるので、再訪では出さない */
   reveal: {
     ja: "この海には、モチーフがありません。\nいつかこんな景色を見てみたくて、つくりました。",
     en: "This sea isn't based on any real place.\nI made it because I want to see something like it someday.",
   },
-  /** 0:33 静かにするボタンの案内。種明かしより後ろに置く ── 先に出すと
+  /** 0:45 静かにするボタンの案内。種明かしより後ろに置く ── 先に出すと
       「これからうるさくします」の予告になる。再訪では雑音なので出さない */
   button: {
     ja: "私がうるさかったら、右上のボタンで黙ります！",
@@ -77,10 +77,13 @@ export type ScriptKey = "greeting" | keyof typeof SCRIPT_LINES;
  * 台本のスロット。at は全画面に入ってからの秒数。
  *
  * ・0:00 は黙っている。空が広がった瞬間に文字を乗せない
- * ・0:08 にスロットが無いのは、そこが「昼=鳥 / 夜=流れ星」への反応の
- *   居場所だから。冒頭 8 秒は昼夜どちらでも必ず何かが起きるようにして
+ * ・0:15 にスロットが無いのは、そこが「昼=鳥 / 夜=流れ星」への反応の
+ *   居場所だから。冒頭 15 秒は昼夜どちらでも必ず何かが起きるようにして
  *   あるので (BIRDS.firstGap / SHOOTING_STAR_CADENCE.full.firstGap)、
  *   台本は場所を空けて待つ
+ * ・at はスロットの時刻であって、その秒に必ず出る約束ではない。冒頭の
+ *   反応が読み終わるまで種明かしは待たされるので、実際に出るのは
+ *   0:30 と 0:48 前後になる (ぶつかったぶんは pending が次の tick へ送る)
  * ・4:00 で台本は終わり、以降は反応と、静かな時間の独り言だけになる。
  *   永遠に喋るものは嫌われる
  */
@@ -94,8 +97,8 @@ export type ScriptSlot = {
 
 export const SCRIPT: readonly ScriptSlot[] = [
   { at: 3, key: "greeting" },
-  { at: 20, key: "reveal", firstVisitOnly: true },
-  { at: 33, key: "button", firstVisitOnly: true },
+  { at: 30, key: "reveal", firstVisitOnly: true },
+  { at: 45, key: "button", firstVisitOnly: true },
   { at: 90, key: "stillHere" },
   { at: 150, key: "hush" },
   { at: 240, key: "works" },
@@ -216,7 +219,7 @@ export const STATE = {
  * 上げ続けると「時間とともに静かになる」と逆走するので、近づくのは距離の
  * ほうだけにする。最後の「！」はお礼のひと押しで、驚きの続きではない。
  *
- * 45 分は 0:20 の種明かしへの折り返し。「いつかこんな景色を見てみたくて、
+ * 45 分は 0:30 の種明かしへの折り返し。「いつかこんな景色を見てみたくて、
  * つくりました。」で始まった願いが、ここで主語を増やして戻ってくる。
  * 語りはここで打ち止め ── 終わりがあるから最後の一言が最後になる。
  */
@@ -261,7 +264,7 @@ export const QUIET_TALK = {
   light: [
     { ja: "雲、ゆっくりだなあ。", en: "The clouds are so slow." },
     /** つくりものへの自己言及。独り言は 90 秒の沈黙が要るので、実際に出る
-        のは種明かし (0:20) のずっと後 ── 先走って種を明かすことはない */
+        のは種明かし (0:30) のずっと後 ── 先走って種を明かすことはない */
     { ja: "水平線、まっすぐすぎる。", en: "That horizon is way too straight." },
     /** 昼の主役は sceneConfig の CLOUD_LAYER 先頭の入道雲で、画枠 (HERO_FRAMING)
         はあれを収めるために組まれている。夜の主役 (天の川) に 1 行あるのに

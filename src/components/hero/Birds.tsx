@@ -168,7 +168,7 @@ export function Birds({ animated }: { animated: boolean }) {
       // 縁が見つかったら lead 秒ぶん手前へ戻し、そこから飛ばせてやる。
       // これで gap / firstGap が「次に鳥が見えるまで」の秒数として素直に
       // 効く——端からいきなり飛ばすと、画角の外を十数秒飛んでから見え
-      // 始めることになり、firstGap = 8 が台本の 0:08 と噛み合わない
+      // 始めることになり、firstGap = 15 が台本の 0:15 と噛み合わない
       const step = flock.span / 128;
       flock.x = -flock.span;
       while (flock.x < flock.span && !inFrame(flock, frame.camera)) {
