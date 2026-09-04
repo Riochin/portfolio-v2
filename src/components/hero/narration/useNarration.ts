@@ -21,9 +21,9 @@ import {
   type ScriptKey,
   STATE,
   WISHES,
-  WISHES_WITHOUT_FOLLOWUP,
   WISH_FOLLOWUP,
   WISH_MISSES,
+  WISH_OPENERS,
   type Line,
 } from "./lines";
 
@@ -300,8 +300,12 @@ export function useNarration(mode: "light" | "dark") {
 
     // ── 反応 ──────────────────────────────────────────────
     const reactions = REACTIONS[mode];
-    const drawWish = bag(WISHES.length);
+    // 袋に入れるのは願い事のほうだけ。先頭の「おっ流れ星！！！」は 1 本目の
+    // 決め打ち専用なので抽選には回さない (lines.ts の WISH_OPENERS)
+    const drawWish = bag(WISHES.length - WISH_OPENERS);
     const drawMiss = bag(WISH_MISSES.length);
+    /** この全画面で、まだ 1 本目の流れ星を言えていない */
+    let firstStar = true;
     let openingUsed = false;
     let nextMilestone = 0;
 
@@ -327,15 +331,27 @@ export function useNarration(mode: "light" | "dark") {
     };
 
     const shootingStar = () => {
+      const now = opening();
+
+      // 1 本目は決め打つ。まず驚いて、願い事はその次から ── この順が崩れると
+      // いきなり願い事から始まる回ができて、何に驚いているのか分からない。
+      // 倒すのは言えたときだけ。黙らせてある間に降った 1 本や、クールダウンに
+      // 弾かれた 1 本では消費しないので、誰でも必ず一度はここを通る
+      if (firstStar) {
+        const said = say(t(WISHES[0]), { now });
+        if (said) {
+          firstStar = false;
+          if (now) openingUsed = true;
+        }
+        return said;
+      }
+
       // 願い事を言えずに終わる回。続きの一言は付けない
       if (Math.random() < WISH_MISS_RATE)
         return react(t(WISH_MISSES[drawMiss()]));
-      const at = drawWish();
-      // 「おっ流れ星！！！」は願い事ではないので、続きの一言は付かない
-      const wished = at >= WISHES_WITHOUT_FOLLOWUP;
-      const then =
-        wished && Math.random() < FOLLOWUP_RATE ? t(WISH_FOLLOWUP) : undefined;
-      const now = opening();
+      // 袋は願い事だけなので、引いた番号を出だしのぶんだけ後ろへずらす
+      const at = drawWish() + WISH_OPENERS;
+      const then = Math.random() < FOLLOWUP_RATE ? t(WISH_FOLLOWUP) : undefined;
       const said = say(t(WISHES[at]), { now, then });
       if (said && now) openingUsed = true;
       return said;
