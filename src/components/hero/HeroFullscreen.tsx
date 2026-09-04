@@ -18,8 +18,10 @@ import { HeroNarration } from "./narration/HeroNarration";
 
 // 押したまま動いた距離がこれを越えたら、閉じる合図ではなく見回しとみなす (px)
 const TAP_SLOP = 10;
-// これだけ操作が途切れたら、閉じるボタンを引っ込めて空だけにする (ms)
-const IDLE_DELAY = 3000;
+// これだけ操作が途切れたら、右上のボタンを引っ込めて空だけにする (ms)。
+// 台本の 0:33 が「右上のボタンで黙ります」と案内する先なので、短すぎると
+// 言葉の指す先がもう消えている。
+const IDLE_DELAY = 5000;
 
 export function HeroFullscreen({
   mode,
