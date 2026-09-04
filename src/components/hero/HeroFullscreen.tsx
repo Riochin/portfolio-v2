@@ -14,6 +14,7 @@ import { HeroBackground } from "./HeroBackground";
 import { HeroSceneClient } from "./HeroSceneClient";
 import { useIdleVisible } from "./idle";
 import { useMorphSettled } from "./morph";
+import { HeroNarration } from "./narration/HeroNarration";
 
 // 押したまま動いた距離がこれを越えたら、閉じる合図ではなく見回しとみなす (px)
 const TAP_SLOP = 10;
@@ -53,9 +54,12 @@ export function HeroFullscreen({
   // (opacity 0 のまま focus が回ると、押せるものの居場所が分からなくなる)。
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  // 語りの「静かにする」も右上に並ぶ。出し入れの間合いは 1 つで持ち、
+  // 押さえたい事情 (ホバー・フォーカス) だけ両方から集める
+  const [narrationHeld, setNarrationHeld] = useState(false);
   const [closeVisible, notifyActivity] = useIdleVisible(
     IDLE_DELAY,
-    hovered || focused,
+    hovered || focused || narrationHeld,
   );
 
   const handlePointerDown = useCallback(
@@ -166,6 +170,14 @@ export function HeroFullscreen({
           <X size={22} />
         </motion.button>
       </motion.div>
+      {/* 語りは全画面のときだけ。トップでは名乗らず、近づいてくれた人の前に
+          だけ人格が現れる ── 遠くの灯りに近づくと人がいる、という漁火と
+          同じ構造を歓迎の設計にしている。 */}
+      <HeroNarration
+        mode={mode}
+        visible={closeVisible}
+        onHoldChange={setNarrationHeld}
+      />
     </motion.div>
   );
 }
