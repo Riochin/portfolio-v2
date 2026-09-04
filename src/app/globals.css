@@ -115,8 +115,14 @@ body {
 .hero-welcome-char {
   /* transform を効かせるため。字間(tracking)はこの上の要素が持つ。 */
   display: inline-block;
-  animation: hero-welcome-char 600ms cubic-bezier(0.22, 1, 0.36, 1)
-    var(--char-delay, 0ms) backwards;
+  /* 1 文字が結像する尺と、文字と文字のあいだの送り。
+     送りの実値を渡すのは JS の側 (トップの挨拶文は HeroSection、全画面の
+     語りは HeroNarration が、同じ 40ms 刻みで --char-delay を組む) だが、
+     全体をゆっくりにしたいときに 2 箇所を直しに行かなくて済むよう、
+     倍率はこの 1 行で掛ける。急がず結像させるほうが、霞が晴れる感じに近い。 */
+  animation: hero-welcome-char var(--char-reveal, 900ms)
+    cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--char-delay, 0ms) * var(--char-reveal-stagger, 1.5)) backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
