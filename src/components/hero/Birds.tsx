@@ -3,6 +3,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { emitHeroEvent, inFrame } from "./heroEvents";
 import { BIRDS } from "./sceneConfig";
 
 // 遠くの鳥は数ピクセルにしかならない。テクスチャを貼ると等倍で潰れて
@@ -75,6 +76,12 @@ type Flock = {
   flying: boolean;
   /** 次の群れが出るまでの残り秒。flying の間は使わない */
   wait: number;
+  /** 枠に入ったことをもう知らせたか。1 群れにつき 1 回だけ流す */
+  told: boolean;
+  /** 端の位置(|x|)。奥行きから起こす。ここを越えたら渡り終わり */
+  span: number;
+  /** 飛び始めた x。濃さの立ち上がりをここから測る */
+  from: number;
   count: number;
   x: number;
   y: number;
@@ -100,7 +107,11 @@ export function Birds({ animated }: { animated: boolean }) {
     bobs: new Float32Array(BIRDS.limit * 3),
     flock: {
       flying: false,
-      wait: BIRDS.firstGap,
+      // 待ちは「枠に入るまで」で書いてあるので、枠の手前の助走ぶんを引く
+      wait: BIRDS.firstGap - BIRDS.lead,
+      told: false,
+      span: 0,
+      from: 0,
       count: 0,
       x: 0,
       y: 0,
@@ -147,8 +158,24 @@ export function Birds({ animated }: { animated: boolean }) {
       flock.y = between(BIRDS.altitude);
       flock.z = between(BIRDS.depth);
       flock.speed = between(BIRDS.speed);
-      flock.x = -BIRDS.span;
+      flock.span = Math.abs(flock.z) * Math.tan(BIRDS.span);
       flock.flying = true;
+      flock.told = false;
+
+      // 枠の左の縁を、カメラで見て探す。方位から解くと画枠 (16:9 と 4:3)
+      // と基準の yaw、それに見回している角度まで式に入ってくるので、
+      // 実際に投影して探すほうが短く、どの画枠でも同じだけ確かになる。
+      // 縁が見つかったら lead 秒ぶん手前へ戻し、そこから飛ばせてやる。
+      // これで gap / firstGap が「次に鳥が見えるまで」の秒数として素直に
+      // 効く——端からいきなり飛ばすと、画角の外を十数秒飛んでから見え
+      // 始めることになり、firstGap = 8 が台本の 0:08 と噛み合わない
+      const step = flock.span / 128;
+      flock.x = -flock.span;
+      while (flock.x < flock.span && !inFrame(flock, frame.camera)) {
+        flock.x += step;
+      }
+      flock.x -= BIRDS.lead * flock.speed;
+      flock.from = flock.x;
 
       for (let i = 0; i < flock.count; i++) {
         const gap = BIRDS.spacing * (0.75 + 0.5 * random());
@@ -174,9 +201,9 @@ export function Birds({ animated }: { animated: boolean }) {
     // 進む向きは左から右で固定。方向が毎回変わると、目に留まるたびに
     // 別のものが起きているように見えて落ち着かない
     flock.x += flock.speed * dt;
-    if (flock.x > BIRDS.span) {
+    if (flock.x > flock.span) {
       flock.flying = false;
-      flock.wait = between(BIRDS.gap);
+      flock.wait = between(BIRDS.gap) - BIRDS.lead;
       instance.count = 0;
       return;
     }
@@ -194,6 +221,25 @@ export function Birds({ animated }: { animated: boolean }) {
     instance.count = flock.count;
     instance.instanceMatrix.needsUpdate = true;
 
+    // 出入りの濃さ。置くのも消すのも枠の外だが、目いっぱい左右を覗くと
+    // そこまで見えてしまうので、湧いて出たようにも消灯したようにも見せない。
+    // 助走 (lead) のほうが長いので、枠に入るころには濃さは出切っている
+    const flown = (flock.x - flock.from) / flock.speed;
+    const left = (flock.span - flock.x) / flock.speed;
+    (instance.material as THREE.ShaderMaterial).uniforms.uOpacity.value =
+      BIRDS.opacity *
+      Math.min(
+        THREE.MathUtils.smoothstep(flown, 0, BIRDS.fade),
+        THREE.MathUtils.smoothstep(left, 0, BIRDS.fade),
+      );
+
+    // 外へ知らせるのは先頭が枠に入ってから (heroEvents の inFrame 参照)。
+    // 助走のぶんは待ちから引いてあるので、ここへ来る時刻がそのまま
+    // gap / firstGap になる
+    if (!flock.told && inFrame(flock, frame.camera)) {
+      flock.told = true;
+      emitHeroEvent({ type: "bird", flock: flock.count });
+    }
   });
 
   // 静止画キャプチャは animated=false で焼く。ここで出さないことで、

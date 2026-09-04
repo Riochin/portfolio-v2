@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { emitHeroEvent, inFrame } from "./heroEvents";
 import { CONTRAIL } from "./sceneConfig";
 
 const vertexShader = /* glsl */ `
@@ -96,6 +97,8 @@ type Trail = {
   elapsed: number;
   draw: number;
   linger: number;
+  /** 機影が枠に入ったことをもう知らせたか。1 本につき 1 回だけ流す */
+  told: boolean;
 };
 
 /**
@@ -142,9 +145,13 @@ export function Contrail({ animated }: { animated: boolean }) {
     elapsed: 0,
     draw: 0,
     linger: 0,
+    told: false,
   });
 
-  useFrame((_, delta) => {
+  // 機影の位置を割り出すための置き場。使い回して確保を起こさない
+  const head = useRef(new THREE.Vector3());
+
+  useFrame((frame, delta) => {
     const instance = mesh.current;
     const material = materialRef.current;
     if (!instance || !material) return;
@@ -164,6 +171,7 @@ export function Contrail({ animated }: { animated: boolean }) {
       t.linger = pick(CONTRAIL.linger);
       t.elapsed = 0;
       t.phase = "draw";
+      t.told = false;
 
       instance.scale.set(CONTRAIL.span * 2, CONTRAIL.height, 1);
       instance.position.set(0, pick(CONTRAIL.altitude), pick(CONTRAIL.depth));
@@ -179,9 +187,25 @@ export function Contrail({ animated }: { animated: boolean }) {
     t.elapsed += dt;
 
     if (t.phase === "draw") {
-      material.uniforms.uProgress.value = Math.min(t.elapsed / t.draw, 1);
+      const progress = Math.min(t.elapsed / t.draw, 1);
+      material.uniforms.uProgress.value = progress;
       // 出はじめの機影がいきなり点かないよう、2 秒かけて濃くする
       material.uniforms.uFade.value = THREE.MathUtils.smoothstep(t.elapsed, 0, 2);
+
+      // 板は画角 (±42.8°) より広い ±54° を覆っていて、機影が枠に入るまで
+      // 引き始めから 10 秒以上かかる。外へ知らせるのはそこから。
+      // 機影は uv の x=progress にいる。板の中の位置をワールドへ移せば、
+      // 傾き (rotation.z) も長さ (scale) もまとめて通る
+      if (!t.told) {
+        const dir = material.uniforms.uDir.value;
+        const at = head.current.set(dir * (progress - 0.5), 0, 0);
+        instance.localToWorld(at);
+        if (inFrame(at, frame.camera)) {
+          t.told = true;
+          emitHeroEvent({ type: "contrail" });
+        }
+      }
+
       if (t.elapsed >= t.draw) {
         t.phase = "linger";
         t.elapsed = 0;

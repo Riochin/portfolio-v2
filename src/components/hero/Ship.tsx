@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { emitHeroEvent, inFrame } from "./heroEvents";
 import { CLOUD_HAZE, SHIP } from "./sceneConfig";
 
 const WHITE = new THREE.Color("#ffffff");
@@ -92,6 +93,8 @@ type Voyage = {
   sailing: boolean;
   /** 次の出現までの残り秒。useFrame の delta で減らす */
   wait: number;
+  /** 枠に入ったことをもう知らせたか。1 隻につき 1 回だけ流す */
+  told: boolean;
   /** 船体の中心の x */
   x: number;
   /** ここを越えたら渡り終わり */
@@ -134,6 +137,7 @@ export function Ship({ animated }: { animated: boolean }) {
   const voyage = useRef<Voyage>({
     sailing: false,
     wait: pick(SHIP.firstGap),
+    told: false,
     x: 0,
     span: 0,
     dir: 1,
@@ -146,7 +150,7 @@ export function Ship({ animated }: { animated: boolean }) {
     [],
   );
 
-  useFrame((_, delta) => {
+  useFrame((frame, delta) => {
     const instance = mesh.current;
     const material = materialRef.current;
     if (!instance || !material) return;
@@ -173,6 +177,7 @@ export function Ship({ animated }: { animated: boolean }) {
       v.span = Math.abs(z) * Math.tan(SHIP.span) + length;
       v.x = -v.dir * v.span;
       v.sailing = true;
+      v.told = false;
 
       const height = length * SHIP.aspect;
       // 航跡ぶんは船首側にも余白として取る。板の中心が船体の中心のままなら、
@@ -203,6 +208,14 @@ export function Ship({ animated }: { animated: boolean }) {
 
     instance.position.x = v.x;
     instance.visible = true;
+
+    // 折り返しは画角 (±42.8°) の外の ±50° に取ってあり、しかも渡る速さが
+    // 速さなので、組んでから枠に入るまで 1 分を越えることもある。外へ
+    // 知らせるのは船体が枠に入ってから (heroEvents の inFrame 参照)
+    if (!v.told && inFrame(instance.position, frame.camera)) {
+      v.told = true;
+      emitHeroEvent({ type: "ship" });
+    }
   });
 
   // 静止画キャプチャは animated=false で焼く。ここで出さないことで、水平線に

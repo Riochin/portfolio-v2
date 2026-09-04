@@ -3,6 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { emitHeroEvent, inFrame } from "./heroEvents";
 import { NAV_LIGHTS } from "./sceneConfig";
 
 /** 灯りの並び。0=左舷(赤), 1=右舷(緑), 2=ストロボ(白) */
@@ -64,6 +65,8 @@ type Flight = {
   /** 飛び始めてからの秒 */
   elapsed: number;
   duration: number;
+  /** 枠に入ったことをもう知らせたか。1 機につき 1 回だけ流す */
+  told: boolean;
 };
 
 /**
@@ -120,10 +123,11 @@ export function NavLights({ animated }: { animated: boolean }) {
       wait: pick(NAV_LIGHTS.firstGap),
       elapsed: 0,
       duration: 0,
+      told: false,
     } as Flight,
   });
 
-  useFrame((_, delta) => {
+  useFrame((frame, delta) => {
     const instance = mesh.current;
     const material = materialRef.current;
     if (!instance || !material) return;
@@ -177,6 +181,7 @@ export function NavLights({ animated }: { animated: boolean }) {
       f.duration = pick(NAV_LIGHTS.duration);
       f.elapsed = 0;
       f.flying = true;
+      f.told = false;
     }
 
     f.elapsed += dt;
@@ -190,6 +195,13 @@ export function NavLights({ animated }: { animated: boolean }) {
 
     const { matrix, position, offset, starboard } = s;
     position.lerpVectors(s.start, s.end, t);
+
+    // 経路の両端は画角 (±42.8°) の外の 50〜62° に取ってあり、渡る速さが
+    // 速さなので、枠に入るまで 20 秒ほどかかる。外へ知らせるのはそこから
+    if (!f.told && inFrame(position, frame.camera)) {
+      f.told = true;
+      emitHeroEvent({ type: "navLights" });
+    }
 
     offset.copy(position).sub(starboard);
     matrix.makeTranslation(offset.x, offset.y, offset.z);
