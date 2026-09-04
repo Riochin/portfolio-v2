@@ -24,7 +24,9 @@ export default async function Home() {
       <HeroSection
         aboutHref={localePath(locale, "/about")}
         labels={{
-          welcome: t(DICT.hero.welcome),
+          welcomeLight: t(DICT.hero.welcomeLight),
+          welcomeDark: t(DICT.hero.welcomeDark),
+          closer: t(DICT.hero.closer),
           about: t(DICT.nav.about),
           expand: t(DICT.aria.expandHero),
           close: t(DICT.aria.closeFullscreen),

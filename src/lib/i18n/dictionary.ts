@@ -84,10 +84,27 @@ export const DICT = {
     tracks: { ja: "よく聴いている曲", en: "On repeat" },
   },
   hero: {
-    welcome: {
-      ja: "Welcome to my portfolio",
-      en: "Welcome to my portfolio",
+    /**
+     * 挨拶文。明暗で 1 語だけ変える。
+     *
+     * `Welcome to my portfolio` が悪いのは「ようこそ」ではなく行き先で、
+     * 作品集に招かれても嬉しくないが、海に招かれたら嬉しい。あの空は
+     * 「いつか行きたい海」の心象風景だが、その一行がどこにも書かれて
+     * いないと、ただの綺麗な背景にしか見えない。
+     *
+     * 2 本とも描画側 (HeroSection) に渡して CSS で選ばせる。next-themes の
+     * 解決はクライアントでしか効かないので、ここで 1 本に絞れない。
+     */
+    welcomeLight: {
+      ja: "ようこそ、いつか行きたい海へ。",
+      en: "Welcome to the sea I hope to see someday.",
     },
+    welcomeDark: {
+      ja: "ようこそ、いつか行きたい夜の海へ。",
+      en: "Welcome to the night sea I hope to see someday.",
+    },
+    /** 全画面への誘い。UI の言葉 (「全画面表示」) は使わず、所作で言う。 */
+    closer: { ja: "近づいてみる", en: "Come closer" },
   },
   aria: {
     mainNav: { ja: "メインナビゲーション", en: "Main navigation" },

@@ -11,16 +11,107 @@ import { AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { revealTransition } from "@/lib/motion";
 import { HeroBlock } from "./HeroBlock";
 import { HeroFullscreen } from "./HeroFullscreen";
 import { useWebGLSupported } from "./webgl";
 
 export type HeroLabels = {
-  readonly welcome: string;
+  /** 明暗で 1 語だけ違う挨拶文。どちらを見せるかは CSS が決める */
+  readonly welcomeLight: string;
+  readonly welcomeDark: string;
+  readonly closer: string;
   readonly about: string;
   readonly expand: string;
   readonly close: string;
 };
+
+/** 挨拶文の 1 文字ずつの遅れ。globals.css の hero-welcome-char と対。 */
+const CHAR_STAGGER_MS = 40;
+
+/**
+ * 何ミリ秒の滞在で全画面への誘いを出すか。
+ *
+ * デスクトップはホバーでも出るが (そちらは CSS)、スマホにホバーは無く
+ * 来訪の大半がスマホなので、ホバーだけだと入口の案内が一度も出ない。
+ * デバイスでは分岐させず、全デバイス共通でこの時間でも出す。
+ */
+const DWELL_MS = 10000;
+
+/**
+ * 挨拶文を折り返しの最小単位に切る正規表現。
+ *
+ * 1 文字ずつ inline-block に割ると、どの文字と文字のあいだにも折り返し
+ * どころができてしまい、英文が `Welco / me` のように単語の途中で切れる。
+ * 英字だけは単語のまとまりで取り (中で nowrap する)、それ以外は 1 文字ずつ
+ * ── 日本語はどこで折り返しても読めるので、狭い画面では自由に折らせたい。
+ */
+const WORD = /[A-Za-z0-9'\u2019]+|[\s\S]/gu;
+
+/**
+ * 挨拶文 1 本ぶん。霞が晴れるように 1 文字ずつ結像させる。
+ *
+ * 明暗で 1 語だけ違う 2 本を重ねて置き、見せる側は CSS (dark:) に選ばせる。
+ * next-themes の解決はクライアントでしか効かないので、JS で 1 本に絞ると
+ * サーバの HTML は必ずライトになり、水和のあとに文字が入れ替わって見える。
+ *
+ * 消すのは display ではなく visibility。display:none の要素はアニメーションが
+ * 取り消されるので、テーマを切り替えるたびに挨拶文が 1 文字ずつ出るところから
+ * やり直しになる (円形リベールの最中に文字だけ消えて見える)。visibility なら
+ * 箱は残るので走り終えたままで、読み上げにも選択にも乗らない。
+ */
+function Welcome({
+  text,
+  shown,
+  className,
+}: {
+  text: string;
+  /** 空が開ききったか。開いている途中の線と字を重ねない */
+  shown: boolean;
+  /** 明暗どちらで見せる側かを決めるクラス */
+  className: string;
+}) {
+  let index = 0;
+
+  return (
+    <span className={`[grid-area:1/1] ${className}`}>
+      {/* 1 文字ずつ span に割ると読み上げが文字単位になりうるので、
+          支援技術には素の 1 文として渡し、見た目側は隠す。 */}
+      <span className="sr-only">{text}</span>
+      <span aria-hidden>
+        {shown &&
+          (text.match(WORD) ?? []).map((word, w) => {
+            const chars = [...word];
+            const delay = index * CHAR_STAGGER_MS;
+            index += chars.length;
+
+            // 単語のあいだの空白は素のテキストのまま置く。ここが唯一の
+            // 折り返しどころになり、行末に来たぶんは中央揃えから外れて
+            // 消えてくれる (inline-block の中に入れると幅を持ったまま残る)。
+            return /\s/.test(word) ? (
+              " "
+            ) : (
+              <span key={w} className="whitespace-nowrap">
+                {chars.map((char, c) => (
+                  <span
+                    key={c}
+                    className="hero-welcome-char"
+                    style={
+                      {
+                        "--char-delay": `${delay + c * CHAR_STAGGER_MS}ms`,
+                      } as CSSProperties
+                    }
+                  >
+                    {char}
+                  </span>
+                ))}
+              </span>
+            );
+          })}
+      </span>
+    </span>
+  );
+}
 
 export function HeroSection({
   labels,
@@ -54,6 +145,11 @@ export function HeroSection({
   // 読み込みの間、ブロックは出さず中央の線だけが見えている。挨拶文もその線と
   // 重ねず、空が開ききってから出す(1 文字ずつの出現もそこで見せたい)。
   const shown = still || revealed;
+  // 全画面へ開けるか。動きを減らす設定ではモーフごと畳んであるので開かない。
+  const canExpand = prefersReducedMotion === false;
+  // 全画面への誘いを出す頃合い。ホバー (デスクトップ) は CSS が持つので、
+  // JS が数えるのは滞在のほうだけ。
+  const [dwelled, setDwelled] = useState(false);
 
   const close = useCallback(() => {
     setReturning(true);
@@ -71,6 +167,15 @@ export function HeroSection({
     setSnapshot(revealed ? (captureRef.current?.() ?? null) : null);
     setIsExpanded(true);
   }, [revealed]);
+
+  // 数え始めは空が開ききってから。読み込みに時間がかかった画面では、絵と
+  // ほぼ同時に案内まで出ることになり、1 文字ずつ出ている挨拶文と重なって
+  // 騒がしい。一度出したら引っ込めない (案内は消えるものではない)。
+  useEffect(() => {
+    if (!shown || dwelled) return;
+    const timer = setTimeout(() => setDwelled(true), DWELL_MS);
+    return () => clearTimeout(timer);
+  }, [shown, dwelled]);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -138,25 +243,31 @@ export function HeroSection({
             見えるので、中心対称の淡いハロー 1 本だけにする。
             狭い幅ではブロックも小さいので、字を一回り落として左右に逃げを作り、
             それでも入らなければ折り返させる (中央揃えなので 2 行でも崩れない)。
-            pointer-events-none にして、文字の上でもブロックを押せるようにする。 */}
+
+            日本語は 17 字ぶんが 1 行に載るかどうかの瀬戸際にある。字 (1em) と
+            字間 (0.2em) で 1 字 1.2em なので、text-xs (このサイトでは 13px) なら
+            17 字で 265px ── 使える幅は 画面幅 - 80px (ページの px-6 と h1 の
+            px-4) だから、345px から上は 1 行で持つ。ここを text-sm (16px) に
+            上げると必要な幅が 326px になり、375px の画面で「へ。」だけが 2 行目に
+            残る。英語は 46 字あってどのみち折り返すが、単語のまとまりで折れる
+            (WORD の説明を参照)。
+            pointer-events-none にして、文字の上でもブロックを押せるようにする。
+
+            明暗の 2 本を同じ 1 マスに重ね、grid で両方を中央に置く。flex だと
+            2 本が横に並ぶので、ここだけ grid にしてある。見せる側を選ぶのは
+            CSS で、どちらが出ても行の位置は動かない (Welcome の説明も参照)。 */}
         {!isExpanded && (
-          <h1 className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 flex items-center justify-center px-4 text-center text-sm font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-base">
-            {/* 1 文字ずつ span に割ると読み上げが文字単位になりうるので、
-                支援技術には素の 1 文として渡し、見た目側は隠す。 */}
-            <span className="sr-only">{labels.welcome}</span>
-            <span aria-hidden>
-              {shown &&
-                [...labels.welcome].map((char, i) => (
-                  <span
-                    key={i}
-                    className="hero-welcome-char"
-                    style={{ "--char-delay": `${i * 40}ms` } as CSSProperties}
-                  >
-                    {/* inline-block にすると半角空白が潰れるので実体で置く */}
-                    {char === " " ? "\u00a0" : char}
-                  </span>
-                ))}
-            </span>
+          <h1 className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 grid place-items-center px-4 text-center text-xs font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-sm">
+            <Welcome
+              text={labels.welcomeLight}
+              shown={shown}
+              className="dark:invisible"
+            />
+            <Welcome
+              text={labels.welcomeDark}
+              shown={shown}
+              className="invisible dark:visible"
+            />
           </h1>
         )}
         {/* aspect は幅からしか高さを決めないので、低い画面 (横向きの端末など) では
@@ -169,7 +280,7 @@ export function HeroSection({
             置くと、絵が細い帯になって主役の入道雲の背丈が出ない。比を変えても
             縦の見え方は動かず横だけが切れるので、切れたぶんはカメラの yaw で
             取り戻す ── その対は sceneConfig の HERO_FRAMING が持っている。 */}
-        <div className="mx-auto aspect-[16/9] w-full max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*16/9)] upright:aspect-[4/3] upright:max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*4/3)]">
+        <div className="group relative mx-auto aspect-[16/9] w-full max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*16/9)] upright:aspect-[4/3] upright:max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*4/3)]">
           {!isExpanded && (
             <HeroBlock
               onClick={prefersReducedMotion || !shown ? undefined : expand}
@@ -180,10 +291,41 @@ export function HeroSection({
               still={still}
               underlay={snapshot}
               returning={returning}
+              inviting={dwelled && canExpand}
               onCapture={onCapture}
               onRevealed={onRevealed}
               onFailed={onFailed}
             />
+          )}
+          {/* 全画面への誘い。ブロックの中、海の上に置く ── 枠も背景も付けない。
+              囲った瞬間にボタンという UI 部品になって、世界の中の言葉ではなく
+              なる。行き先は「全画面表示」ではなく「近づく」で言う。
+
+              出す条件は 2 つで、どちらでも同じ言葉が同じ尺で出る。
+                ・ホバー (group-hover) ── カーソルが近づいたら言葉が現れる、で
+                  所作と意味が一致する。タッチでは :hover が付かないので、
+                  デバイスを見て分岐する必要がない
+                ・滞在 (data-near) ── ホバーの無い端末でも案内が届くように
+
+              尺と曲線は revealTransition が 1 箇所で持つ。あとで足すナビの
+              ホバーと完全に揃っている必要があるので、クラス名で書かない。
+              押せるのはブロック自身なので pointer-events-none で通す
+              (この span がホバーを奪うと、出た瞬間に消えて明滅する)。
+
+              出すのは空が開ききってから、かつ押せば開く回だけ。読み込みの
+              最中はまだ押せないし、押しても開かない回 (動きを減らす設定) も
+              あって、どちらも近づけないのに誘うことになる。 */}
+          {!isExpanded && shown && canExpand && (
+            <span
+              aria-hidden
+              data-near={dwelled ? "" : undefined}
+              style={revealTransition}
+              // 12px は @theme のスケールに無い値。挨拶文 (text-xs = 13px) より
+              // さらに一段落としたいが、下にもう段が無いので直に書く。
+              className="pointer-events-none absolute inset-x-0 bottom-[7%] z-10 px-4 text-center text-[0.75rem] tracking-[0.2em] text-white/85 opacity-0 transition-opacity [text-shadow:0_0_12px_rgb(0_0_0/0.3)] group-hover:opacity-100 motion-reduce:transition-none data-[near]:opacity-100"
+            >
+              {labels.closer}
+            </span>
           )}
         </div>
         {/* ヒーローは 1 画面で閉じていてスクロールの続きが無いので、「↓」は
