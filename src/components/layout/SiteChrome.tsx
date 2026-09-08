@@ -90,15 +90,27 @@ export async function SiteChrome() {
              (896x414) との差が 5.31px しかない ── 少しでも足すとそこが
              溢れる側に倒れ、今まで中央にあったものが動く。
 
-          2) 横は本文との隙間を確保する。隙間 = 0.18 x 幅 - --rail-w で、
+          2) 左右に --rail-pad ぶんの余白を持つ。1) の overflow-y は overflow-x も
+             visible でなくすので、枠からはみ出して描かれるものが切られる。
+             ここには 2 種類ある ── SideNav の ul の -ml-4 (ピルの padding ぶん
+             左へ出して、文字の左端を見出しと揃えている) と、font-logo の
+             筆記体が字送り幅の外へ流す筆先 (右へ 1.5px)。余白が無いと
+             「About me」のピルは左の角丸と余白を失い、ワードマークは R の
+             入りと v の払いが落ちる。余白は透明なので見た目には出ない。
+
+          3) 横は本文との隙間を確保する。隙間 = 0.18 x 幅 - --rail-w で、
              本文の左端 (PageShell の md:pl-[28%]) とこのレールの右端
              (10% + レール幅) の差。md の下限 768px でちょうど 1px しかなく、
              ワードマーク (font-logo) の字形が少し変わるだけで食い込む。
-             幅が足りないときだけ左へ逃がす。交点は 0.10w = 0.28w - --rail-w
-             - 1.5rem を解いて 894px で、そこから上では 10% が選ばれるので
-             位置は変わらない。--rail-w はワードマーク (text-4xl) が決めている
-             実測値。字の大きさを変えたらここも測り直す。 */}
-      <div className="fixed inset-y-0 left-[min(10%,calc(28%-var(--rail-w)-1.5rem))] z-30 hidden w-max overflow-y-auto overscroll-contain [--rail-w:137px] md:block">
+             幅が足りないときだけ左へ逃がす。交点は 894px で、そこから上では
+             10% - --rail-pad が選ばれる ── left から余白ぶんを引き戻して
+             いるので、ワードマークの左端は今までどおり画面の 10% に来る。
+             隙間は 2) の余白を含めない字送り幅どうしで測る。余白は透明で、
+             そこへはみ出しているのは筆先の 1.5px だけなので、目に見える
+             間合いは字送り幅で数えたほうが実態に合う。
+             --rail-w はワードマーク (text-4xl) が決めている実測値。
+             字の大きさを変えたら --rail-w を測り直す。 */}
+      <div className="fixed inset-y-0 left-[min(calc(10%-var(--rail-pad)),calc(28%-var(--rail-w)-var(--rail-pad)-1.5rem))] z-30 hidden w-max overflow-y-auto overscroll-contain px-[var(--rail-pad)] [--rail-pad:1rem] [--rail-w:137px] md:block">
         <div className="flex min-h-full flex-col justify-center gap-16">
           <SideNav
             items={items}
