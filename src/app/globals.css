@@ -10,6 +10,29 @@
    ここを下回ったときだけ、中央を諦めて上の余りをブロックに回す。 */
 @custom-variant short (@media (height < 31rem));
 
+/* short のうち、ブロックが下限 (9rem) まで縮んでもなお下が足りない範囲。
+   ここだけ About への導線をフローに戻す (HeroSection の cramped:static)。
+
+   short との違い: short は「中央を諦めて余白で居場所を作る」境目で、そこでは
+   まだ導線を absolute でぶら下げたままでも収まる。こちらは下限が予算に勝って
+   しまい、ぶら下げたぶんがテーマ切替のボタンに乗る範囲を指す。
+
+   導出。ブロックを content box (100dvh - pt - pb) の中央に据えると、下には
+   必ず (content box - ブロック高) / 2 が空く。導線が乗らない条件は
+     3.5rem (導線の行 1.5rem + 間隔 2rem) <= (100dvh - pt - 7.5rem - h) / 2
+   すなわち h <= 100dvh - pt - 12.5rem。h は下限の 9rem で止まるので、
+   乗るのは 100dvh < pt + 21.5rem のとき。md 以上は pt が 0 なので 21.5rem、
+   モバイルはヘッダーぶん 3.875rem を足して 25.375rem。
+
+   9rem (下限) / page の short:pb-30 / mt-8 / min-h-6 / ThemeToggle の h-16 の
+   どれかを触ったら、この 2 つの数を計算し直す。 */
+@custom-variant cramped {
+  @media (width < 48rem) and (height < 25.375rem),
+    (width >= 48rem) and (height < 21.5rem) {
+    @slot;
+  }
+}
+
 /* ヒーローを 4:3 で組む画面。手に持った端末の縦向きがこれにあたる。
 
    three の fov は垂直基準なので、枠の比を詰めても縦の見え方は動かず、横だけが
@@ -445,6 +468,21 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 0.2em;
+}
+
+/* リンクカード (rehypeLinkCard が置いた単独行のリンク)。
+   見た目はほぼ LinkCard.tsx の Tailwind 側に置いてあり、ここに書くのは
+   すぐ上の `.article-body a` を打ち消すぶんだけ。あちらは詳細度 0,2,0 で
+   色と下線を強制するので、ユーティリティクラス (0,1,0) では上書きできない。 */
+.article-body a.link-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* サムネイルの角は丸めない。丸めるのはカードの外枠で、
+   はみ出しは overflow-hidden が切る (`.article-body img` の角丸を外す)。 */
+.article-body a.link-card img {
+  border-radius: 0;
 }
 
 .article-body ul,
