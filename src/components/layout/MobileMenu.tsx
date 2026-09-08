@@ -100,7 +100,7 @@ export function MobileMenu({
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? labels.close : labels.open}
             aria-expanded={open}
-            className="pointer-events-auto absolute inset-y-0 left-0 flex items-center text-foreground transition-colors hover:text-accent"
+            className="pointer-events-auto absolute -inset-y-[7px] left-0 flex w-11 items-center text-foreground transition-colors hover:text-accent"
           >
             <span aria-hidden className="relative block h-[1.125rem] w-6">
               <motion.span

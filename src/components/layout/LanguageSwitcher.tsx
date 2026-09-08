@@ -39,11 +39,18 @@ export function LanguageSwitcher({
             // 次に接頭辞なしで来たとき proxy がこの選択を尊重する
             document.cookie = `NEXT_LOCALE=${l}; path=/; max-age=31536000; samesite=lax`;
           }}
-          className={
+          /* 字そのものは 19x23 しかなく、WCAG 2.2 の下限 (24x24) を割る。
+             見た目を動かさずに当たり判定だけ広げたいので、透明な擬似要素を
+             敷く (padding + 相殺マージンと違い、flex の計算にも
+             getBoundingClientRect にも出ない)。
+             横を 4px までにしているのは、gap-2 (8px) で隣り合う JA と EN の
+             判定がちょうど接して重ならない上限だから。ここを 44px まで
+             広げると判定が食い合い、隙間を押したとき逆側が反応する。 */
+          className={`relative before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[''] ${
             l === locale
               ? "text-accent"
               : "text-muted-foreground transition-colors hover:text-accent"
-          }
+          }`}
         >
           {l.toUpperCase()}
         </a>

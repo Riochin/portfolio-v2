@@ -18,7 +18,11 @@ const VARIANTS = {
   },
   chrome: {
     className:
-      "flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-accent",
+      // 見えている丸は 32px のまま。当たり判定だけ透明な擬似要素で 44x44 に
+      // 広げる。padding で広げないのは、下の toggle が円の起点に
+      // getBoundingClientRect() を使っているため ── 矩形が変わると
+      // テーマ切替のリベールの中心がずれる。
+      "relative flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors before:absolute before:-inset-1.5 before:content-[''] hover:text-accent",
     icon: 18,
     placeholder: "h-[18px] w-[18px]",
   },

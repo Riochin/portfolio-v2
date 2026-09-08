@@ -52,7 +52,11 @@ export function SocialLinks({
                   "--brand-dark": brandDark ?? brand,
                 } as CSSProperties
               }
-              className="group block text-foreground"
+              /* アイコンは 30px。見た目を変えずに当たり判定だけ 44x44 へ
+                 広げる (透明な擬似要素なので矩形も並びも動かない)。
+                 gap-6 (24px) から 7px x 2 を引いて 10px 残るので、隣どうしの
+                 判定は重ならない。 */
+              className="group relative block text-foreground before:absolute before:-inset-[7px] before:content-['']"
             >
               {/* fill を currentColor から差し替えるので、色の変化は svg 側で受ける。
                   ブランド色が url(#...) のときも fill なら同じ書き方で通る。
