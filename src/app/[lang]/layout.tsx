@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Zen_Maru_Gothic, Alex_Brush } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
@@ -29,6 +29,19 @@ const logoCursive = Alex_Brush({
  */
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
+/**
+ * ブラウザの UI (Android の URL バー、スタンドアロン時のステータスバー) に渡す色。
+ * テーマは next-themes の system 既定なので、端末の設定と同じ条件で出し分ける。
+ * 値は globals.css の --background と同じ。
+ * サイト内のトグルで明暗を選び直したときだけはここが追随しない。
+ */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbf3f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#070d1e" },
+  ],
+};
+
 export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
 }
@@ -44,6 +57,15 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: t(SITE.description),
     alternates: alternates(locale, "/"),
+    /**
+     * iOS はマニフェストを読まないので、ホーム画面から開いたときに
+     * ブラウザの UI を外すのはここ。アイコンは app/apple-icon.png が出す。
+     */
+    appleWebApp: {
+      capable: true,
+      title: SITE.brand,
+      statusBarStyle: "default",
+    },
     openGraph: {
       type: "website",
       siteName: SITE.brand,
