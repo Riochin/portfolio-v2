@@ -48,8 +48,8 @@ export default async function ExperiencePage() {
             {group.experiences.map((exp, index) => (
               <li
                 key={exp.slug}
-                className={`reveal-rise relative overflow-hidden rounded-xl bg-surface ${
-                  exp.image ? "sm:min-h-44" : ""
+                className={`reveal-rise @container relative overflow-hidden rounded-xl bg-surface ${
+                  exp.image ? "@[37rem]:min-h-44" : ""
                 }`}
                 style={
                   {
@@ -64,22 +64,30 @@ export default async function ExperiencePage() {
                     合わせて object-cover で縦を切り取る。min-h-44 は本文が
                     短いときに写真が細くなりすぎないための下限で、逆の上限は
                     9:16 (幅 176px なら 312px)。
-                    狭い幅では横並びだと本文が潰れるので、フローのまま上に敷く。 */}
+                    狭い幅では横並びだと本文が潰れるので、フローのまま上に敷く。
+
+                    判定はビューポートではなくカード自身の幅で行う (@container)。
+                    本文カラムは md 以上で固定レールに挟まれるので、幅 768px の
+                    画面ではカードが 415px しか無い ── スマホより狭い。sm:
+                    (ビューポート 640px) で切り替えていた頃は、そこでも横並びの
+                    ままになり、176px の写真を引くと本文に 207px しか残らず
+                    見出しが折れていた。37rem = 592px は sm: で切り替わっていた
+                    瞬間のカラム幅 (640 - px-6 の 48) で、閾値は変えていない。 */}
                 {exp.image && (
                   <Image
                     src={exp.image.src}
                     alt={t(exp.image.alt)}
                     width={exp.image.width}
                     height={exp.image.height}
-                    sizes="(max-width: 640px) 100vw, 176px"
+                    sizes="(min-width: 1096px) 176px, (min-width: 768px) 100vw, (min-width: 640px) 176px, 100vw"
                     // 1 件目だけ先読みする。next/image の既定は lazy で、
                     // 画面に映っているカードまで遅延にすると写真が後乗せに
                     // なり、リロードのたびに読み込み直しているように見える。
                     priority={groupIndex === 0 && index === 0}
-                    className="photo-frame aspect-video w-full object-cover sm:absolute sm:inset-y-0 sm:left-0 sm:aspect-auto sm:h-full sm:max-h-[19.5rem] sm:w-44"
+                    className="photo-frame aspect-video w-full object-cover @[37rem]:absolute @[37rem]:inset-y-0 @[37rem]:left-0 @[37rem]:aspect-auto @[37rem]:h-full @[37rem]:max-h-[19.5rem] @[37rem]:w-44"
                   />
                 )}
-                <div className={`min-w-0 p-4 ${exp.image ? "sm:ml-44" : ""}`}>
+                <div className={`min-w-0 p-4 ${exp.image ? "@[37rem]:ml-44" : ""}`}>
                   {/* 見出しは所属ではなくプログラム名。
                         「株式会社◯◯」が並ぶより何をやったかで拾い読みできる。
                         体験記などの外部記事はその右端に。absolute で右上に
