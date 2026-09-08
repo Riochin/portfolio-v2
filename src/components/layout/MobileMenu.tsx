@@ -57,10 +57,10 @@ export function MobileMenu({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={fade}
-            className="fixed inset-0 z-40 flex flex-col bg-background/95 px-4 py-4 backdrop-blur-sm"
+            className="fixed inset-0 z-40 flex flex-col overflow-y-auto overscroll-contain bg-background/95 px-4 py-4 backdrop-blur-sm"
           >
             {/* ヘッダー行のぶんの place holder。ボタン自体はヘッダー側にある */}
-            <div aria-hidden className={HEADER_ROW} />
+            <div aria-hidden className={`shrink-0 ${HEADER_ROW}`} />
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -70,7 +70,7 @@ export function MobileMenu({
                 transition: { duration: reduceMotion ? 0 : 0.2, ease: EASE },
               }}
               transition={{ ...morph, delay: reduceMotion ? 0 : 0.06 }}
-              className="mt-10 flex flex-1 flex-col gap-10 text-lg"
+              className="mt-10 flex flex-[1_0_auto] flex-col gap-10 text-lg"
               onClick={() => setOpen(false)}
             >
               <SideNav
