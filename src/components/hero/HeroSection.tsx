@@ -221,61 +221,6 @@ export function HeroSection({
           予算は 100dvh - 22rem = 315px、幅は 375 - px-6 の 48 = 327px、
           4:3 の高さは 245px で予算の内に収まる。 */}
       <div className="relative w-full max-w-3xl [--hero-reserve:22rem] max-md:short:[--hero-reserve:18.5rem] md:short:[--hero-reserve:14.5rem]">
-        {/* 挨拶文は水平線より下、海の上に重ねる。空には雲が湧くので、字が乗る
-            のは面の落ち着いた水側がいい。
-
-            水平線の高さはカメラから出る。画面の中央からの隔たりは
-            tan(pitch) / (2 * tan(fov/2)) で、既定 (pitch 0.055 / fov 55) なら
-            ブロックの上から 55.3%。この式に比が入っていないのは、three の fov が
-            垂直基準で、枠を 16:9 から 4:3 へ詰めても縦の見え方が動かないため。
-            画枠を変えても水平線は 55.3% のままなので、この 22% も据え置ける
-            (fov を触ったときだけ動く。55→62 なら 54.6%)。
-            字の中心はその下の 61% に置く (top を 22%
-            にすると、下辺との中点がちょうど 61%)。字の高さの半分が 3% ほどな
-            ので、上辺と水平線の間はまだ空く。ポインタ追従で pitch は ±0.12
-            振れ、上を向ききると水平線が 67% まで下がって字を越すが、それは
-            見回している間だけの一瞬で、据わりの良さを取った。
-            sceneConfig の CAMERA か POINTER_LOOK を触ったらここも計算し直す。
-
-            色はテーマによらず白。昼は海面に日のギラつきの帯が出て白と
-            白がぶつかるので、輪郭を拾わせる影は残す。ただし下向きの
-            オフセットを持たせると字だけが絵から浮いて「貼り付けた」ように
-            見えるので、中心対称の淡いハロー 1 本だけにする。
-            狭い幅ではブロックも小さいので、字を一回り落として左右に逃げを作り、
-            それでも入らなければ折り返させる (中央揃えなので 2 行でも崩れない)。
-
-            ここに来る文はロケールによらず英語 (page.tsx の labels を参照)。
-            30 字を超えて狭い画面では折り返すが、単語のまとまりで折れるので
-            読める (WORD の説明を参照)。日本語を出していた頃は 17 字ぶんが
-            1 行に載るかどうかの瀬戸際で、字 (1em) と字間 (0.2em) の 1 字 1.2em
-            から text-xs (このサイトでは 13px) で 265px、使える幅 (画面幅 -
-            ページの px-6 と h1 の px-4 で 80px) から 345px 以上なら 1 行、と
-            見積もっていた ── ja に戻すならこの計算に戻ること。
-            pointer-events-none にして、文字の上でもブロックを押せるようにする。
-
-            lang は文書 (ja) とずれるので h1 で立て直す。読み上げに日本語の音で
-            英文を読ませないため。t() に戻すときは対で外すこと。
-
-            明暗の 2 本を同じ 1 マスに重ね、grid で両方を中央に置く。flex だと
-            2 本が横に並ぶので、ここだけ grid にしてある。見せる側を選ぶのは
-            CSS で、どちらが出ても行の位置は動かない (Welcome の説明も参照)。 */}
-        {!isExpanded && (
-          <h1
-            lang="en"
-            className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 grid place-items-center px-4 text-center text-xs font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-sm"
-          >
-            <Welcome
-              text={labels.welcomeLight}
-              shown={shown}
-              className="dark:invisible"
-            />
-            <Welcome
-              text={labels.welcomeDark}
-              shown={shown}
-              className="invisible dark:visible"
-            />
-          </h1>
-        )}
         {/* aspect は幅からしか高さを決めないので、低い画面 (横向きの端末など) では
             ブロックだけで画面を越えてしまう。残り高さから逆算した幅で頭を押さえ、
             比を保ったまま縮ませる。max() は予算が尽きたときに幅が 0 や負に
@@ -287,6 +232,67 @@ export function HeroSection({
             縦の見え方は動かず横だけが切れるので、切れたぶんはカメラの yaw で
             取り戻す ── その対は sceneConfig の HERO_FRAMING が持っている。 */}
         <div className="group relative mx-auto aspect-[16/9] w-full max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*16/9)] upright:aspect-[4/3] upright:max-w-[calc(max(9rem,100dvh-var(--hero-reserve))*4/3)]">
+          {/* この h1 は絵のブロックの子。inset-x-0 / top-[22%] / bottom-0 は
+              どれもブロックの箱を指す ── 上の 55.3% の導出がずっと前提にして
+              いたのがこの箱で、以前は外側のラッパーに吊るしていたため、高さの
+              予算でブロックだけが細くなる画面で字が絵の外へはみ出していた。
+              縦は変わらない (ラッパーの唯一のフロー子がブロックなので、
+              ラッパーの箱は 0..ブロック高で一致する)。 */}
+          {/* 挨拶文は水平線より下、海の上に重ねる。空には雲が湧くので、字が乗る
+              のは面の落ち着いた水側がいい。
+
+              水平線の高さはカメラから出る。画面の中央からの隔たりは
+              tan(pitch) / (2 * tan(fov/2)) で、既定 (pitch 0.055 / fov 55) なら
+              ブロックの上から 55.3%。この式に比が入っていないのは、three の fov が
+              垂直基準で、枠を 16:9 から 4:3 へ詰めても縦の見え方が動かないため。
+              画枠を変えても水平線は 55.3% のままなので、この 22% も据え置ける
+              (fov を触ったときだけ動く。55→62 なら 54.6%)。
+              字の中心はその下の 61% に置く (top を 22%
+              にすると、下辺との中点がちょうど 61%)。字の高さの半分が 3% ほどな
+              ので、上辺と水平線の間はまだ空く。ポインタ追従で pitch は ±0.12
+              振れ、上を向ききると水平線が 67% まで下がって字を越すが、それは
+              見回している間だけの一瞬で、据わりの良さを取った。
+              sceneConfig の CAMERA か POINTER_LOOK を触ったらここも計算し直す。
+
+              色はテーマによらず白。昼は海面に日のギラつきの帯が出て白と
+              白がぶつかるので、輪郭を拾わせる影は残す。ただし下向きの
+              オフセットを持たせると字だけが絵から浮いて「貼り付けた」ように
+              見えるので、中心対称の淡いハロー 1 本だけにする。
+              狭い幅ではブロックも小さいので、字を一回り落として左右に逃げを作り、
+              それでも入らなければ折り返させる (中央揃えなので 2 行でも崩れない)。
+
+              ここに来る文はロケールによらず英語 (page.tsx の labels を参照)。
+              30 字を超えて狭い画面では折り返すが、単語のまとまりで折れるので
+              読める (WORD の説明を参照)。日本語を出していた頃は 17 字ぶんが
+              1 行に載るかどうかの瀬戸際で、字 (1em) と字間 (0.2em) の 1 字 1.2em
+              から text-xs (このサイトでは 13px) で 265px、使える幅 (画面幅 -
+              ページの px-6 と h1 の px-4 で 80px) から 345px 以上なら 1 行、と
+              見積もっていた ── ja に戻すならこの計算に戻ること。
+              pointer-events-none にして、文字の上でもブロックを押せるようにする。
+
+              lang は文書 (ja) とずれるので h1 で立て直す。読み上げに日本語の音で
+              英文を読ませないため。t() に戻すときは対で外すこと。
+
+              明暗の 2 本を同じ 1 マスに重ね、grid で両方を中央に置く。flex だと
+              2 本が横に並ぶので、ここだけ grid にしてある。見せる側を選ぶのは
+              CSS で、どちらが出ても行の位置は動かない (Welcome の説明も参照)。 */}
+          {!isExpanded && (
+            <h1
+              lang="en"
+              className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 grid place-items-center px-4 text-center text-xs font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-sm"
+            >
+              <Welcome
+                text={labels.welcomeLight}
+                shown={shown}
+                className="dark:invisible"
+              />
+              <Welcome
+                text={labels.welcomeDark}
+                shown={shown}
+                className="invisible dark:visible"
+              />
+            </h1>
+          )}
           {!isExpanded && (
             <HeroBlock
               onClick={prefersReducedMotion || !shown ? undefined : expand}
@@ -338,22 +344,32 @@ export function HeroSection({
             置かない (ブロック自体が押せるので、押すのか送るのかも紛れる)。
             行き先を名乗るリンクにして、空が開ききってから遅れて出す。
             top-full = ブロックの下辺。フローに置かないので、この行が出ても
-            ブロックは動かない (中央に据わったまま)。 */}
-        {!isExpanded && (
-          <div className="absolute inset-x-0 top-full mt-8 flex min-h-6 justify-center">
-            {shown && (
-              <Link
-                href={aboutHref}
-                className="reveal-rise inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
-                // 挨拶文が 1 文字ずつ出そろうのを待ってから
-                style={{ "--reveal-delay": "1000ms" } as CSSProperties}
-              >
-                {labels.about}
-                <ArrowRight size={16} />
-              </Link>
-            )}
-          </div>
-        )}
+            ブロックは動かない (中央に据わったまま)。
+
+            例外が cramped ── ブロックが下限 (9rem) まで縮んでもなお下が
+            足りない画面。そこだけ static に戻してフローに参加させ、ブロックと
+            この行をひとまとまりで中央に据える。absolute のままだと、予算を
+            超えたぶんがそのまま下へ溢れてテーマ切替のボタンに乗る。
+            static は top を無効にするので、mt-8 の意味 (ブロックの下辺から
+            2rem) はどちらのモードでも変わらない。
+
+            行ごと常に描くのは、全画面を開いている間もラッパーの高さを保つため。
+            cramped で丸ごと外すとラッパーが 3.5rem 縮んでブロックが動き、
+            layoutId="hero-block" の閉じるモーフがずれた位置を測る。
+            中は空の min-h-6 なので見た目には出ない。 */}
+        <div className="absolute inset-x-0 top-full mt-8 flex min-h-6 justify-center cramped:static">
+          {!isExpanded && shown && (
+            <Link
+              href={aboutHref}
+              className="reveal-rise inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
+              // 挨拶文が 1 文字ずつ出そろうのを待ってから
+              style={{ "--reveal-delay": "1000ms" } as CSSProperties}
+            >
+              {labels.about}
+              <ArrowRight size={16} />
+            </Link>
+          )}
+        </div>
       </div>
       <AnimatePresence>
         {isExpanded && (
