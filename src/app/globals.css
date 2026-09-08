@@ -470,6 +470,21 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   text-underline-offset: 0.2em;
 }
 
+/* リンクカード (rehypeLinkCard が置いた単独行のリンク)。
+   見た目はほぼ LinkCard.tsx の Tailwind 側に置いてあり、ここに書くのは
+   すぐ上の `.article-body a` を打ち消すぶんだけ。あちらは詳細度 0,2,0 で
+   色と下線を強制するので、ユーティリティクラス (0,1,0) では上書きできない。 */
+.article-body a.link-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* サムネイルの角は丸めない。丸めるのはカードの外枠で、
+   はみ出しは overflow-hidden が切る (`.article-body img` の角丸を外す)。 */
+.article-body a.link-card img {
+  border-radius: 0;
+}
+
 .article-body ul,
 .article-body ol {
   padding-left: 1.5rem;

@@ -116,7 +116,7 @@ export default async function ArticlePage({
           )}
         </p>
 
-        <ArticleBody markdown={article.markdown} />
+        <ArticleBody markdown={article.markdown} locale={locale} />
       </article>
 
       <DetailPager

@@ -6,7 +6,9 @@ import { rehypeDemoteH1 } from "@/lib/articles/rehype-demote-h1";
 import { rehypeLowercaseLang } from "@/lib/articles/rehype-lowercase-lang";
 import { rehypeUnwrapImage } from "@/lib/articles/rehype-unwrap-image";
 import { rehypeImageSize } from "@/lib/articles/rehype-image-size";
+import { rehypeLinkCard } from "@/lib/articles/rehype-link-card";
 import { CODE_THEMES, getHighlighter } from "@/lib/articles/highlighter";
+import type { Locale } from "@/lib/i18n/config";
 import { MarkdownImage } from "./MarkdownImage";
 import { MarkdownLink } from "./MarkdownLink";
 
@@ -22,8 +24,19 @@ import { MarkdownLink } from "./MarkdownLink";
  *
  * 同期版の <Markdown> ではなく MarkdownAsync を使うのは、shiki の rehype
  * プラグインが非同期だから ── 同期版は内部で runSync() を呼ぶので例外になる。
+ * リンクカードが他所のページを取りに行けるのも、この形になっているおかげ。
+ *
+ * locale を受け取るのはリンクカードのため。lib/articles/ は OG 画像から呼べるよう
+ * ロケール非依存を守る必要があるので、サイト内リンクの行き先を
+ * `/ja/blog/...` に直す変換はここから下でだけ行う (lib/output/self.ts と同じ)。
  */
-export async function ArticleBody({ markdown }: { markdown: string }) {
+export async function ArticleBody({
+  markdown,
+  locale,
+}: {
+  markdown: string;
+  locale: Locale;
+}) {
   const highlighter = await getHighlighter();
 
   return (
@@ -38,6 +51,9 @@ export async function ArticleBody({ markdown }: { markdown: string }) {
           rehypeDemoteH1,
           // figure で包めるように、画像だけの段落から p を外しておく。
           rehypeUnwrapImage,
+          // 同じく「子が 1 つだけの段落」をほどく側なので隣に置く。
+          // こちらはリンクだけの段落をカードに差し替える。
+          [rehypeLinkCard, { locale }],
           rehypeImageSize,
           // 言語名の大小を均してから shiki に渡す。
           rehypeLowercaseLang,
