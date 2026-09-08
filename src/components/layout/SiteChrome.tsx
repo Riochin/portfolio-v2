@@ -76,28 +76,52 @@ export async function SiteChrome() {
       <div className="fixed right-[10%] top-1/2 z-30 hidden -translate-y-1/2 md:block">
         <SocialLinks />
       </div>
-      <div className="fixed left-[10%] top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-16 md:flex">
-        <SideNav
-          items={items}
-          heading={SITE.wordmark}
-          headingHref={homeHref}
-          ariaLabel={labels.mainNav}
-        />
-        <div className="flex flex-col gap-3">
-          {/* テーマ切替は JP/EN と同じ「サイトの設定」の列なので同じ行に並べる。
-              ヒーローではボタンが消えるが、行の高さは JP/EN が決めるので
-              下の Copyright は動かない。 */}
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher
-              locale={locale}
-              ariaLabel={t(DICT.aria.languageToggle)}
-            />
-            <ChromeThemeToggle
-              ariaLabel={t(DICT.aria.themeToggle)}
-              className="-my-2"
-            />
+      {/* 左レール。2 つのことをしている。
+
+          1) 縦は「収まるときだけ中央」。中身は 25rem ほどあるので、横向きの
+             端末 (812x375 など) では画面より高くなる。top-1/2 の中央寄せは
+             溢れたぶんを上下へ等分に押し出すので、ワードマークとコピーライトが
+             画面の外へ出たまま fixed で掴めなくなっていた。外側を全高の
+             スクロール枠にし、中身は min-h-full + justify-center で中央に
+             据える ── 収まるあいだは今までと同じ位置、溢れたら送れる。
+             justify-center をスクロール枠自身に持たせないこと (溢れると上が
+             切れて、そこだけスクロールでも出てこない)。
+             天地に余白は入れない。中身は 408.69px で、収まる一番低い画面
+             (896x414) との差が 5.31px しかない ── 少しでも足すとそこが
+             溢れる側に倒れ、今まで中央にあったものが動く。
+
+          2) 横は本文との隙間を確保する。隙間 = 0.18 x 幅 - --rail-w で、
+             本文の左端 (PageShell の md:pl-[28%]) とこのレールの右端
+             (10% + レール幅) の差。md の下限 768px でちょうど 1px しかなく、
+             ワードマーク (font-logo) の字形が少し変わるだけで食い込む。
+             幅が足りないときだけ左へ逃がす。交点は 0.10w = 0.28w - --rail-w
+             - 1.5rem を解いて 894px で、そこから上では 10% が選ばれるので
+             位置は変わらない。--rail-w はワードマーク (text-4xl) が決めている
+             実測値。字の大きさを変えたらここも測り直す。 */}
+      <div className="fixed inset-y-0 left-[min(10%,calc(28%-var(--rail-w)-1.5rem))] z-30 hidden w-max overflow-y-auto overscroll-contain [--rail-w:137px] md:block">
+        <div className="flex min-h-full flex-col justify-center gap-16">
+          <SideNav
+            items={items}
+            heading={SITE.wordmark}
+            headingHref={homeHref}
+            ariaLabel={labels.mainNav}
+          />
+          <div className="flex flex-col gap-3">
+            {/* テーマ切替は JP/EN と同じ「サイトの設定」の列なので同じ行に並べる。
+                ヒーローではボタンが消えるが、行の高さは JP/EN が決めるので
+                下の Copyright は動かない。 */}
+            <div className="flex items-center gap-4">
+              <LanguageSwitcher
+                locale={locale}
+                ariaLabel={t(DICT.aria.languageToggle)}
+              />
+              <ChromeThemeToggle
+                ariaLabel={t(DICT.aria.themeToggle)}
+                className="-my-2"
+              />
+            </div>
+            <Copyright />
           </div>
-          <Copyright />
         </div>
       </div>
     </>
