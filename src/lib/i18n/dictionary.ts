@@ -48,6 +48,12 @@ export const DICT = {
      *  誘いたいのは同じ「読みもの」なので、記事の側から呼ぶ。 */
     otherArticles: { ja: "ほかの記事も見る", en: "See other articles" },
     draft: { ja: "下書き", en: "Draft" },
+    /** 末尾のシェア。行き先を名乗らず所作だけを言う ── 何に送るかは OS の
+     *  共有シートが決めるので、こちらから約束できない (ArticleShare.tsx)。 */
+    share: { ja: "この記事をシェア", en: "Share this article" },
+    /** 共有シートが無い環境で share と入れ替わる。 */
+    copyLink: { ja: "リンクをコピー", en: "Copy link" },
+    copied: { ja: "コピーしました", en: "Copied" },
   },
   works: {
     awards: { ja: "受賞歴", en: "Awards" },
@@ -82,6 +88,22 @@ export const DICT = {
     skills: { ja: "勉強している技術", en: "Currently learning" },
     /** 上位再生曲なので「好きな曲」とは名乗らない。 */
     tracks: { ja: "よく聴いている曲", en: "On repeat" },
+  },
+  /**
+   * 見つからなかったときの画面 (app/[lang]/not-found.tsx)。
+   *
+   * 見出しは「迷子になってしまいましたか」ではなく問いかけ 1 語で置く ──
+   * 迷ったのは読み手の落ち度ではないので、長く言うほど詫びさせる形になる。
+   * 何が起きたかの説明は message が引き受けるので、見出しは声だけでいい。
+   */
+  notFound: {
+    title: { ja: "迷子？", en: "Lost?" },
+    message: {
+      ja: "お探しのページは、移動または削除された可能性があります。",
+      en: "The page you're looking for may have moved or been removed.",
+    },
+    /** 戻り先はトップ 1 本だけ。迷っている人に選択肢を並べても選べない。 */
+    home: { ja: "トップに戻る", en: "Back to home" },
   },
   hero: {
     /**

@@ -18,7 +18,7 @@ draft: false
 
 <br />
 
-といったタイミングで、このポートフォリオサイトをnpmからpnpmに移行したので、ついでに「依存関係（`node_modules`）の持ち方」って観点をメインに色々調べてみましたー！！！
+ちょうどこのポートフォリオサイトをnpmからpnpmに移行したタイミングだったので、ついでに「依存関係（`node_modules`）の持ち方」をメインにいろいろと調べてみましたー！！！
 
 ## npm v2以前:ネスト地獄の時代
 
@@ -50,8 +50,8 @@ node_modules/
 
 これの困ったところ：
 
-- 依存が増えるほどこの重複が積み重なって、`node_modules`が数百MB〜1GBに膨れ上がった（らしい）
-- Windowsだとパスが伸びすぎて削除すらできなくなるケースもあった（らしい）
+- 依存が増えるほどこの重複が積み重なって、`node_modules`が数百MB〜1GBに膨れ上がることがあった
+- Windowsだとパスが伸びすぎて削除すらできなくなるケースも報告されていた
 
 ## npm v3:フラット化とphantom dependency
 
@@ -82,7 +82,7 @@ node_modules/
 
 - **phantom dependency が起こる**
   - `package.json`に書いてない未宣言のパッケージが、なぜか`require`できてしまう現象のこと
-  - 名前がかっこいい
+  - （名前はかっこいいが、よくない）
 
 ```
 // package.jsonにはnextしか書いてないのに
@@ -236,7 +236,9 @@ pnpmは「階層構造」を取ってるけど、npm v2のネスト地獄とは�
 
 ネストした先に置くのが、**実体のコピー or 既存実体への参照** って違いがいちばん大きいみたいでした！
 
-少しだけですが、pnpmを選ぶ理由が説明できるようになったぞ〜！（めでたし）
+<br />
+
+少しだけですが、名前のかわいさ以外にも、pnpmを選ぶ理由が説明できるようになった気がします〜！（めでたし）
 
 ## 新しく調べた用語のおさらい
 
@@ -250,6 +252,8 @@ pnpmは「階層構造」を取ってるけど、npm v2のネスト地獄とは�
 
 ## 参考
 
-- <https://qiita.com/iGeMi/items/2be097d5c6c9111f81c4>
-- <https://zenn.dev/yuichi_ai/articles/node-modules-structure-explained#pnpm%E3%81%AE3%E5%B1%A4%E6%A7%8B%E9%80%A0>
-- <https://zenn.dev/yuichi_ai/articles/phantom-dependency-explained-with-examples>
+<https://qiita.com/iGeMi/items/2be097d5c6c9111f81c4>
+
+<https://zenn.dev/yuichi_ai/articles/node-modules-structure-explained#pnpm%E3%81%AE3%E5%B1%A4%E6%A7%8B%E9%80%A0>
+
+<https://zenn.dev/yuichi_ai/articles/phantom-dependency-explained-with-examples>
