@@ -7,6 +7,7 @@ import {
 } from "@/components/layout/DetailPager";
 import { PageShell } from "@/components/layout/PageShell";
 import { ArticleBody } from "@/components/blog/ArticleBody";
+import { ArticleShare } from "@/components/blog/ArticleShare";
 import {
   getArticleBySlug,
   getArticleNeighbors,
@@ -118,6 +119,8 @@ export default async function ArticlePage({
 
         <ArticleBody markdown={article.markdown} locale={locale} />
       </article>
+
+      <ArticleShare slug={slug} title={article.title} />
 
       <DetailPager
         prev={toPagerLink(prev)}

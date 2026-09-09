@@ -48,6 +48,12 @@ export const DICT = {
      *  誘いたいのは同じ「読みもの」なので、記事の側から呼ぶ。 */
     otherArticles: { ja: "ほかの記事も見る", en: "See other articles" },
     draft: { ja: "下書き", en: "Draft" },
+    /** 末尾のシェア。行き先を名乗らず所作だけを言う ── 何に送るかは OS の
+     *  共有シートが決めるので、こちらから約束できない (ArticleShare.tsx)。 */
+    share: { ja: "この記事をシェア", en: "Share this article" },
+    /** 共有シートが無い環境で share と入れ替わる。 */
+    copyLink: { ja: "リンクをコピー", en: "Copy link" },
+    copied: { ja: "コピーしました", en: "Copied" },
   },
   works: {
     awards: { ja: "受賞歴", en: "Awards" },
