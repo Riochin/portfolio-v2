@@ -90,8 +90,10 @@ export function MobileMenu({
           アイコンだけをその行の中央に置く。
           帯そのものをぼかして下端に境界線を引き、本文が下を流れても
           ワードマークとアイコンの可読性を保つ。
+          帯は見た目どおり面として振る舞わせる。pointer-events を切ると
+          ぼけの下を流れる本文のリンクが帯越しに押せてしまう。
           site-header は globals.css がテーマ切替中だけ掴むための目印。 */}
-      <header className="site-header pointer-events-none fixed inset-x-0 top-0 z-40 border-b border-border bg-background/80 px-4 py-4 backdrop-blur-md">
+      <header className="site-header fixed inset-x-0 top-0 z-40 border-b border-border bg-background/80 px-4 py-4 backdrop-blur-md">
         {/* ワードマークは画面中央に据えたいので、ボタンのぶんだけずれないよう
             ボタン側を絶対配置で左端に逃がす。 */}
         <div className={`relative justify-center ${HEADER_ROW}`}>
@@ -100,7 +102,7 @@ export function MobileMenu({
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? labels.close : labels.open}
             aria-expanded={open}
-            className="pointer-events-auto absolute -inset-y-[7px] left-0 flex w-11 items-center text-foreground transition-colors hover:text-accent"
+            className="absolute -inset-y-[7px] left-0 flex w-11 items-center text-foreground transition-colors hover:text-accent"
           >
             <span aria-hidden className="relative block h-[1.125rem] w-6">
               <motion.span

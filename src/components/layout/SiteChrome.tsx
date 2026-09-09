@@ -60,7 +60,7 @@ export async function SiteChrome() {
         themeToggle={
           <ChromeThemeToggle
             ariaLabel={t(DICT.aria.themeToggle)}
-            className="pointer-events-auto absolute inset-y-0 -right-[7px] flex items-center"
+            className="absolute inset-y-0 -right-[7px] flex items-center"
           />
         }
         wordmark={
