@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { flushSync } from "react-dom";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+import { useHydrated } from "@/lib/useHydrated";
 
 /* hero は下部中央に単体で置く大きな丸ボタン。chrome は JP/EN の隣やフッターに
    並ぶ小さなアイコンで、枠を持たず周りの文字リンクと同じ重さに見せる。
@@ -36,10 +37,8 @@ export function ThemeToggle({
   variant?: keyof typeof VARIANTS;
 }) {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => setMounted(true), []);
 
   const isDark = resolvedTheme === "dark";
 

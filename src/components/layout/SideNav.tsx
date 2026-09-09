@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useHydrated } from "@/lib/useHydrated";
 
 export type NavItem = {
   /** ロケール接頭辞まで解決済みの href。組み立ては SiteChrome (server) が行う。 */
@@ -36,8 +36,7 @@ export function SideNav({
   // 計測ではなく CSS だけで成立させるため、帯は各リンクに重ねる。
   // ただし SSR / JS 無効時に色が消えないよう、素の背景を先に出しておき、
   // マウント後にアニメーションする帯へ引き継ぐ。
-  const [enhanced, setEnhanced] = useState(false);
-  useEffect(() => setEnhanced(true), []);
+  const enhanced = useHydrated();
 
   // 入りはゆったり見せ、抜けは少し早めに引く
   const enterDuration = reduceMotion ? 0 : 0.6;
