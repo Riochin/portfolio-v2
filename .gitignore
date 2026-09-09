@@ -15,6 +15,10 @@
 
 # next.js
 /.next/
+# dev を止めずに確認ビルドを出す先 (next.config.ts の distDir を一時的に
+# 差し替えて使う)。無視しないと Tailwind v4 が中の compiled chunk まで走査し、
+# 壊れたクラスを拾って dev の CSS が落ちる。
+/.next-verify/
 /out/
 
 # production
