@@ -509,6 +509,7 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   border: 1px solid var(--border);
   padding: 0.125em 0.375em;
   font-size: 0.875em;
+  overflow-wrap: break-word;
 }
 
 /* コードブロック。
