@@ -83,6 +83,22 @@ export const DICT = {
     /** 上位再生曲なので「好きな曲」とは名乗らない。 */
     tracks: { ja: "よく聴いている曲", en: "On repeat" },
   },
+  /**
+   * 見つからなかったときの画面 (app/[lang]/not-found.tsx)。
+   *
+   * 見出しは「迷子になってしまいましたか」ではなく問いかけ 1 語で置く ──
+   * 迷ったのは読み手の落ち度ではないので、長く言うほど詫びさせる形になる。
+   * 何が起きたかの説明は message が引き受けるので、見出しは声だけでいい。
+   */
+  notFound: {
+    title: { ja: "迷子？", en: "Lost?" },
+    message: {
+      ja: "お探しのページは、移動または削除された可能性があります。",
+      en: "The page you're looking for may have moved or been removed.",
+    },
+    /** 戻り先はトップ 1 本だけ。迷っている人に選択肢を並べても選べない。 */
+    home: { ja: "トップに戻る", en: "Back to home" },
+  },
   hero: {
     /**
      * 挨拶文。明暗で 1 語だけ変える。
