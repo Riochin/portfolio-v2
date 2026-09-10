@@ -1,0 +1,41 @@
+# PR ごとに make check と同じ 3 つ (typecheck / lint / build) を回す。
+# 手元では dev サーバーと .next を奪い合うので build は既定で走らせていないが、
+# CI は毎回まっさらなので気にせず通せる。
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    name: typecheck / lint / build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # pnpm のバージョンは package.json の packageManager (pnpm@10.13.1) から読む。
+      # ここに書き足すと二重管理になるので指定しない。
+      - uses: pnpm/action-setup@v6
+
+      # Vercel のビルドが Node 24 なので、それに合わせる。
+      # 手元はまだ 23 で、engines の固定はその更新と一緒にやる。
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm typecheck
+
+      # 型で落ちても lint の結果は見たい。1 回の実行で両方出す。
+      - if: ${{ !cancelled() }}
+        run: pnpm lint
+
+      # build は静的な検査が両方通ってから (既定の挙動に任せる)。
+      - run: pnpm build

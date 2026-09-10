@@ -1,0 +1,47 @@
+# 依存と Action の更新 PR を週次で。
+# pnpm も npm エコシステムとして扱われる (pnpm-lock.yaml を読む)。
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    labels: [deps]
+    commit-message:
+      # Dependabot の件名は英語になる。日本語のコミットには揃えられないので、
+      # せめて接頭辞で見分けが付くようにしておく。
+      prefix: deps
+
+    # バラバラに上がると壊れる組があるので、まとめる。
+    groups:
+      # next と eslint-config-next は同じバージョンにピン留めしてある。
+      next:
+        patterns: ["next", "eslint-config-next", "@next/*"]
+      # react と react-dom もピン留め。型定義も一緒に動かす。
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+      # ヒーロー一式。three の minor で drei / fiber が追随する。
+      three:
+        patterns: ["three", "three-stdlib", "@types/three", "@react-three/*"]
+      # studio のエディタ一式。
+      editor:
+        patterns: ["@milkdown/*", "@codemirror/*", "@uiw/*", "@lezer/*"]
+      # 記事のコードブロックのハイライタ。
+      shiki:
+        patterns: ["shiki", "@shikijs/*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    labels: [ci, deps]
+    commit-message:
+      prefix: ci
