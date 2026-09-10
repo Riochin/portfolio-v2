@@ -1,0 +1,150 @@
+# 変更したパスから PR にラベルを付ける (.github/workflows/labeler.yml から読まれる)。
+#
+# glob は minimatch なので、`src/app/[lang]/**` と書くと `[lang]` が「l か a か n か g の
+# 1 文字」という文字クラスとして解釈されてしまう。ルーティングの [lang] は `*` で受ける
+# (src/app/ の直下は [lang] / studio / hero-capture の 3 つだけなので曖昧にならない)。
+
+hero:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/components/hero/**
+          - src/app/hero-capture/**
+          - src/app/*/hero-capture/**
+          - scripts/generate-water-normals.mjs
+          - scripts/generate-hero-signature.mjs
+          - public/hero-*.webp
+          - public/water-normals.png
+
+works:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/components/works/**
+          - src/app/*/works/**
+          - src/data/works.ts
+          - public/works/**
+
+about:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/components/about/**
+          - src/components/skills/**
+          - src/app/*/about/**
+          - src/app/*/experience/**
+          - src/data/about.ts
+          - src/data/experience.ts
+          - src/data/skills.ts
+          - public/experience/**
+          - public/profile*
+
+blog:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/components/blog/**
+          - src/app/*/blog/**
+          - src/lib/articles/**
+
+article:
+  - changed-files:
+      - any-glob-to-any-file:
+          - content/articles/**
+          - public/articles/**
+
+output:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/components/output/**
+          - src/app/*/output/**
+          - src/lib/output/**
+          - src/lib/spotify/**
+
+studio:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/components/studio/**
+          - src/app/studio/**
+          - src/app/*/studio/**
+
+layout:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/components/layout/**
+          - src/components/theme/**
+          - src/components/icons/**
+          - src/app/*/layout.tsx
+          - src/app/*/not-found.tsx
+
+home:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/app/*/page.tsx
+
+# src/lib 直下に散らしてあるフックとユーティリティ。og.tsx と meta-tags.ts は
+# seo 側で見ているので、ここでは除く (all-globs-to-any-file は「全部の glob に
+# 当たるファイルが 1 つでもあるか」なので、! で外せる)。
+lib:
+  - changed-files:
+      - all-globs-to-any-file:
+          - src/lib/*.ts*
+          - "!src/lib/og.tsx"
+          - "!src/lib/meta-tags.ts"
+      - any-glob-to-any-file:
+          - src/proxy.ts
+          - src/data/index.ts
+          - src/data/site.ts
+          - src/data/types.ts
+
+i18n:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/lib/i18n/**
+          # [...rest] は角括弧もドットも glob と相性が悪いので、名前の一部で受ける。
+          - src/app/*/*rest*/**
+
+styles:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/app/globals.css
+          - postcss.config.mjs
+
+seo:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/app/sitemap.ts
+          - src/app/robots.ts
+          - src/app/manifest.ts
+          - src/app/*/opengraph-image.tsx
+          - src/lib/meta-tags.ts
+          - src/lib/og.tsx
+
+assets:
+  - changed-files:
+      - any-glob-to-any-file:
+          - public/**
+          - scripts/**
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+
+deps:
+  - changed-files:
+      - any-glob-to-any-file:
+          - package.json
+          - pnpm-lock.yaml
+
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - next.config.ts
+          - tsconfig.json
+          - eslint.config.mjs
+          - Makefile
+          - .gitignore
+          # エージェント向けの設定と skill。
+          - .claude/**
+
+docs:
+  - changed-files:
+      # 直下の .md だけ。content/articles/*.md はこれには当たらない。
+      - any-glob-to-any-file: "*.md"

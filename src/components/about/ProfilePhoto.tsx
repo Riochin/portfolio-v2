@@ -113,7 +113,13 @@ export function ProfilePhoto({
 
       {open && (
         /* 幕のどこを押しても閉じる。拡大した写真の上も同じで、閉じ方を
-           探させない (ボタンは右上にも置いてある)。 */
+           探させない (ボタンは右上にも置いてある)。
+
+           jsx-a11y からは「非対話要素にクリックだけが付いている」と見えるが、
+           キーボードからの閉じ方は上の useEffect の Escape と右上の閉じるボタンで
+           足りている (開いた時点でフォーカスもそのボタンへ移している)。幕のクリックは
+           マウスの人向けの上乗せなので、ここは抑制する。 */
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
         <div
           role="dialog"
           aria-modal="true"

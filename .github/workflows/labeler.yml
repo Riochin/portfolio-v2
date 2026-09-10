@@ -1,0 +1,64 @@
+# 変更したパスと規模から PR にラベルを付ける。
+#
+# pull_request_target ではなく pull_request で回している。前者は base ブランチ側の
+# コードで動くため、labeler を入れる PR やその設定を直す PR では検証できない
+# (actions/labeler の README が明記している)。代わりに fork からの PR には付かなくなるが、
+# このリポジトリは個人のものなので実害が無い。
+name: Labeler
+
+on: pull_request
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      # パス連動のラベル。設定は .github/labeler.yml。
+      # sync-labels: true にしているので、差分から消えたパスのラベルは外れる。
+      # 設定に書いていないラベル (手で付ける accessibility など) は触られない。
+      - uses: actions/labeler@v7
+        with:
+          sync-labels: true
+
+      # サイズラベル。サードパーティの Action は使わず、閾値と除外を自分で持つ。
+      #
+      # ロックファイルは数に入れない。数えると依存を 1 つ上げただけで毎回 XL になり、
+      # ラベルが規模を表さなくなる (#16 は実装 130 行に対してロックファイルが 18,698 行だった)。
+      - name: サイズラベル
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+
+          lines=$(gh api --paginate "repos/$REPO/pulls/$PR/files" \
+            --jq '.[]
+                  | select(.filename != "pnpm-lock.yaml"
+                        and .filename != "package-lock.json"
+                        and .filename != "THIRD-PARTY-NOTICES.md")
+                  | .additions + .deletions' \
+            | awk '{ s += $1 } END { print s + 0 }')
+
+          if   [ "$lines" -lt 10 ];  then size="size/XS"
+          elif [ "$lines" -lt 50 ];  then size="size/S"
+          elif [ "$lines" -lt 300 ]; then size="size/M"
+          elif [ "$lines" -lt 800 ]; then size="size/L"
+          else                            size="size/XL"
+          fi
+          echo "変更 $lines 行 -> $size"
+
+          # 付け替えなので、先に他の size/* を外す。labeler の sync-labels は
+          # .github/labeler.yml に書いたラベルしか面倒を見ないため、ここは自分でやる。
+          gh api "repos/$REPO/issues/$PR/labels" --jq '.[].name' \
+            | { grep '^size/' || true; } \
+            | { grep -vx "$size" || true; } \
+            | while read -r stale; do
+                gh api -X DELETE \
+                  "repos/$REPO/issues/$PR/labels/$(jq -rn --arg n "$stale" '$n | @uri')"
+              done
+
+          gh api -X POST "repos/$REPO/issues/$PR/labels" -f "labels[]=$size"
