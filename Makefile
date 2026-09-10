@@ -47,7 +47,7 @@ start:
 
 # ── 検証 ──────────────────────────────────────────────────
 typecheck:
-	pnpm exec tsc --noEmit
+	pnpm typecheck
 
 lint:
 	pnpm lint
