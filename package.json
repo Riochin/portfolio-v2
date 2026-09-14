@@ -34,7 +34,7 @@
     "server-only": "^0.0.1",
     "shiki": "^4.4.3",
     "simple-icons": "^16.29.0",
-    "three": "^0.185.1",
+    "three": "^0.186.0",
     "three-stdlib": "^2.36.1",
     "unist-util-visit": "^5.1.0",
     "yaml": "^2.9.0"
