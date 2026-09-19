@@ -307,6 +307,22 @@ export const WORKS = {
     },
     awards: [
       {
+        event: { ja: "技育博 2026 vol.2", en: "Geek Expo 2026 vol.2" },
+        prize: { ja: "サイバーエージェント賞", en: "CyberAgent Award" },
+        rank: "sponsor",
+        sponsor: { ja: "サイバーエージェント", en: "CyberAgent" },
+        date: "2026-09",
+        day: "19",
+      },
+      {
+        event: { ja: "技育博 2026 vol.2", en: "Geek Expo 2026 vol.2" },
+        prize: { ja: "ゆめみ賞", en: "YUMEMI Award" },
+        rank: "sponsor",
+        sponsor: { ja: "ゆめみ", en: "YUMEMI" },
+        date: "2026-09",
+        day: "19",
+      },
+      {
         event: {
           ja: "技育CAMP ハッカソン 2026 vol.3",
           en: "Geek Camp Hackathon 2026 vol.3",

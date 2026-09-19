@@ -26,7 +26,12 @@ export type Year = `20${Digit}${Digit}`;
 export type YearMonth = `${Year}-${Month}`;
 
 /** 01-31。存在しない日 (2 月 31 日など) までは型では防げないので isYearMonthDay() で確かめる。 */
-type Day = `0${Exclude<Digit, "0">}` | `1${Digit}` | `2${Digit}` | "30" | "31";
+export type Day =
+  | `0${Exclude<Digit, "0">}`
+  | `1${Digit}`
+  | `2${Digit}`
+  | "30"
+  | "31";
 
 /**
  * "2026-09-03" 形式。記事の公開日に使う。
