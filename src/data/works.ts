@@ -477,8 +477,11 @@ export const WORKS = {
     },
     awards: [
       {
-        event: { ja: "JPHACKS Award Day", en: "JPHACKS Award Day" },
-        prize: { ja: "ファイナリスト", en: "Finalist Award" },
+        event: { ja: "JPHACKS", en: "JPHACKS" },
+        prize: {
+          ja: "Award Day Finalist Award",
+          en: "Award Day Finalist Award",
+        },
         rank: "finalist",
         date: "2025-10",
       },
