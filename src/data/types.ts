@@ -1,5 +1,5 @@
 import type { Localized } from "@/lib/i18n/types";
-import type { Period, YearMonth } from "@/lib/date";
+import type { Day, Period, YearMonth } from "@/lib/date";
 import type { SkillSlug } from "./skills";
 import type { ExperienceSlug } from "./experience";
 
@@ -35,6 +35,8 @@ export type Award = {
   /** スポンサー賞のときの企業名。 */
   readonly sponsor?: Localized<string>;
   readonly date: YearMonth;
+  /** 同じ月の受賞どうしの前後を決めるためだけの日。表示には出さない。 */
+  readonly day?: Day;
   readonly url?: string;
 };
 

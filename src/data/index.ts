@@ -52,12 +52,17 @@ const EXPERIENCES_BY_YEAR: readonly ExperienceYearGroup[] =
     [],
   );
 
+/** day の無い受賞は月初扱い。同じ月なら day を持つ側が新しい。 */
+function awardSortKey(award: Award): string {
+  return `${award.date}-${award.day ?? "00"}`;
+}
+
 const ALL_AWARDS: readonly AwardEntry[] = ALL_WORKS.flatMap((work) =>
   (work.awards ?? []).map((award) => ({
     ...award,
     work: { slug: work.slug, title: work.shortTitle ?? work.title },
   })),
-).sort((a, b) => b.date.localeCompare(a.date));
+).sort((a, b) => awardSortKey(b).localeCompare(awardSortKey(a)));
 
 /** 受賞バッジで「一番良い賞」を選ぶための序列。 */
 const RANK_ORDER = {
