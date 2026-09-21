@@ -34,7 +34,7 @@
     "server-only": "^0.0.1",
     "shiki": "^4.4.3",
     "simple-icons": "^16.29.0",
-    "three": "^0.185.1",
+    "three": "^0.186.0",
     "three-stdlib": "^2.36.1",
     "unist-util-visit": "^5.1.0",
     "yaml": "^2.9.0"
@@ -51,7 +51,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "^0.185.4",
+    "@types/three": "^0.186.0",
     "@uiw/codemirror-theme-dracula": "^4.25.11",
     "@uiw/codemirror-themes": "^4.25.11",
     "eslint": "^9",
