@@ -228,6 +228,10 @@ export const EXPERIENCES = {
         ja: "最終課題では、テストファーストの考え方でアーキテクチャ設計に取り組みました",
         en: "Focused on architecture design with a test-first approach for the final project",
       },
+      {
+        ja: "仲間と進捗やノウハウを積極的に共有し、ベストチーム賞をいただきました",
+        en: "Received the Best Team Award for actively sharing progress and know-how with fellow participants",
+      },
     ],
     stack: ["go"],
     url: "https://zenn.dev/riochin/articles/6b4099bd6cce6d",
@@ -278,6 +282,27 @@ export const EXPERIENCES = {
       },
     ],
     stack: ["flutter", "go", "typescript"],
+  },
+
+  "cyberagent-universe": {
+    organization: { ja: "株式会社サイバーエージェント", en: "CyberAgent, Inc." },
+    position: {
+      ja: "CA UNIVERSE（バックエンドインターン）",
+      en: "CA UNIVERSE (Backend Internship)",
+    },
+    period: { start: "2026-09", end: "2026-09" },
+    kind: "internship",
+    highlights: [
+      {
+        ja: "3日間のチーム開発で、ゲームのガチャ機能のバックエンドを実装しました",
+        en: "Implemented the backend of a game's gacha feature in a three-day team project",
+      },
+      {
+        ja: "「運用と拡張性」をテーマに、ユースケースを洗い出して設計に落とし込みました",
+        en: "Under the theme of operations and extensibility, mapped out use cases and turned them into a design",
+      },
+    ],
+    stack: ["go"],
   },
 } as const satisfies Record<string, ExperienceEntry>;
 
