@@ -294,8 +294,8 @@ export const EXPERIENCES = {
     kind: "internship",
     highlights: [
       {
-        ja: "3日間のチーム開発で、ゲームのガチャ機能のバックエンドを実装しました",
-        en: "Implemented the backend of a game's gacha feature in a three-day team project",
+        ja: "3日間のチーム開発で、バックエンドの課題に取り組みました",
+        en: "Tackled a backend challenge in a three-day team project",
       },
       {
         ja: "「運用と拡張性」をテーマに、ユースケースを洗い出して設計に落とし込みました",
