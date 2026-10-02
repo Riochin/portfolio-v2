@@ -42,8 +42,11 @@ export default async function Home() {
             出入りするたびにセクションが伸び縮みし、下端に吊るしたテーマ切替と
             スクロールの合図、中央のブロックまで上下に揺れる。svh はツールバーが
             出ている側の高さで固定なので、隠れたときは下が少し覗くだけで済む。
-            HeroSection の高さ予算 (100svh) もこれと対。 */}
-        <section className="relative flex h-svh flex-col items-center justify-center overflow-hidden px-6 short:pb-30 max-md:short:pt-[3.875rem]">
+            ただし LINE などのアプリ内ブラウザでは svh まで動くので、
+            HeroSection が最初の 100svh を px で測って --hero-h に止める
+            (useFrozenViewportHeight)。測る前は 100svh で描く。
+            HeroSection の高さ予算も同じ --hero-h を使う。 */}
+        <section className="relative flex h-[var(--hero-h,100svh)] flex-col items-center justify-center overflow-hidden px-6 short:pb-30 max-md:short:pt-[3.875rem]">
         <HeroSection
           labels={{
             // 挨拶文だけは日本語ロケールでも en を出すので、t() を通さない。

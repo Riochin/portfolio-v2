@@ -13,6 +13,7 @@ import { revealTransition } from "@/lib/motion";
 import { HeroBlock } from "./HeroBlock";
 import { HeroFullscreen } from "./HeroFullscreen";
 import { ScrollCue } from "./ScrollCue";
+import { useFrozenViewportHeight } from "./useFrozenViewportHeight";
 import { useWebGLSupported } from "./webgl";
 
 export type HeroLabels = {
@@ -113,6 +114,7 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
   const captureRef = useRef<(() => string | null) | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const supportsWebGL = useWebGLSupported();
+  useFrozenViewportHeight();
   const { resolvedTheme } = useTheme();
   const mode = resolvedTheme === "dark" ? "dark" : "light";
 
@@ -191,7 +193,7 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
 
           short (縦 31rem 未満) だけは page 側が余白で居場所を作り、中央では
           なくその余白の中に据える。上下が非対称になるぶん倍を取らずに済み、
-          天の余白を pt、地を pb とすると h <= 100svh - 14.5rem - pt。
+          天の余白を pt、地を pb とすると h <= --hero-h - 14.5rem - pt。
           md 以上は pt が 0 なので 14.5rem、モバイルはヘッダーぶん 3.875rem を
           足して 18.5rem (端数は切り上げ)。
 
@@ -209,7 +211,7 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
             置くと、絵が細い帯になって主役の入道雲の背丈が出ない。比を変えても
             縦の見え方は動かず横だけが切れるので、切れたぶんはカメラの yaw で
             取り戻す ── その対は sceneConfig の HERO_FRAMING が持っている。 */}
-        <div className="group relative mx-auto aspect-[16/9] w-full max-w-[calc(max(9rem,100svh-var(--hero-reserve))*16/9)] upright:aspect-[4/3] upright:max-w-[calc(max(9rem,100svh-var(--hero-reserve))*4/3)]">
+        <div className="group relative mx-auto aspect-[16/9] w-full max-w-[calc(max(9rem,var(--hero-h,100svh)-var(--hero-reserve))*16/9)] upright:aspect-[4/3] upright:max-w-[calc(max(9rem,var(--hero-h,100svh)-var(--hero-reserve))*4/3)]">
           {/* この h1 は絵のブロックの子。inset-x-0 / top-[22%] / bottom-0 は
               どれもブロックの箱を指す ── 上の 55.3% の導出がずっと前提にして
               いたのがこの箱で、以前は外側のラッパーに吊るしていたため、高さの
