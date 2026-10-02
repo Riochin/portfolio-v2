@@ -78,9 +78,13 @@ export function MobileMenu({
                 heading={heading}
                 headingHref={headingHref}
                 ariaLabel={labels.mainNav}
+                align="center"
               />
-              <SocialLinks direction="row" />
-              {languageSwitcher}
+              {/* ナビを中央に据えたので、残りの行も中央に揃える */}
+              <div className="flex justify-center">
+                <SocialLinks direction="row" />
+              </div>
+              <div className="flex justify-center">{languageSwitcher}</div>
             </motion.div>
           </motion.div>
         )}
