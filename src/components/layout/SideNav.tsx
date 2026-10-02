@@ -57,13 +57,12 @@ export function SideNav({
         {heading}
       </Link>
       {/* start: ピルの padding のぶんだけ左に寄せて、文字の左端を見出しと揃える。
-          w-fit で列の幅を一番長い項目に合わせ、リンクを block にして各ピルを
-          その幅いっぱいに伸ばす ── どの項目を選んでも帯の幅が同じになる。
+          ピルは inline-block で、帯の幅は項目の文字の長さに合わせる。
           center: ピルを画面の左右の端まで伸ばし、文字を中央に置く。-mx-4 は
           MobileMenu のオーバーレイの px-4 を打ち消す分。行のどこを押しても
           リンクに当たるので、指で押すモバイルに向く。 */}
       <ul
-        className={`flex flex-col gap-2 ${centered ? "-mx-4 text-center" : "-ml-4 w-fit"}`}
+        className={`flex flex-col gap-2 ${centered ? "-mx-4 text-center" : "-ml-4"}`}
       >
         {items.map((item) => {
           const isActive =
@@ -74,7 +73,7 @@ export function SideNav({
               <Link
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`relative block ${rounded} px-4 py-1.5 transition-colors ${
+                className={`relative ${centered ? "block" : "inline-block"} ${rounded} px-4 py-1.5 transition-colors ${
                   isActive
                     ? enhanced
                       ? "text-foreground"
