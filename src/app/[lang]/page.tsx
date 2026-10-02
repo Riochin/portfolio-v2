@@ -36,8 +36,14 @@ export default async function Home() {
 
             テーマ切替はこのセクションに置き、スクロールすると一緒に流れる。画面に固定すると
             下のプロフィールや作品に重なる。下端から少し浮かせる (モバイル 4rem、
-            md 3rem)。short は余地が無いので下端寄り (2.5rem) のまま。 */}
-        <section className="relative flex h-dvh flex-col items-center justify-center overflow-hidden px-6 short:pb-30 max-md:short:pt-[3.875rem]">
+            md 3rem)。short は余地が無いので下端寄り (2.5rem) のまま。
+
+            高さは dvh ではなく svh。dvh だとスマホのブラウザのツールバーが
+            出入りするたびにセクションが伸び縮みし、下端に吊るしたテーマ切替と
+            スクロールの合図、中央のブロックまで上下に揺れる。svh はツールバーが
+            出ている側の高さで固定なので、隠れたときは下が少し覗くだけで済む。
+            HeroSection の高さ予算 (100svh) もこれと対。 */}
+        <section className="relative flex h-svh flex-col items-center justify-center overflow-hidden px-6 short:pb-30 max-md:short:pt-[3.875rem]">
         <HeroSection
           labels={{
             // 挨拶文だけは日本語ロケールでも en を出すので、t() を通さない。
