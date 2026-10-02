@@ -65,7 +65,7 @@ export function SideNav({
                   isActive
                     ? enhanced
                       ? "text-foreground"
-                      : "bg-accent text-white"
+                      : "bg-accent text-white dark:text-background"
                     : "text-foreground hover:text-accent"
                 }`}
               >
@@ -93,7 +93,7 @@ export function SideNav({
                         }}
                         className="pointer-events-none absolute inset-0 rounded-xl bg-accent"
                       >
-                        <span className="block whitespace-nowrap px-4 py-1.5 text-white">
+                        <span className="block whitespace-nowrap px-4 py-1.5 text-white dark:text-background">
                           {item.label}
                         </span>
                       </motion.span>
