@@ -82,6 +82,15 @@ export const DICT = {
     personal: { ja: "個人で開発したもの", en: "Built on my own" },
     hackathon: { ja: "ハッカソンで開発したもの", en: "Built at hackathons" },
   },
+  /** トップのヒーローの下 (簡易プロフィールと Featured works)。 */
+  home: {
+    role: { ja: "Software engineer", en: "Software engineer" },
+    /** 続きへのリンクは行き先の名前ではなく動作で言う (blog.otherArticles と
+     *  同じ型)。ページ名 (About me / Works) にすると、押す理由が伝わらない。 */
+    more: { ja: "自己紹介を読む", en: "Read about me" },
+    featured: { ja: "Featured works", en: "Featured works" },
+    allWorks: { ja: "すべての作品を見る", en: "See all works" },
+  },
   about: {
     /** 「使っている」ではなく「勉強している」。習得済みの一覧ではなく、
      *  いま手を動かして覚えている最中のものを並べる枠なので。 */

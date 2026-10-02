@@ -18,8 +18,8 @@ import { getT } from "@/lib/i18n/server";
  * テーマ切替は入れていない。モバイルではヘッダー右端に常設されていて、
  * 足すと画面内に同じボタンが 2 つ並ぶため。
  *
- * 置き場所は PageShell。ヒーロー (トップ) だけは PageShell を使わず自前の
- * <main> で 1 画面に閉じているので、pathname を見て消す必要がない。
+ * 置き場所は PageShell。トップは PageShell を使わないので、page.tsx が
+ * 自前で同じものを置いている。
  */
 export async function SiteFooter() {
   const { locale, t } = await getT();

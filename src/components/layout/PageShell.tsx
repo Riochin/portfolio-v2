@@ -19,7 +19,7 @@ export function PageShell({
       <main className="w-full flex-1 px-6 pb-16 pt-28 md:py-16 md:pl-[28%] md:pr-[18%]">
         <div className={wide ? "" : "max-w-3xl"}>{children}</div>
       </main>
-      {/* フッターはモバイルだけ。ヒーローは PageShell を使わないので出ない。 */}
+      {/* フッターはモバイルだけ。トップは PageShell を使わず、自前で同じものを置く。 */}
       <SiteFooter />
     </>
   );

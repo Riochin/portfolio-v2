@@ -9,8 +9,6 @@ import {
 } from "react";
 import { AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { revealTransition } from "@/lib/motion";
 import { HeroBlock } from "./HeroBlock";
 import { HeroFullscreen } from "./HeroFullscreen";
@@ -20,7 +18,6 @@ export type HeroLabels = {
   /** 挨拶文。昼も夜も同じ 1 本 */
   readonly welcome: string;
   readonly closer: string;
-  readonly about: string;
   readonly expand: string;
   readonly close: string;
 };
@@ -103,14 +100,7 @@ function Welcome({
   );
 }
 
-export function HeroSection({
-  labels,
-  aboutHref,
-}: {
-  labels: HeroLabels;
-  /** ヒーローから次に見せたい 1 ページ。ロケール付きのパスで受け取る。 */
-  aboutHref: string;
-}) {
+export function HeroSection({ labels }: { labels: HeroLabels }) {
   const [isExpanded, setIsExpanded] = useState(false);
   // 一度でも全画面から戻ったか。戻りのモーフを挟む回だけ、ブロックは
   // Canvas を作るのを待つ
@@ -178,23 +168,23 @@ export function HeroSection({
 
   return (
     <LayoutGroup>
-      {/* フローに置くのはブロックだけ。挨拶文も下の導線も absolute でブロックに
-          吊るす。フローに残すと 3 つの合計が画面の中央に揃ってしまい、ブロック
-          自身はそのぶん上へずれる (About への導線を足したときに起きたのがこれ)。
+      {/* フローに置くのはブロックだけ。挨拶文は absolute でブロックに吊るす。
+          フローに残すと合計が中央に揃ってしまい、ブロック自身がそのぶんずれる。
 
           --hero-reserve はブロック以外がこの画面で使う高さ。ブロックを画面の
           中央に置く以上、上下には必ず同じだけ空くので、厳しい方の 2 倍を取る。
 
             下 = 7.5rem (テーマ切替: bottom-10 の 2.5rem + h-16 の 4rem に
-                         ひと呼吸 1rem) + 3.5rem (導線の行 1.5rem + 間隔 2rem)
+                         ひと呼吸 1rem) + 3.5rem (間隔)
                = 11rem
             上 = 3.875rem (モバイルのヘッダー: py-4 + 行 1.875rem)
                  ※ 挨拶文はブロックに重なるので数えない。md 以上はヘッダーも
                    無いので 0
 
-          下が厳しいので 11rem x 2 = 22rem。モバイルと md で同じ値になるため
-          1 つで足りる。導線の行の 1.5rem は min-h-6 と対で、文字サイズの
-          スケール (globals.css の @theme) を触ったらここも一緒に見直す。
+          下が厳しいので 11rem x 2 = 22rem。モバイルと md で同じ値になる。
+          下の 3.5rem は以前 About への導線 (行 1.5rem + 間隔 2rem) が使って
+          いた高さ。導線はヒーローの下のプロフィールへ移したが、ブロックの
+          大きさを変えないよう、そのぶんは間隔として残してある。
 
           short (縦 31rem 未満) だけは page 側が余白で居場所を作り、中央では
           なくその余白の中に据える。上下が非対称になるぶん倍を取らずに済み、
@@ -203,13 +193,8 @@ export function HeroSection({
           足して 18.5rem (端数は切り上げ)。
 
           ここに出てくる数はどれもブロック以外の高さなので、ブロックの比を
-          16:9 から 4:3 へ変えても動かない。高さで頭を押さえられている画面では
-          h = 100dvh - 22rem がそのまま出て、上下に 11rem ずつ残る ── 比を
-          変えても等号は成り立ったままで、22rem / 18.5rem / 14.5rem は据え置き。
-          比が効くのは幅のほうで、幅で決まる高さ (w * 3/4) が予算を超えたときに
-          初めて下の max-w が働く。iPhone SE (375x667) は short ではないので
-          予算は 100dvh - 22rem = 315px、幅は 375 - px-6 の 48 = 327px、
-          4:3 の高さは 245px で予算の内に収まる。 */}
+          16:9 から 4:3 へ変えても動かない。比が効くのは幅のほうで、幅で
+          決まる高さ (w * 3/4) が予算を超えたときに初めて下の max-w が働く。 */}
       <div className="relative w-full max-w-3xl [--hero-reserve:22rem] max-md:short:[--hero-reserve:18.5rem] md:short:[--hero-reserve:14.5rem]">
         {/* aspect は幅からしか高さを決めないので、低い画面 (横向きの端末など) では
             ブロックだけで画面を越えてしまう。残り高さから逆算した幅で頭を押さえ、
@@ -315,36 +300,6 @@ export function HeroSection({
             >
               {labels.closer}
             </span>
-          )}
-        </div>
-        {/* ヒーローは 1 画面で閉じていてスクロールの続きが無いので、「↓」は
-            置かない (ブロック自体が押せるので、押すのか送るのかも紛れる)。
-            行き先を名乗るリンクにして、空が開ききってから遅れて出す。
-            top-full = ブロックの下辺。フローに置かないので、この行が出ても
-            ブロックは動かない (中央に据わったまま)。
-
-            例外が cramped ── ブロックが下限 (9rem) まで縮んでもなお下が
-            足りない画面。そこだけ static に戻してフローに参加させ、ブロックと
-            この行をひとまとまりで中央に据える。absolute のままだと、予算を
-            超えたぶんがそのまま下へ溢れてテーマ切替のボタンに乗る。
-            static は top を無効にするので、mt-8 の意味 (ブロックの下辺から
-            2rem) はどちらのモードでも変わらない。
-
-            行ごと常に描くのは、全画面を開いている間もラッパーの高さを保つため。
-            cramped で丸ごと外すとラッパーが 3.5rem 縮んでブロックが動き、
-            layoutId="hero-block" の閉じるモーフがずれた位置を測る。
-            中は空の min-h-6 なので見た目には出ない。 */}
-        <div className="absolute inset-x-0 top-full mt-8 flex min-h-6 justify-center cramped:static">
-          {!isExpanded && shown && (
-            <Link
-              href={aboutHref}
-              className="reveal-rise inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
-              // 挨拶文が 1 文字ずつ出そろうのを待ってから
-              style={{ "--reveal-delay": "1000ms" } as CSSProperties}
-            >
-              {labels.about}
-              <ArrowRight size={16} />
-            </Link>
           )}
         </div>
       </div>
