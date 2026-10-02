@@ -132,7 +132,7 @@ body {
 }
 
 /* --- Hero のスクロールの合図 (ScrollCue) ---
-   遅れて灯し、続けて手書きの矢印を上から一度だけ描き、描き終えたら矢じりを
+   遅れて灯し、続けて縦の線を上から一度だけ引き、引き終えたら矢じりを
    描き足す。どれも一度きりで、出切ったら止まる。灯すのは挨拶文が出そろうころ。
    描画は pathLength=1 に正規化した dashoffset を 1 -> 0 へ送る。
    framer-motion ではなく CSS なのは reveal-rise と同じ理由。 */
@@ -157,15 +157,15 @@ body {
   stroke-dasharray: 1;
 }
 
-/* ペンの速さ。入りと抜けをゆるめ、ループのあたりで速く走らせる */
+/* すっと伸びて、下で減速して止まる */
 .scroll-cue-stroke {
-  animation: scroll-cue-draw 1100ms cubic-bezier(0.45, 0, 0.25, 1) 2000ms
+  animation: scroll-cue-draw 700ms cubic-bezier(0.3, 0, 0.2, 1) 2000ms
     backwards;
 }
 
-/* 線を描き終える直前 (2000ms + 1100ms) から続けて描く */
+/* 線を引き終える直前 (2000ms + 700ms) から続けて描く */
 .scroll-cue-head {
-  animation: scroll-cue-draw 350ms ease-out 3050ms backwards;
+  animation: scroll-cue-draw 300ms ease-out 2650ms backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
