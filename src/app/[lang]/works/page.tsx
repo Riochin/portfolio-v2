@@ -1,8 +1,9 @@
 import { PageShell } from "@/components/layout/PageShell";
 import { AwardList, type AwardListItem } from "@/components/works/AwardList";
-import { WorkGrid, type WorkGridItem } from "@/components/works/WorkGrid";
-import { getAwards, getSkills, getWorksByCategory } from "@/data";
-import { formatPeriod, formatYearMonth } from "@/lib/date";
+import { WorkGrid } from "@/components/works/WorkGrid";
+import { toWorkGridItem } from "@/components/works/toWorkGridItem";
+import { getAwards, getWorksByCategory } from "@/data";
+import { formatYearMonth } from "@/lib/date";
 import { DICT } from "@/lib/i18n/dictionary";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { localePath } from "@/lib/i18n/paths";
@@ -10,9 +11,6 @@ import { getT } from "@/lib/i18n/server";
 
 export const generateMetadata = () =>
   buildPageMetadata({ path: "/works", title: DICT.pages.works });
-
-/** 一覧のタイルに出す技術チップの上限。 */
-const STACK_PREVIEW = 3;
 
 export default async function WorksPage() {
   const { locale, t } = await getT();
@@ -31,19 +29,7 @@ export default async function WorksPage() {
   const groups = getWorksByCategory().map((group) => ({
     category: group.category,
     heading: t(DICT.workCategories[group.category]),
-    items: group.works.map((work): WorkGridItem => ({
-      slug: work.slug,
-      href: localePath(locale, `/works/${work.slug}`),
-      title: t(work.title),
-      period: formatPeriod(work.period, locale),
-      image: work.image && {
-        src: work.image.src,
-        width: work.image.width,
-        height: work.image.height,
-        alt: t(work.image.alt),
-      },
-      stack: getSkills(work.stack.slice(0, STACK_PREVIEW)).map((s) => s.label),
-    })),
+    items: group.works.map((work) => toWorkGridItem(work, locale, t)),
   }));
 
   return (
