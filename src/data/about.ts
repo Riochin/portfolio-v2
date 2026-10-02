@@ -80,6 +80,15 @@ Kurihara Lab`,
     } satisfies Localized<string>,
   },
 
+  /**
+   * トップの簡易プロフィールに出す 1 文。「何をする人か」はすぐ上の肩書きが
+   * 言うので、ここは所属と人柄だけ。詳しい話は About の paragraphs に任せる。
+   */
+  summary: {
+    ja: `津田塾大学 情報科学科の${GRADE}年生。ジョジョとガンダムとハッカソンが好きです。`,
+    en: `Year ${GRADE} information science student at Tsuda University. I love JoJo's Bizarre Adventure, Gundam, and hackathons.`,
+  } satisfies Localized<string>,
+
   paragraphs: [
     {
       ja: "2024年12月、人生初のハッカソンでWeb開発の楽しさに目覚めました！（ハッカソン楽しい！）",

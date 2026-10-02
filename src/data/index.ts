@@ -1,4 +1,4 @@
-import { WORKS, type WorkSlug } from "./works";
+import { HOME_WORKS, WORKS, type WorkSlug } from "./works";
 import { EXPERIENCES, type ExperienceSlug } from "./experience";
 import { SKILLS, type Skill, type SkillSlug } from "./skills";
 import { compareStartDesc, comparePeriodDesc, yearOf } from "@/lib/date";
@@ -79,6 +79,13 @@ export function getWorks(): readonly Work[] {
 
 export function getFeaturedWorks(): readonly Work[] {
   return ALL_WORKS.filter((work) => work.featured);
+}
+
+/** トップに並べる作品。順は HOME_WORKS の記述順のまま。 */
+export function getHomeWorks(): readonly Work[] {
+  return HOME_WORKS.map(
+    (slug) => ALL_WORKS.find((work) => work.slug === slug)!,
+  );
 }
 
 export function getWorkSlugs(): WorkSlug[] {

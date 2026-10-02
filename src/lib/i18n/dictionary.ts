@@ -82,6 +82,15 @@ export const DICT = {
     personal: { ja: "個人で開発したもの", en: "Built on my own" },
     hackathon: { ja: "ハッカソンで開発したもの", en: "Built at hackathons" },
   },
+  /** トップのヒーローの下 (簡易プロフィールと Featured works)。 */
+  home: {
+    role: { ja: "Software engineer", en: "Software engineer" },
+    /** 続きへのリンクは行き先の名前ではなく動作で言う (blog.otherArticles と
+     *  同じ型)。ページ名 (About me / Works) にすると、押す理由が伝わらない。 */
+    more: { ja: "自己紹介を読む", en: "Read about me" },
+    featured: { ja: "Featured works", en: "Featured works" },
+    allWorks: { ja: "すべての作品を見る", en: "See all works" },
+  },
   about: {
     /** 「使っている」ではなく「勉強している」。習得済みの一覧ではなく、
      *  いま手を動かして覚えている最中のものを並べる枠なので。 */
@@ -107,7 +116,7 @@ export const DICT = {
   },
   hero: {
     /**
-     * 挨拶文。明暗で 1 語だけ変える。
+     * 挨拶文。昼も夜も同じ 1 本。
      *
      * `Welcome to my portfolio` が悪いのは「ようこそ」ではなく行き先で、
      * 作品集に招かれても嬉しくないが、海に招かれたら嬉しい。あの空は
@@ -119,17 +128,10 @@ export const DICT = {
      * 画面には出ない ── 型 (Localized) が両言語を要求するので置いてあり、
      * 意味の原文としては生きている。英語だけにする理由と、文書の lang と
      * ずれるぶんの手当ては page.tsx 側のコメントに書いた。
-     *
-     * 2 本とも描画側 (HeroSection) に渡して CSS で選ばせる。next-themes の
-     * 解決はクライアントでしか効かないので、ここで 1 本に絞れない。
      */
-    welcomeLight: {
+    welcome: {
       ja: "ようこそ、どこにもない海へ。",
       en: "Welcome to a sea that is nowhere.",
-    },
-    welcomeDark: {
-      ja: "ようこそ、どこにもない夜の海へ。",
-      en: "Welcome to a night sea that is nowhere.",
     },
     /** 全画面への誘い。UI の言葉 (「全画面表示」) は使わず、所作で言う。 */
     closer: { ja: "近づいてみる", en: "Come closer" },

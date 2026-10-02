@@ -845,3 +845,16 @@ export const WORKS = {
 } as const satisfies Record<string, WorkEntry>;
 
 export type WorkSlug = keyof typeof WORKS;
+
+/**
+ * トップの Featured works に並べる作品と、その順。
+ * featured フラグとは別に手で選ぶ。フラグでは並びを持てないので、
+ * 順まで決めたいここでは slug の配列で持つ。
+ * 2 列 x 2 段で穴が出ないよう 4 件に保つ。
+ */
+export const HOME_WORKS = [
+  "lsib",
+  "nemmy",
+  "begit",
+  "tsuki-no-hayasa",
+] as const satisfies readonly WorkSlug[];

@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Clouds, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import { CameraRig } from "./CameraRig";
@@ -168,6 +168,54 @@ function SceneReady({
   return null;
 }
 
+/**
+ * 止めた直後に 1 フレームだけ余計に回るのを防ぐ。
+ *
+ * R3F は frameloop が never でも、予約済みのフレーム (internal.frames) が
+ * 残っていれば次の rAF で 1 回描く。never のフレームは rAF の時刻 (ミリ秒) を
+ * そのまま秒として扱い、delta = 時刻 - elapsedTime (= 0) になるので、
+ * 画面外へ出た瞬間に数千秒ぶん時計が進む。雲は delta の積算で流しているので
+ * 2000 単位ほど流されて帯の端で折り返し、戻ると並びが総入れ替えに見えていた。
+ * (予約は描画中の invalidate で常に 1 前後残っている)
+ *
+ * Canvas は frameloop を切り替えてから中身を描き直すので、ここで予約を
+ * 捨てれば、その rAF は何もせずに終わる。
+ */
+function DropPendingFrame({ paused }: { paused: boolean }) {
+  const get = useThree((state) => state.get);
+
+  useLayoutEffect(() => {
+    if (paused) get().internal.frames = 0;
+  }, [paused, get]);
+
+  return null;
+}
+
+/**
+ * 描画を止めて再開しても、時計の経過時間を巻き戻させない。
+ *
+ * R3F は frameloop を切り替えるたびに clock を作り直し、elapsedTime を 0 に
+ * 戻す (setFrameloop)。ヒーローの下に続きを置いてからは、読み進めるたびに
+ * 画面外で止まるので、戻るたびに elapsedTime で動くもの ── 雲の粒の膨らみ
+ * (drei の Cloud は sin(elapsedTime) で大きさを揺らす)、鳥、漁火 ── が
+ * 0 秒の姿へ飛んでしまう。
+ *
+ * 毎フレーム最初に (負の優先度で、描画は R3F に任せたまま) 経過時間を
+ * 控えておき、前のフレームより戻っていたら、控えた分を足して続きから
+ * 数えさせる。止まっていたあいだの時間は数えない (delta は start() で
+ * 起点が今になるので、再開直後も飛ばない)。
+ */
+function ContinuousClock() {
+  const last = useRef(0);
+
+  useFrame(({ clock }) => {
+    if (clock.elapsedTime < last.current) clock.elapsedTime += last.current;
+    last.current = clock.elapsedTime;
+  }, -1);
+
+  return null;
+}
+
 export default function HeroScene({
   mode,
   animated = true,
@@ -258,6 +306,8 @@ export default function HeroScene({
         // 全画面では変数が解決できず、border-radius は初期値(0)に戻る
         className={`h-full w-full rounded-[var(--hero-radius)]${interactive ? " touch-none" : " pointer-events-none"}`}
       >
+        <DropPendingFrame paused={paused} />
+        <ContinuousClock />
         {interactive ? <CameraRig yaw={yaw} /> : <CameraFraming yaw={yaw} />}
         <Suspense fallback={null}>
           {mode === "dark" ? (

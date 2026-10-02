@@ -24,11 +24,14 @@ export function SideNav({
   heading,
   headingHref,
   ariaLabel,
+  align = "start",
 }: {
   items: readonly NavItem[];
   heading: string;
   headingHref: string;
   ariaLabel: string;
+  /** center はモバイルのメニュー用。見出しとピルを中央に据え、ピルを横いっぱいに広げる。 */
+  align?: "start" | "center";
 }) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
@@ -41,17 +44,26 @@ export function SideNav({
   // 入りはゆったり見せ、抜けは少し早めに引く
   const enterDuration = reduceMotion ? 0 : 0.6;
   const exitDuration = reduceMotion ? 0 : 0.4;
+  const centered = align === "center";
+  // 端まで届く帯は画面の縁に接するので、角を丸めると四隅がわずかに欠けて見える
+  const rounded = centered ? "" : "rounded-xl";
 
   return (
     <nav aria-label={ariaLabel}>
       <Link
         href={headingHref}
-        className="mb-6 block font-logo text-4xl leading-none text-foreground transition-colors hover:text-accent"
+        className={`mb-6 block font-logo text-4xl leading-none text-foreground transition-colors hover:text-accent ${centered ? "text-center" : ""}`}
       >
         {heading}
       </Link>
-      {/* ピルの padding のぶんだけ左に寄せて、文字の左端を見出しと揃える */}
-      <ul className="-ml-4 flex flex-col gap-2">
+      {/* start: ピルの padding のぶんだけ左に寄せて、文字の左端を見出しと揃える。
+          ピルは inline-block で、帯の幅は項目の文字の長さに合わせる。
+          center: ピルを画面の左右の端まで伸ばし、文字を中央に置く。-mx-4 は
+          MobileMenu のオーバーレイの px-4 を打ち消す分。行のどこを押しても
+          リンクに当たるので、指で押すモバイルに向く。 */}
+      <ul
+        className={`flex flex-col gap-2 ${centered ? "-mx-4 text-center" : "-ml-4"}`}
+      >
         {items.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -61,11 +73,11 @@ export function SideNav({
               <Link
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`relative inline-block rounded-xl px-4 py-1.5 transition-colors ${
+                className={`relative ${centered ? "block" : "inline-block"} ${rounded} px-4 py-1.5 transition-colors ${
                   isActive
                     ? enhanced
                       ? "text-foreground"
-                      : "bg-accent text-white"
+                      : "bg-accent text-white dark:text-background"
                     : "text-foreground hover:text-accent"
                 }`}
               >
@@ -91,9 +103,9 @@ export function SideNav({
                           duration: enterDuration,
                           ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="pointer-events-none absolute inset-0 rounded-xl bg-accent"
+                        className={`pointer-events-none absolute inset-0 ${rounded} bg-accent`}
                       >
-                        <span className="block whitespace-nowrap px-4 py-1.5 text-white">
+                        <span className="block whitespace-nowrap px-4 py-1.5 text-white dark:text-background">
                           {item.label}
                         </span>
                       </motion.span>
