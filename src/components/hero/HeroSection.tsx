@@ -17,9 +17,8 @@ import { HeroFullscreen } from "./HeroFullscreen";
 import { useWebGLSupported } from "./webgl";
 
 export type HeroLabels = {
-  /** 明暗で 1 語だけ違う挨拶文。どちらを見せるかは CSS が決める */
-  readonly welcomeLight: string;
-  readonly welcomeDark: string;
+  /** 挨拶文。昼も夜も同じ 1 本 */
+  readonly welcome: string;
   readonly closer: string;
   readonly about: string;
   readonly expand: string;
@@ -49,32 +48,23 @@ const DWELL_MS = 10000;
 const WORD = /[A-Za-z0-9'\u2019]+|[\s\S]/gu;
 
 /**
- * 挨拶文 1 本ぶん。霞が晴れるように 1 文字ずつ結像させる。
+ * 挨拶文。霞が晴れるように 1 文字ずつ結像させる。
  *
- * 明暗で 1 語だけ違う 2 本を重ねて置き、見せる側は CSS (dark:) に選ばせる。
- * next-themes の解決はクライアントでしか効かないので、JS で 1 本に絞ると
- * サーバの HTML は必ずライトになり、水和のあとに文字が入れ替わって見える。
- *
- * 消すのは display ではなく visibility。display:none の要素はアニメーションが
- * 取り消されるので、テーマを切り替えるたびに挨拶文が 1 文字ずつ出るところから
- * やり直しになる (円形リベールの最中に文字だけ消えて見える)。visibility なら
- * 箱は残るので走り終えたままで、読み上げにも選択にも乗らない。
+ * 昼も夜も同じ文なので、テーマを切り替えても入れ替わらず、走り終えた
+ * アニメーションもそのまま残る。
  */
 function Welcome({
   text,
   shown,
-  className,
 }: {
   text: string;
   /** 空が開ききったか。開いている途中の線と字を重ねない */
   shown: boolean;
-  /** 明暗どちらで見せる側かを決めるクラス */
-  className: string;
 }) {
   let index = 0;
 
   return (
-    <span className={`[grid-area:1/1] ${className}`}>
+    <span>
       {/* 1 文字ずつ span に割ると読み上げが文字単位になりうるので、
           支援技術には素の 1 文として渡し、見た目側は隠す。 */}
       <span className="sr-only">{text}</span>
@@ -271,26 +261,13 @@ export function HeroSection({
               pointer-events-none にして、文字の上でもブロックを押せるようにする。
 
               lang は文書 (ja) とずれるので h1 で立て直す。読み上げに日本語の音で
-              英文を読ませないため。t() に戻すときは対で外すこと。
-
-              明暗の 2 本を同じ 1 マスに重ね、grid で両方を中央に置く。flex だと
-              2 本が横に並ぶので、ここだけ grid にしてある。見せる側を選ぶのは
-              CSS で、どちらが出ても行の位置は動かない (Welcome の説明も参照)。 */}
+              英文を読ませないため。t() に戻すときは対で外すこと。 */}
           {!isExpanded && (
             <h1
               lang="en"
               className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-10 grid place-items-center px-4 text-center text-xs font-medium tracking-[0.2em] text-white [text-shadow:0_0_12px_rgb(0_0_0/0.3)] md:text-sm"
             >
-              <Welcome
-                text={labels.welcomeLight}
-                shown={shown}
-                className="dark:invisible"
-              />
-              <Welcome
-                text={labels.welcomeDark}
-                shown={shown}
-                className="invisible dark:visible"
-              />
+              <Welcome text={labels.welcome} shown={shown} />
             </h1>
           )}
           {!isExpanded && (

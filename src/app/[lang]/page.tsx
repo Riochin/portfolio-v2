@@ -34,8 +34,7 @@ export default async function Home() {
           // t() を外したぶん、文書の lang (ja) と中身がずれる。日本語の音で
           // 英文を読み上げられないよう、HeroSection の h1 に lang="en" を
           // 立ててある ── ここを t() に戻すときは、あちらも対で外すこと。
-          welcomeLight: DICT.hero.welcomeLight.en,
-          welcomeDark: DICT.hero.welcomeDark.en,
+          welcome: DICT.hero.welcome.en,
           closer: t(DICT.hero.closer),
           about: t(DICT.nav.about),
           expand: t(DICT.aria.expandHero),

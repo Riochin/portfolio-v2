@@ -154,10 +154,11 @@ type ExperienceEntry = {
 
 ### トップの文言
 
-| | ja | en |
-|---|---|---|
-| ライト | ようこそ、どこにもない海へ。 | Welcome to a sea that is nowhere. |
-| ダーク | ようこそ、どこにもない夜の海へ。 | Welcome to a night sea that is nowhere. |
+| ja | en |
+|---|---|
+| ようこそ、どこにもない海へ。 | Welcome to a sea that is nowhere. |
+
+昼も夜も同じ一行。夜だけ `night` を足していた時期もあったが、空を見れば夜なのは分かるので、言葉で言い直さない。
 
 `Welcome to my portfolio` が悪いのは「ようこそ」ではなく行き先。作品集に招かれても嬉しくないが、海に招かれたら嬉しい。
 
