@@ -35,7 +35,8 @@ export default async function Home() {
             (bottom-10 の 2.5rem + h-16 の 4rem) にひと呼吸ぶん。
 
             テーマ切替はこのセクションに置き、スクロールすると一緒に流れる。画面に固定すると
-            下のプロフィールや作品に重なる。 */}
+            下のプロフィールや作品に重なる。下端から少し浮かせる (モバイル 4rem、
+            md 3rem)。short は余地が無いので下端寄り (2.5rem) のまま。 */}
         <section className="relative flex h-dvh flex-col items-center justify-center overflow-hidden px-6 short:pb-30 max-md:short:pt-[3.875rem]">
         <HeroSection
           labels={{
@@ -56,7 +57,7 @@ export default async function Home() {
           }}
         />
 
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 md:bottom-12 short:bottom-10">
             <ThemeToggle ariaLabel={t(DICT.aria.themeToggle)} />
           </div>
         </section>

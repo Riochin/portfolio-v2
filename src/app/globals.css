@@ -131,6 +131,51 @@ body {
   }
 }
 
+/* --- Hero のスクロールの合図 (ScrollCue) ---
+   遅れて灯し、続けて手書きの矢印を上から一度だけ描き、描き終えたら矢じりを
+   描き足す。どれも一度きりで、出切ったら止まる。灯すのは挨拶文が出そろうころ。
+   描画は pathLength=1 に正規化した dashoffset を 1 -> 0 へ送る。
+   framer-motion ではなく CSS なのは reveal-rise と同じ理由。 */
+@keyframes scroll-cue-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes scroll-cue-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+.scroll-cue {
+  animation: scroll-cue-in 800ms ease-out 1500ms backwards;
+}
+
+.scroll-cue-stroke,
+.scroll-cue-head {
+  stroke-dasharray: 1;
+}
+
+/* ペンの速さ。入りと抜けをゆるめ、ループのあたりで速く走らせる */
+.scroll-cue-stroke {
+  animation: scroll-cue-draw 1100ms cubic-bezier(0.45, 0, 0.25, 1) 2000ms
+    backwards;
+}
+
+/* 線を描き終える直前 (2000ms + 1100ms) から続けて描く */
+.scroll-cue-head {
+  animation: scroll-cue-draw 350ms ease-out 3050ms backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue,
+  .scroll-cue-stroke,
+  .scroll-cue-head {
+    animation: none;
+  }
+}
+
 /* --- テーマ切替: 円形リベール ---
    root のデフォルトのクロスフェードを止め、新テーマのスナップショットを
    ThemeToggle 側の Web Animations API で clip-path 展開させる。

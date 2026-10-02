@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 import { revealTransition } from "@/lib/motion";
 import { HeroBlock } from "./HeroBlock";
 import { HeroFullscreen } from "./HeroFullscreen";
+import { ScrollCue } from "./ScrollCue";
 import { useWebGLSupported } from "./webgl";
 
 export type HeroLabels = {
@@ -174,17 +175,19 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
           --hero-reserve はブロック以外がこの画面で使う高さ。ブロックを画面の
           中央に置く以上、上下には必ず同じだけ空くので、厳しい方の 2 倍を取る。
 
-            下 = 7.5rem (テーマ切替: bottom-10 の 2.5rem + h-16 の 4rem に
-                         ひと呼吸 1rem) + 3.5rem (間隔)
+            下 = テーマ切替 (下端からの浮き + h-16 の 4rem にひと呼吸 1rem)
+                 + 間隔
+               = モバイル 4rem + 5rem + 2rem / md 3rem + 5rem + 3rem
                = 11rem
             上 = 3.875rem (モバイルのヘッダー: py-4 + 行 1.875rem)
                  ※ 挨拶文はブロックに重なるので数えない。md 以上はヘッダーも
                    無いので 0
 
           下が厳しいので 11rem x 2 = 22rem。モバイルと md で同じ値になる。
-          下の 3.5rem は以前 About への導線 (行 1.5rem + 間隔 2rem) が使って
-          いた高さ。導線はヒーローの下のプロフィールへ移したが、ブロックの
-          大きさを変えないよう、そのぶんは間隔として残してある。
+          以前は浮きが 2.5rem で、間隔の 3.5rem を About への導線 (行 1.5rem +
+          間隔 2rem) が使っていた。導線はヒーローの下のプロフィールへ移し、
+          空いたぶんでテーマ切替を浮かせた ── 合計を 11rem に保ったので、
+          ブロックの大きさは変わらない。
 
           short (縦 31rem 未満) だけは page 側が余白で居場所を作り、中央では
           なくその余白の中に据える。上下が非対称になるぶん倍を取らずに済み、
@@ -303,6 +306,9 @@ export function HeroSection({ labels }: { labels: HeroLabels }) {
           )}
         </div>
       </div>
+      {/* ブロックのラッパーの外 = page のセクションに対して置く (LayoutGroup は
+          DOM を持たない)。セクションの右下に吊るす。 */}
+      {!isExpanded && shown && <ScrollCue />}
       <AnimatePresence>
         {isExpanded && (
           <HeroFullscreen
