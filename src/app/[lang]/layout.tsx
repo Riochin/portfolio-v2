@@ -14,6 +14,10 @@ const zenMaruGothic = Zen_Maru_Gothic({
   variable: "--font-zen-maru-gothic",
   weight: ["400", "500", "700"],
   subsets: ["latin"],
+  // 日本語の字形は unicode-range で 3 ウェイト × 約 80 本に割られている。
+  // preload のままだと全部に <link rel="preload"> が付き、1 回の表示で
+  // 240 本 (4MB 強) を取りに行く。外せばページで使う字の分だけ読まれる。
+  preload: false,
 });
 
 const logoCursive = Alex_Brush({
