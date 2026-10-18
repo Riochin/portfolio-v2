@@ -5,18 +5,18 @@ import { usePathname, useRouter } from "next/navigation";
 import { stripLocale } from "@/lib/i18n/paths";
 
 /**
- * ブラウザの「戻る/進む」でも一覧 <-> 詳細の画像モーフを走らせるための橋渡し。
+ * ブラウザの「戻る/進む」でも一覧・トップ <-> 作品詳細の画像モーフを走らせるための橋渡し。
  *
  * Next は popstate を ACTION_RESTORE として処理するが、この経路だけは React の
  * transition の外で state を差し替えるため <ViewTransition> が起動せず、画像が
- * ハードカットで入れ替わる (vercel/next.js#94369)。そこで一覧 <-> 詳細の移動に
+ * ハードカットで入れ替わる (vercel/next.js#94369)。そこでこの組の移動に
  * 限って popstate を横取りし、同じ URL への router.replace() ── リンクを押した
  * ときと同じ経路 ── としてやり直す。
  *
  * ついでに「どこから来たか」(arrivedFrom) も控える。こちらは works に限らず
  * 詳細ページの「戻る」(BackLink) が全ページで使う。
  *
- * ルートレイアウトに置く。モーフは works 配下でしか効かない仕組みだが、下の
+ * ルートレイアウトに置く。モーフは作品のタイルがあるページでしか効かない仕組みだが、下の
  * addEventListener が Next の購読 (AppRouter の useEffect = ハイドレーション後)
  * より先に走らないと横取りできないので、最初のバンドルに入る位置から読み込む。
  */
@@ -61,20 +61,26 @@ function isWorkDetail(path: string): boolean {
   return path.startsWith("/works/");
 }
 
-/** 画像モーフのペアが在る組み合わせ (一覧 <-> 詳細) か。 */
+/** 作品のタイルを並べていて、詳細と画像モーフのペアを持つページ。
+    トップの「作ったもの」も同じ WorkTile なので、一覧と同じ名前を持つ。 */
+function hasWorkTiles(path: string): boolean {
+  return path === "/works" || path === "/";
+}
+
+/** 画像モーフのペアが在る組み合わせ (一覧・トップ <-> 詳細) か。 */
 function isMorphPair(from: string | null, to: string): boolean {
   if (from === null) return false;
   const a = stripLocale(from);
   const b = stripLocale(to);
   return (
-    (a === "/works" && isWorkDetail(b)) || (isWorkDetail(a) && b === "/works")
+    (hasWorkTiles(a) && isWorkDetail(b)) || (isWorkDetail(a) && hasWorkTiles(b))
   );
 }
 
 /** スクロールの復元を自分で持つページか (= scrollRestoration を manual にする)。 */
 function ownsScroll(path: string): boolean {
   const p = stripLocale(path);
-  return p === "/works" || isWorkDetail(p);
+  return hasWorkTiles(p) || isWorkDetail(p);
 }
 
 /**
