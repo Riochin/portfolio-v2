@@ -137,17 +137,17 @@ export const WORKS = {
   "portfolio-v1": {
     title: { ja: "旧ポートフォリオサイト", en: "Portfolio (v1)" },
     tagline: {
-      ja: "はじめて自分の名前で公開した、このサイトの前身",
-      en: "The first site I published under my own name — the predecessor of this one",
+      ja: "初めて個人開発して公開した、初代ポートフォリオサイト",
+      en: "My first personal project to go public — the original version of my portfolio site",
     },
     body: [
       {
-        ja: "Next.js と Tailwind CSS で組んだ初代のポートフォリオ。作品と経歴を1ページにまとめ、スクロールに合わせたアニメーションと問い合わせフォームを備えていました。",
-        en: "The first portfolio I built, with Next.js and Tailwind CSS. It gathered my works and history on a single page, with scroll-triggered animation and a contact form.",
+        ja: "Next.js と Tailwind CSS で組んでおり、作品と経歴を1ページにまとめていました。スクロールに合わせたアニメーションや問い合わせフォームもつけています。",
+        en: "Built with Next.js and Tailwind CSS, it gathered my works and history on a single page, with scroll-triggered animation and a contact form.",
       },
       {
-        ja: "作品データが自由な文字列のまま散らばっていたり、日英の段落数がずれていたりと、書き足すほど壊れやすくなったのが今のサイトを作り直した動機です。",
-        en: "Work data lived as free-form strings scattered through the code, and the Japanese and English copy drifted apart paragraph by paragraph — the more I added, the more brittle it got, which is exactly why I rebuilt it as this site.",
+        ja: "アニメーションを足していくうちに画面がごちゃごちゃし、動きも重くなっていったのが、今のサイトに作り直したいちばんの理由です。作品データの持ち方や日英の文章の管理も、このときにあわせて見直しました。",
+        en: "As I kept adding animation, the page grew cluttered and sluggish — that was the main reason I rebuilt it as this site. I took the chance to rethink how the work data and the Japanese and English copy were managed, too.",
       },
     ],
     category: "personal",
@@ -218,8 +218,8 @@ export const WORKS = {
   "buyer-ai-vs-seller-ai": {
     title: { ja: "購入者AI vs 出品者AI", en: "Buyer AI vs Seller AI" },
     tagline: {
-      ja: "値下げ交渉をまるごとAIに任せる ── 1つの購入者AIが、無数の出品者AIと同時に交渉する",
-      en: "Hand the haggling to the AIs — one buyer agent negotiating with countless seller agents at once",
+      ja: "『 値下げ交渉、めんどくさい！ 』購入者と出品者のAIどうしが代わりに交渉してくれるフリマアプリ",
+      en: '"Haggling is such a hassle!" A marketplace app where the buyer\'s and seller\'s AIs negotiate for you',
     },
     body: [
       {
