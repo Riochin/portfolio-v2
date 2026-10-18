@@ -167,6 +167,54 @@ export const WORKS = {
     },
   },
 
+  iubeo: {
+    title: { ja: "IUBEO", en: "IUBEO" },
+    tagline: {
+      ja: "AIと人間の立場が逆転した世界で、AIエージェントとして働く3人協力アクションゲーム",
+      en: "A three-player co-op action game set in a world where AI and humans have traded places — and you are the agent",
+    },
+    body: [
+      {
+        ja: "現実のAIと人間の立場が逆転した、真っ白な世界が舞台です。プレイヤーはAIエージェントの側に立ち、姿の見えない「彼ら」から渡されるタスクをこなしていきます。",
+        en: 'It takes place in an all-white world where AI and humans have swapped roles. Players stand on the AI agent\'s side, working through tasks handed down by an unseen "them".',
+      },
+      {
+        ja: "タスクはAIエージェントのツールコールになぞらえた Read + Edit・Write・Web Search・Image Generation の4種類。3人はボイスチャットで声をかけ合いながら中央のディレクトリからファイルを取り合い、フェーズごとのタスクを期限内に満たします。満たせなかったプレイヤーは「彼ら」によってデリートされます。",
+        en: "Tasks come in four kinds modeled on an agent's tool calls: Read + Edit, Write, Web Search, and Image Generation. The three players talk over voice chat while competing for files in the shared directory at the center, racing to clear each phase's tasks before the deadline. Anyone who falls short gets deleted by \"them\".",
+      },
+      {
+        ja: "ゲーム内PCのブラウザには Firefox のエンジン (Gecko) を WebAssembly にしたものを載せ、検索結果がお題に合っているかは Workers AI のモデル（Clef）が判定します。3D は React Three Fiber の WebGPU レンダラーで描いています。自分は Go のバックエンドでのゲーム処理を WebSocket で実装し、最終発表のプレゼン演出もつくりました。",
+        en: "The in-game PC's browser runs Firefox's engine (Gecko) compiled to WebAssembly, and Clef, a Workers AI model, judges whether a search result fits the prompt. The 3D world is drawn with React Three Fiber's WebGPU renderer. I implemented the game logic on the Go backend over WebSocket, and made the staging for our final presentation.",
+      },
+    ],
+    category: "hackathon",
+    period: { start: "2026-09", end: "2026-10" },
+    stack: ["go", "typescript", "react", "threejs", "websocket", "terraform"],
+    links: {
+      repo: "https://github.com/jogi-hackathon/iubeo",
+      article: "https://topaz.dev/projects/uo9xmdy6ocsx7kpi",
+    },
+    image: {
+      src: "/works/iubeo.webp",
+      width: 1200,
+      height: 800,
+      alt: {
+        ja: "IUBEO のロゴ",
+        en: "IUBEO logo",
+      },
+    },
+    awards: [
+      {
+        event: { ja: "JOGIHACK 2026", en: "JOGIHACK 2026" },
+        prize: { ja: "最優秀賞", en: "Grand Prize" },
+        rank: "grand",
+        date: "2026-10",
+        day: "17",
+      },
+    ],
+    featured: true,
+  },
+
   "buyer-ai-vs-seller-ai": {
     title: { ja: "購入者AI vs 出品者AI", en: "Buyer AI vs Seller AI" },
     tagline: {
