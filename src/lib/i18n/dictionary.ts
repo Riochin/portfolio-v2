@@ -88,8 +88,13 @@ export const DICT = {
     /** 続きへのリンクは行き先の名前ではなく動作で言う (blog.otherArticles と
      *  同じ型)。ページ名 (About me / Works) にすると、押す理由が伝わらない。 */
     more: { ja: "自己紹介を読む", en: "Read about me" },
+    allExperience: { ja: "すべての経歴を見る", en: "See all experience" },
     featured: { ja: "Featured works", en: "Featured works" },
     allWorks: { ja: "すべての作品を見る", en: "See all works" },
+    recentTalks: { ja: "Recent talks", en: "Recent talks" },
+    allTalks: { ja: "すべての登壇資料を見る", en: "See all talks" },
+    recentArticles: { ja: "Recent articles", en: "Recent articles" },
+    allArticles: { ja: "すべての記事を見る", en: "See all articles" },
   },
   about: {
     /** 「使っている」ではなく「勉強している」。習得済みの一覧ではなく、
@@ -118,10 +123,16 @@ export const DICT = {
     /**
      * 挨拶文。昼も夜も同じ 1 本。
      *
-     * `Welcome to my portfolio` が悪いのは「ようこそ」ではなく行き先で、
-     * 作品集に招かれても嬉しくないが、海に招かれたら嬉しい。あの空は
-     * 実在しない海の心象風景だが、その一行がどこにも書かれていないと、
-     * ただの綺麗な背景にしか見えない。
+     * 一度は `Welcome to a sea that is nowhere.` (海への招待) にしていた。
+     * 作品集に招かれても嬉しくないが海に招かれたら嬉しい、あの空が実在しない
+     * 海の心象風景だと一行も書かれていないと、ただの綺麗な背景に見える ──
+     * という理由だった。
+     *
+     * `Welcome to my portfolio` に戻したのは、トップで自己紹介の文脈を強めたい
+     * から。海の下に経歴・作品・登壇・記事を並べ、トップだけで「どんな人か」が
+     * 伝わるようにした回 (feat/home-journey) で、入口の一行も「ここは誰かの
+     * ポートフォリオだ」と先に言う側に寄せた。海の出自は、全画面に入れば
+     * Riochin が語る (narration) ので、そちらに任せる。
      *
      * **ロケールによらず en を出す。**ここだけは日本語ページでも英語のまま。
      * 消費側 (page.tsx) が t() を通さず `.en` を直に読むので、下の ja は
@@ -130,8 +141,8 @@ export const DICT = {
      * ずれるぶんの手当ては page.tsx 側のコメントに書いた。
      */
     welcome: {
-      ja: "ようこそ、どこにもない海へ。",
-      en: "Welcome to a sea that is nowhere.",
+      ja: "ようこそ、私のポートフォリオへ。",
+      en: "Welcome to my portfolio.",
     },
     /** 全画面への誘い。UI の言葉 (「全画面表示」) は使わず、所作で言う。 */
     closer: { ja: "近づいてみる", en: "Come closer" },

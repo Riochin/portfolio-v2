@@ -81,27 +81,32 @@ export function compareStartDesc(a: Period, b: Period): number {
 export const yearOf = (yearMonth: YearMonth): Year =>
   yearMonth.slice(0, 4) as Year;
 
-/** "2025-06" -> "2025.6" */
+/**
+ * "2025-06" -> "2025.06"
+ *
+ * 日付の表示はサイト全体でドット区切り・ゼロ埋めに揃える (formatYearMonthDay、
+ * lib/output/format.ts も同じ)。月までと日までが同じ区切りで読め、桁も
+ * 揃うので、トップのリストのように日付を列に並べても頭がずれない。
+ */
 export function formatYearMonth(yearMonth: YearMonth): string {
-  const [year, month] = yearMonth.split("-");
-  return `${year}.${Number(month)}`;
+  return yearMonth.replace("-", ".");
 }
 
 /**
- * "2026-09-03" -> "2026/09/03"
+ * "2026-09-03" -> "2026.09.03"
  *
  * new Date() を通さずに組み替える。`new Date("2026-09-03")` は UTC 深夜と
  * 解釈されるので、getDate() で読み直すと UTC より西の環境で 1 日前になる。
- * OutputGrid の formatDate が同じ理由で同じことをしている。
+ * lib/output/format.ts が同じ理由で同じことをしている。
  */
 export function formatYearMonthDay(value: YearMonthDay): string {
-  return value.replaceAll("-", "/");
+  return value.replaceAll("-", ".");
 }
 
 const PRESENT: Record<Locale, string> = { ja: "現在", en: "Present" };
 
 /**
- * 表示は旧サイトの `2024.11 – 2025.12` 形式を踏襲する。
+ * 表示は旧サイトの `2024.11 – 2025.12` 形式を踏襲する (月はゼロ埋め)。
  * `2025年6月` / `Jun 2025` は日英で幅が揃わずタイムラインの目線が崩れるため。
  */
 export function formatPeriod(period: Period, locale: Locale): string {

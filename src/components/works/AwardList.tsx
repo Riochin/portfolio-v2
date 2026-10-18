@@ -7,7 +7,7 @@ import Link from "next/link";
  */
 export type AwardListItem = {
   readonly key: string;
-  /** 表示用の年月 ("2026.8")。 */
+  /** 表示用の年月 ("2026.08")。 */
   readonly date: string;
   /** <time datetime> に入れる機械可読な値 ("2026-08")。 */
   readonly dateTime: string;
