@@ -65,15 +65,20 @@ export default async function Home() {
             下のプロフィールや作品に重なる。下端から少し浮かせる (モバイル 4rem、
             md 3rem)。short は余地が無いので下端寄り (2.5rem) のまま。
 
-            高さは dvh ではなく svh。dvh だとスマホのブラウザのツールバーが
-            出入りするたびにセクションが伸び縮みし、下端に吊るしたテーマ切替と
-            スクロールの合図、中央のブロックまで上下に揺れる。svh はツールバーが
-            出ている側の高さで固定なので、隠れたときは下が少し覗くだけで済む。
-            ただし LINE などのアプリ内ブラウザでは svh まで動くので、
-            HeroSection が最初の 100svh を px で測って --hero-h に止める
-            (useFrozenViewportHeight)。測る前は 100svh で描く。
-            HeroSection の高さ予算も同じ --hero-h を使う。 */}
-        <section className="relative flex h-[var(--hero-h,100svh)] flex-col items-center justify-center overflow-hidden px-6 short:pb-30 max-md:short:pt-[3.875rem]">
+            高さは dvh ではなく、外枠が lvh・中身が svh。dvh だとスマホの
+            ブラウザのツールバーが出入りするたびにセクションが伸び縮みし、
+            下端に吊るしたテーマ切替とスクロールの合図、中央のブロックまで
+            上下に揺れる。中身はツールバーが出ている側の高さ (svh) で固定し、
+            外枠だけツールバーが隠れた側の高さ (lvh) まで伸ばす。svh だけだと、
+            下でツールバーを畳んでからトップに戻ったとき、差のぶん下の
+            プロフィールが覗いていた。ツールバーが出ているあいだは、
+            外枠の余りがツールバーの裏に隠れるだけ。
+            ただし LINE などのアプリ内ブラウザでは svh / lvh まで動くので、
+            HeroSection が最初の値を px で測って --hero-h / --hero-lh に止める
+            (useFrozenViewportHeight)。測る前は 100svh / 100lvh で描く。
+            HeroSection の高さ予算は中身と同じ --hero-h を使う。 */}
+        <section className="relative h-[var(--hero-lh,100lvh)] overflow-hidden">
+        <div className="relative flex h-[var(--hero-h,100svh)] flex-col items-center justify-center px-6 short:pb-30 max-md:short:pt-[3.875rem]">
         <HeroSection
           labels={{
             // 挨拶文だけは日本語ロケールでも en を出すので、t() を通さない。
@@ -95,6 +100,7 @@ export default async function Home() {
           <div className="absolute bottom-16 left-1/2 -translate-x-1/2 md:bottom-12 short:bottom-10">
             <ThemeToggle ariaLabel={t(DICT.aria.themeToggle)} />
           </div>
+        </div>
         </section>
 
         {/* 海の下は「誰が」「どう来たか」「何を作ったか」「何を話し、書いたか」の順。
