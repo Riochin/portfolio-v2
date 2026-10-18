@@ -721,10 +721,10 @@ export const WORKS = {
     image: {
       src: "/works/exit-prog8.webp",
       width: 1200,
-      height: 903,
+      height: 675,
       alt: {
-        ja: "Prog-8版出口 のスクリーンショット",
-        en: "Screenshot of Exit Prog-8",
+        ja: "Prog-8版出口 のキャラクターのイラスト",
+        en: "Illustration of the Exit Prog-8 character",
       },
     },
   },
