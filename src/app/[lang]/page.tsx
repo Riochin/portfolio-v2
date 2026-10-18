@@ -77,7 +77,10 @@ export default async function Home() {
             HeroSection が最初の値を px で測って --hero-h / --hero-lh に止める
             (useFrozenViewportHeight)。測る前は 100svh / 100lvh で描く。
             HeroSection の高さ予算は中身と同じ --hero-h を使う。 */}
-        <section className="relative h-[var(--hero-lh,100lvh)] overflow-hidden">
+        <section
+          data-hero-stage
+          className="relative h-[var(--hero-lh,100lvh)] overflow-hidden"
+        >
         <div className="relative flex h-[var(--hero-h,100svh)] flex-col items-center justify-center px-6 short:pb-30 max-md:short:pt-[3.875rem]">
         <HeroSection
           labels={{
