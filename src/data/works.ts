@@ -179,12 +179,12 @@ export const WORKS = {
         en: 'It takes place in an all-white world where AI and humans have swapped roles. Players stand on the AI agent\'s side, working through tasks handed down by an unseen "them".',
       },
       {
-        ja: "タスクはAIエージェントのツールコールになぞらえた Read + Edit・Write・Web Search・Image Generation の4種類。3人はボイスチャットで声をかけ合いながら中央のディレクトリからファイルを取り合い、フェーズごとのタスクを期限内に満たします。満たせなかったプレイヤーは区画ごと落ちて脱落します。",
-        en: "Tasks come in four kinds modeled on an agent's tool calls: Read + Edit, Write, Web Search, and Image Generation. The three players talk over voice chat while competing for files in the shared directory at the center, racing to clear each phase's tasks before the deadline. Anyone who falls short drops out, and their whole section of the room falls away with them.",
+        ja: "タスクはAIエージェントのツールコールになぞらえた Read + Edit・Write・Web Search・Image Generation の4種類。3人はボイスチャットで声をかけ合いながら中央のディレクトリからファイルを取り合い、フェーズごとのタスクを期限内に満たします。満たせなかったプレイヤーは「彼ら」によってデリートされます。",
+        en: "Tasks come in four kinds modeled on an agent's tool calls: Read + Edit, Write, Web Search, and Image Generation. The three players talk over voice chat while competing for files in the shared directory at the center, racing to clear each phase's tasks before the deadline. Anyone who falls short gets deleted by \"them\".",
       },
       {
-        ja: "ゲーム内PCのブラウザには Firefox のエンジン (Gecko) を WebAssembly にしたものを載せ、検索結果がお題に合っているかは Workers AI のモデルが判定します。3D は React Three Fiber の WebGPU レンダラーで描いています。自分は Go のバックエンドでフェーズの進行、タスクの配布と達成判定、脱落と決着を担当し、最終発表のプレゼン演出もつくりました。",
-        en: "The in-game PC's browser runs Firefox's engine (Gecko) compiled to WebAssembly, and a Workers AI model judges whether a search result fits the prompt. The 3D world is drawn with React Three Fiber's WebGPU renderer. I built the Go backend's game flow — advancing phases, handing out and checking tasks, eliminations and the final result — and made the staging for our final presentation.",
+        ja: "ゲーム内PCのブラウザには Firefox のエンジン (Gecko) を WebAssembly にしたものを載せ、検索結果がお題に合っているかは Workers AI のモデル（Clef）が判定します。3D は React Three Fiber の WebGPU レンダラーで描いています。自分は Go のバックエンドでフェーズの進行、タスクの配布と達成判定、脱落と決着を担当し、最終発表のプレゼン演出もつくりました。",
+        en: "The in-game PC's browser runs Firefox's engine (Gecko) compiled to WebAssembly, and Clef, a Workers AI model, judges whether a search result fits the prompt. The 3D world is drawn with React Three Fiber's WebGPU renderer. I built the Go backend's game flow — advancing phases, handing out and checking tasks, eliminations and the final result — and made the staging for our final presentation.",
       },
     ],
     category: "hackathon",
