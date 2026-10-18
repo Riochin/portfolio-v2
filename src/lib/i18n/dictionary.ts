@@ -88,8 +88,13 @@ export const DICT = {
     /** 続きへのリンクは行き先の名前ではなく動作で言う (blog.otherArticles と
      *  同じ型)。ページ名 (About me / Works) にすると、押す理由が伝わらない。 */
     more: { ja: "自己紹介を読む", en: "Read about me" },
+    allExperience: { ja: "すべての経歴を見る", en: "See all experience" },
     featured: { ja: "Featured works", en: "Featured works" },
     allWorks: { ja: "すべての作品を見る", en: "See all works" },
+    recentTalks: { ja: "Recent talks", en: "Recent talks" },
+    allTalks: { ja: "すべての登壇資料を見る", en: "See all talks" },
+    recentArticles: { ja: "Recent articles", en: "Recent articles" },
+    allArticles: { ja: "すべての記事を見る", en: "See all articles" },
   },
   about: {
     /** 「使っている」ではなく「勉強している」。習得済みの一覧ではなく、

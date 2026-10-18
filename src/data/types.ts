@@ -125,3 +125,15 @@ export type ProfileSection = {
   readonly label: Localized<string>;
   readonly items: readonly Localized<string>[];
 };
+
+/**
+ * トップの Experience (道のり) の 1 行。経歴の一覧ではなく、節目だけを名前で書く。
+ *
+ * href は続きが読めるものだけに付ける。`/` 始まりはサイト内 (ロケールを
+ * 前に足す)、それ以外は外部の記事として新しいタブで開く。
+ */
+export type JourneyStep = {
+  readonly date: YearMonth;
+  readonly text: Localized<string>;
+  readonly href?: string;
+};

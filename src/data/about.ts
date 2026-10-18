@@ -1,7 +1,12 @@
 import { academicYear } from "@/lib/date";
 import type { Localized } from "@/lib/i18n/types";
 import { EXPERIENCES } from "./experience";
-import type { ImageRef, ProfileFact, ProfileSection } from "./types";
+import type {
+  ImageRef,
+  JourneyStep,
+  ProfileFact,
+  ProfileSection,
+} from "./types";
 
 /** 在学中の学年。入学年月は Experience 側が持っているのでそこから導く。 */
 const GRADE = academicYear(EXPERIENCES["tsuda-university"].period.start);
@@ -88,6 +93,71 @@ Kurihara Lab`,
     ja: `津田塾大学 情報科学科の${GRADE}年生。ジョジョとガンダムとハッカソンが好きです。`,
     en: `Year ${GRADE} information science student at Tsuda University. I love JoJo's Bizarre Adventure, Gundam, and hackathons.`,
   } satisfies Localized<string>,
+
+  /**
+   * トップの Experience に出す「道のり」。古い順。
+   *
+   * 全部の経歴を並べる場所ではない (それは Experience ページ)。トップしか
+   * 見ない人に「どう来た人か」が伝わる節目だけを拾う。
+   * 書くのは名前だけ。見出しと年月があれば「その時期にそこに居た」と読めるので、
+   * 「〜に参加」「〜に入学」は付けない (どの行も同じ語尾になり、情報が増えない)。
+   * 何をしたかの中身も書かない (それも Experience ページ)。賞の名前も書かない ── 並べると実績の
+   * 一覧になり、道のりに見えなくなる。
+   */
+  journey: [
+    {
+      date: EXPERIENCES["tsuda-university"].period.start,
+      text: {
+        ja: "津田塾大学 情報科学科",
+        en: "Tsuda University, Information Science",
+      },
+    },
+    {
+      date: EXPERIENCES["waffle-college"].period.start,
+      text: {
+        ja: "WaffleCollege テックキャリアコース",
+        en: "WaffleCollege Tech Career Course",
+      },
+    },
+    {
+      date: "2024-12",
+      text: {
+        ja: "人生初のハッカソン",
+        en: "My first hackathon",
+      },
+      href: "/works/off",
+    },
+    {
+      date: EXPERIENCES["cyberagent-tech-lounge"].period.start,
+      text: {
+        ja: "CA Tech Lounge",
+        en: "CA Tech Lounge",
+      },
+    },
+    {
+      date: EXPERIENCES["google-swe-internship"].period.start,
+      text: {
+        ja: "Google STEP インターンシップ",
+        en: "Google STEP Internship",
+      },
+    },
+    {
+      date: EXPERIENCES["cyberagent-go-college"].period.start,
+      text: {
+        ja: "CA Go College",
+        en: "CA Go College",
+      },
+      href: EXPERIENCES["cyberagent-go-college"].url,
+    },
+    {
+      date: EXPERIENCES["mixi-internship"].period.start,
+      text: {
+        ja: "MIXI 就業型インターン",
+        en: "MIXI Work-based Internship",
+      },
+      href: EXPERIENCES["mixi-internship"].url,
+    },
+  ] satisfies readonly JourneyStep[],
 
   paragraphs: [
     {

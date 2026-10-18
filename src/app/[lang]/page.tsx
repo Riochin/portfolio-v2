@@ -1,21 +1,48 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import { HeroSection } from "@/components/hero/HeroSection";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { OutputTile } from "@/components/output/OutputTile";
 import { WorkTile } from "@/components/works/WorkTile";
 import { toWorkGridItem } from "@/components/works/toWorkGridItem";
 import { getHomeWorks } from "@/data";
 import { ABOUT } from "@/data/about";
 import { SITE } from "@/data/site";
+import { formatYearMonth } from "@/lib/date";
 import { DICT } from "@/lib/i18n/dictionary";
 import { getT } from "@/lib/i18n/server";
 import { localePath } from "@/lib/i18n/paths";
+import { getRecentOutputs } from "@/lib/output";
+import { ARTICLES_ANCHOR } from "@/lib/output/config";
+import { formatPublishedAt } from "@/lib/output/format";
+import type { OutputItem } from "@/lib/output/types";
+
+/**
+ * トップの文字だけのリスト (Experience / Recent articles) の日付列とリンク。
+ * 2 つで同じものを使い、見た目を揃える。
+ *
+ * 日付列は日までの幅 ("2026.10.15") で固定する。月までの Experience も
+ * 同じ幅にしておくと、セクションをまたいでも本文の頭が揃う。
+ * リンクは下線で示す ── Experience はリンクのある行と無い行が混ざるので、
+ * 下線があればリンク、という 1 つの決まりにしておく。
+ */
+const LIST_DATE_CLASS = "w-20 shrink-0 tabular-nums text-muted-foreground";
+const LIST_LINK_CLASS =
+  "underline decoration-muted-foreground/50 underline-offset-4 transition-opacity hover:opacity-70";
+
+/**
+ * トップに出す登壇・記事の件数。記事はタイトルだけで人柄が伝わる最小限。
+ * 登壇はサムネイルのタイルで Featured works と同じ並び (xl で 1 段、
+ * それ未満は 2 列 x 2 段) にするので、穴があかない 4 件。
+ */
+const RECENT_COUNTS = { talks: 4, articles: 3 };
 
 export default async function Home() {
   const { locale, t } = await getT();
   const works = getHomeWorks().map((work) => toWorkGridItem(work, locale, t));
+  const { talks, articles } = await getRecentOutputs(locale, RECENT_COUNTS);
 
   return (
     <>
@@ -71,8 +98,9 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 海の下は「誰が」「何を」の順。トップは各ページの縮小版を並べる
-            目次ではないので、人と作品の 2 つに絞る (経歴や記事はナビから)。
+        {/* 海の下は「誰が」「どう来たか」「何を作ったか」「何を話し、書いたか」の順。
+            トップは各ページの縮小版を並べる目次ではないので、どれも写真と
+            タイトルか 1 行の文字に絞り、詳しくは各ページへ渡す。
             左右は PageShell と同じく、固定ナビと SNS アイコンのぶんを空ける。 */}
         <div className="px-6 pb-16 pt-12 md:pl-[28%] md:pr-[18%] md:pt-16">
           <section className="max-w-3xl">
@@ -93,6 +121,7 @@ export default async function Home() {
               </div>
             </div>
             <p className="mt-5 leading-relaxed">{t(ABOUT.summary)}</p>
+
             <Link
               href={localePath(locale, "/about")}
               className="mt-3 inline-flex items-center gap-1.5 text-sm text-accent transition-opacity hover:opacity-70"
@@ -102,29 +131,176 @@ export default async function Home() {
             </Link>
           </section>
 
+          {/* 道のり。トップしか見ない人にも「どう来た人か」が伝わるよう、
+              節目だけを年月と 1 行で並べる。縦線や丸は打たない ── 部品が
+              増えるぶん読む手間が増え、見慣れたタイムラインの型にも寄る。
+              続きが読める行だけ下線を引いてリンクにする (外部の記事には
+              外部リンクの印も付ける)。日付列とリンクの見た目は
+              LIST_DATE_CLASS / LIST_LINK_CLASS で下のリストと共通。 */}
+          <section className="mt-16">
+            <h2 className="text-lg font-bold">{t(DICT.pages.experience)}</h2>
+            <ol className="mt-6 space-y-2 text-sm">
+              {ABOUT.journey.map((step) => {
+                const external =
+                  step.href !== undefined && !step.href.startsWith("/");
+                return (
+                  <li key={step.text.en} className="flex gap-4">
+                    <time dateTime={step.date} className={LIST_DATE_CLASS}>
+                      {formatYearMonth(step.date)}
+                    </time>
+                    {step.href ? (
+                      <Link
+                        href={
+                          external ? step.href : localePath(locale, step.href)
+                        }
+                        {...(external && {
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                        })}
+                        className={LIST_LINK_CLASS}
+                      >
+                        {t(step.text)}
+                        {external && (
+                          <ExternalLink
+                            size={13}
+                            className="ml-1 inline align-[-0.125em] opacity-60"
+                          />
+                        )}
+                      </Link>
+                    ) : (
+                      <span>{t(step.text)}</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+            <Link
+              href={localePath(locale, "/experience")}
+              className="mt-6 inline-flex items-center gap-1.5 text-sm text-accent transition-opacity hover:opacity-70"
+            >
+              {t(DICT.home.allExperience)}
+              <ArrowRight size={16} />
+            </Link>
+          </section>
+
           <section className="mt-16">
             <h2 className="text-lg font-bold">{t(DICT.home.featured)}</h2>
-            {/* 4 件を 2 列 x 2 段。Works の一覧と違い 3 列にしない
-                (4 件だと最終行に 1 件だけ残る)。 */}
-            <ul className="mt-6 grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2">
+            {/* 4 件を xl で 1 段、それ未満は 2 列 x 2 段。トップは要約なので
+                タイルは写真とタイトルだけにして縦幅を抑える (compact)。
+                3 列にはしない (4 件だと最終行に 1 件だけ残る)。 */}
+            <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-6 xl:grid-cols-4">
               {works.map((work) => (
                 <li key={work.slug} className="group">
-                  <WorkTile work={work} />
+                  <WorkTile work={work} compact />
                 </li>
               ))}
             </ul>
             <Link
               href={localePath(locale, "/works")}
-              className="mt-8 inline-flex items-center gap-1.5 text-sm text-accent transition-opacity hover:opacity-70"
+              className="mt-6 inline-flex items-center gap-1.5 text-sm text-accent transition-opacity hover:opacity-70"
             >
               {t(DICT.home.allWorks)}
               <ArrowRight size={16} />
             </Link>
           </section>
+
+          {/* 最近の登壇と記事。登壇はサムネイルのタイル、記事は文字だけの
+              リスト (理由は RecentOutputSection)。並びは /output と同じく
+              登壇が先。フィードが落ちて 0 件ならセクションごと出さない。 */}
+          <RecentOutputSection
+            title={t(DICT.home.recentTalks)}
+            items={talks}
+            tiles
+            moreHref={localePath(locale, "/output")}
+            moreLabel={t(DICT.home.allTalks)}
+          />
+          <RecentOutputSection
+            title={t(DICT.home.recentArticles)}
+            items={articles}
+            moreHref={`${localePath(locale, "/output")}#${ARTICLES_ANCHOR}`}
+            moreLabel={t(DICT.home.allArticles)}
+          />
         </div>
       </main>
       {/* フッターはモバイルだけ (PageShell と同じ)。 */}
       <SiteFooter />
     </>
+  );
+}
+
+/**
+ * トップの Recent talks / Recent articles。
+ *
+ * articles は日付とタイトルだけの 1 行ずつ。talks は tiles で、スライドの
+ * 表紙を敷いたタイルにする ── 表紙は 1 枚ずつ見た目が違い、人前で話す
+ * 様子も伝わるので、画像にする意味がある。記事の OGP は Zenn の型で
+ * どれも似るので、並べても情報が増えず縦に伸びるだけ。
+ */
+function RecentOutputSection({
+  title,
+  items,
+  moreHref,
+  moreLabel,
+  tiles = false,
+}: {
+  title: string;
+  items: readonly OutputItem[];
+  moreHref: string;
+  moreLabel: string;
+  tiles?: boolean;
+}) {
+  if (items.length === 0) return null;
+
+  return (
+    <section className="mt-16">
+      <h2 className="text-lg font-bold">{title}</h2>
+      {tiles ? (
+        // 並びと大きさは Featured works (compact) に揃える。
+        <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-6 xl:grid-cols-4">
+          {items.map((item) => (
+            <li key={item.url} className="group">
+              <OutputTile item={item} compact />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ol className="mt-6 space-y-2 text-sm">
+          {items.map((item) => {
+            // 自前記事だけ遷移先がサイト内。別タブに飛ばさず、外部リンクの印も出さない。
+            const internal = item.source === "self";
+            return (
+              <li key={item.url} className="flex gap-4">
+                <time dateTime={item.publishedAt} className={LIST_DATE_CLASS}>
+                  {formatPublishedAt(item.publishedAt)}
+                </time>
+                <Link
+                  href={item.url}
+                  {...(!internal && {
+                    target: "_blank",
+                    rel: "noopener noreferrer",
+                  })}
+                  className={LIST_LINK_CLASS}
+                >
+                  {item.title}
+                  {!internal && (
+                    <ExternalLink
+                      size={13}
+                      className="ml-1 inline align-[-0.125em] opacity-60"
+                    />
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+      <Link
+        href={moreHref}
+        className="mt-6 inline-flex items-center gap-1.5 text-sm text-accent transition-opacity hover:opacity-70"
+      >
+        {moreLabel}
+        <ArrowRight size={16} />
+      </Link>
+    </section>
   );
 }
