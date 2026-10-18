@@ -37,7 +37,7 @@ export const PAGER_BACK_LINK =
  * Component で済ませ、ここには結果だけを渡す。
  *
  * 中央の back を slot で受けるのも同じ理由の裏返しで、Works だけは
- * BackToWorksLink (Client Component) を使いたい。SiteChrome が MobileMenu へ
+ * BackLink (Client Component) を使いたい。SiteChrome が MobileMenu へ
  * LanguageSwitcher を渡しているのと同じ形。
  */
 export function DetailPager({

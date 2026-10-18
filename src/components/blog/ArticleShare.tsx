@@ -4,7 +4,7 @@ import { DICT } from "@/lib/i18n/dictionary";
 import { localePath } from "@/lib/i18n/paths";
 import { getT } from "@/lib/i18n/server";
 
-/* 枠は付けない。ページ上部の「Output に戻る」(page.tsx) から、字とアイコン
+/* 枠は付けない。ページ上部の「記事一覧に戻る」(page.tsx) から、字とアイコン
    だけの控えめな見た目を借りている (向こうは <a>、こちらは <button>)。
 
    DetailPager の枠付きの面は使わなかった。あれは読み終えたあとに次を選ばせる

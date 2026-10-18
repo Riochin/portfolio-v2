@@ -92,8 +92,9 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     >
       <body className="min-h-full flex flex-col text-base">
         <ThemeProvider>
-          {/* Works だけの仕組みだが、Next より先に popstate を購読する必要が
-              あるので最初のバンドルに入るここから読み込む (詳細は同ファイル)。 */}
+          {/* Works のモーフと詳細ページの「戻る」の仕組み。Next より先に
+              popstate を購読する必要があるので最初のバンドルに入るここから
+              読み込む (詳細は同ファイル)。 */}
           <WorksHistoryBridge />
           <SiteChrome />
           {children}
