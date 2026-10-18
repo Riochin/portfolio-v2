@@ -282,6 +282,7 @@ export const EXPERIENCES = {
       },
     ],
     stack: ["flutter", "go", "typescript"],
+    url: "https://zenn.dev/riochin/articles/mixi2-intern-2026",
   },
 
   "cyberagent-universe": {
