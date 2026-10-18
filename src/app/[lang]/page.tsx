@@ -135,9 +135,14 @@ export default async function Home() {
               増えるぶん読む手間が増え、見慣れたタイムラインの型にも寄る。
               続きが読める行だけ下線を引いてリンクにする (外部の記事には
               外部リンクの印も付ける)。日付列とリンクの見た目は
-              LIST_DATE_CLASS / LIST_LINK_CLASS で下のリストと共通。 */}
+              LIST_DATE_CLASS / LIST_LINK_CLASS で下のリストと共通。
+
+              見出しは中身の名前の「経歴」(ページ名の Experience ではなく、
+              「主な作品」などと同じ決まり)。 */}
           <section className="mt-16">
-            <h2 className="text-lg font-bold">{t(DICT.pages.experience)}</h2>
+            <h2 className="text-lg font-bold">
+              {t(DICT.experience.heading)}
+            </h2>
             <ol className="mt-6 space-y-2 text-sm">
               {ABOUT.journey.map((step) => {
                 const external =
