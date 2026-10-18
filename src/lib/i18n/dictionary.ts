@@ -79,8 +79,8 @@ export const DICT = {
    * カテゴリを増やすと参照側 (works/page.tsx) の索引で型エラーになる。
    */
   workCategories: {
-    personal: { ja: "個人で開発したもの", en: "Built on my own" },
-    hackathon: { ja: "ハッカソンで開発したもの", en: "Built at hackathons" },
+    personal: { ja: "個人で開発した作品", en: "Built on my own" },
+    hackathon: { ja: "ハッカソンで開発した作品", en: "Built at hackathons" },
   },
   /** トップのヒーローの下 (簡易プロフィールと Featured works)。 */
   home: {
@@ -89,11 +89,11 @@ export const DICT = {
      *  同じ型)。ページ名 (About me / Works) にすると、押す理由が伝わらない。 */
     more: { ja: "自己紹介を読む", en: "Read about me" },
     allExperience: { ja: "すべての経歴を見る", en: "See all experience" },
-    featured: { ja: "Featured works", en: "Featured works" },
+    featured: { ja: "主な作品", en: "Featured works" },
     allWorks: { ja: "すべての作品を見る", en: "See all works" },
-    recentTalks: { ja: "Recent talks", en: "Recent talks" },
+    recentTalks: { ja: "最近の登壇資料", en: "Recent talks" },
     allTalks: { ja: "すべての登壇資料を見る", en: "See all talks" },
-    recentArticles: { ja: "Recent articles", en: "Recent articles" },
+    recentArticles: { ja: "最近書いた記事", en: "Recent articles" },
     allArticles: { ja: "すべての記事を見る", en: "See all articles" },
   },
   about: {
