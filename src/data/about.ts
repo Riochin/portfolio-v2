@@ -106,6 +106,10 @@ Kurihara Lab`,
    */
   journey: [
     {
+      date: "2005-05",
+      text: { ja: "誕生", en: "Born" },
+    },
+    {
       date: EXPERIENCES["tsuda-university"].period.start,
       text: {
         ja: "津田塾大学 情報科学科",
