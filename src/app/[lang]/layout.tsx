@@ -8,6 +8,7 @@ import { SITE } from "@/data/site";
 import { LOCALES, OG_LOCALE } from "@/lib/i18n/config";
 import { getT } from "@/lib/i18n/server";
 import { alternates } from "@/lib/i18n/paths";
+import { THEME_COLORS } from "@/lib/themeColor";
 import "../globals.css";
 
 const zenMaruGothic = Zen_Maru_Gothic({
@@ -37,12 +38,13 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
  * ブラウザの UI (Android の URL バー、スタンドアロン時のステータスバー) に渡す色。
  * テーマは next-themes の system 既定なので、端末の設定と同じ条件で出し分ける。
  * 値は globals.css の --background と同じ。
- * サイト内のトグルで明暗を選び直したときだけはここが追随しない。
+ * サイト内のトグルで明暗を選び直したときは、ThemeProvider / ThemeToggle が
+ * <meta> を書き換えて追随させる (lib/themeColor.ts)。
  */
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf3f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#070d1e" },
+    { media: "(prefers-color-scheme: light)", color: THEME_COLORS.light },
+    { media: "(prefers-color-scheme: dark)", color: THEME_COLORS.dark },
   ],
 };
 
