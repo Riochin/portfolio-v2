@@ -18,6 +18,9 @@ export const DICT = {
   common: {
     showMore: { ja: "もっとみる", en: "Show more" },
     showLess: { ja: "とじる", en: "Show less" },
+    /** 詳細ページ上部の戻るリンク。一覧以外 (トップなど) から来たときは
+     *  行き先が一覧ではないので、「作品一覧に戻る」ではなくこれを出す。 */
+    back: { ja: "戻る", en: "Back" },
   },
   nav: {
     about: { ja: "About me", en: "About me" },
@@ -41,7 +44,9 @@ export const DICT = {
    * 一覧は独立させず /output の「書いた記事」に混ぜているので、戻り先も Output。
    */
   blog: {
-    back: { ja: "Output に戻る", en: "Back to Output" },
+    /** 上部の戻るリンク。行き先はページ名 (Output) ではなく中身で呼ぶ ──
+     *  Output は登壇資料と記事が混ざっていて、戻りたいのは記事の並びなので。 */
+    back: { ja: "記事一覧に戻る", en: "Back to articles" },
     /** 末尾のページャの行き先。上部の back と役割が違うので言い分ける
      *  ── 上は読み始める前の離脱口、下は読み終えたあとの次の一手。
      *  行き先は /output だが「Output」とは名乗らない。読み終えた直後に
@@ -60,7 +65,8 @@ export const DICT = {
     stack: { ja: "技術スタック", en: "Stack" },
     role: { ja: "担当", en: "Role" },
     related: { ja: "関連する経験", en: "Related experience" },
-    back: { ja: "Works に戻る", en: "Back to Works" },
+    /** 上部の戻るリンク。blog.back と同じく、ページ名ではなく中身で呼ぶ。 */
+    back: { ja: "作品一覧に戻る", en: "Back to works" },
     /** 末尾のページャの行き先。blog.otherArticles と同じ理由で back とは別語。 */
     otherWorks: { ja: "ほかの作品も見る", en: "See other works" },
     // 単一リポジトリではなく Organization のトップを指す作品があるので

@@ -5,6 +5,7 @@ import { flushSync } from "react-dom";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { useHydrated } from "@/lib/useHydrated";
+import { syncThemeColor } from "@/lib/themeColor";
 
 /* hero は下部中央に単体で置く大きな丸ボタン。chrome は JP/EN の隣やフッターに
    並ぶ小さなアイコンで、枠を持たず周りの文字リンクと同じ重さに見せる。
@@ -51,6 +52,7 @@ export function ThemeToggle({
 
     // View Transitions 非対応ブラウザ / reduced-motion では即時切替にフォールバック
     if (!button || prefersReducedMotion || !document.startViewTransition) {
+      syncThemeColor(next);
       setTheme(next);
       return;
     }
@@ -73,7 +75,11 @@ export function ThemeToggle({
     // (ページ遷移のモーフに漏らさないため)
     document.documentElement.dataset.vt = "theme";
 
+    // ツールバーの色 (theme-color) は円を待たずに切り替える。スナップ
+    // ショットの外 (透明なツールバーの下) は円が届かないので、ここで
+    // 先に変えないと、リベールが終わっても元の色のまま残る。
     const transition = document.startViewTransition(() => {
+      syncThemeColor(next);
       flushSync(() => setTheme(next));
     });
 

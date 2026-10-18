@@ -100,29 +100,8 @@ export default async function ExperiencePage() {
                     className={`min-w-0 p-4 ${exp.image ? "@[37rem]:ml-44" : ""}`}
                   >
                     {/* 見出しは所属ではなくプログラム名。
-                        「株式会社◯◯」が並ぶより何をやったかで拾い読みできる。
-                        体験記などの外部記事はその右端に。absolute で右上に
-                        浮かせると長い見出しの下に潜るので、同じ行に並べて
-                        shrink-0 で押し出す (見出しが折り返して逃げる)。
-                        カードごと <a> にはしない ── URL を持つカードと
-                        持たないカードでクリック可否が変わると迷わせるため。 */}
-                    <div className="flex items-baseline justify-between gap-3">
-                      <h4 className="font-bold">{t(exp.position)}</h4>
-                      {exp.url && (
-                        <a
-                          href={exp.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="shrink-0 text-sm text-accent transition-opacity hover:opacity-70"
-                        >
-                          {t(DICT.experience.report)}
-                          <ExternalLink
-                            size={14}
-                            className="ml-1 inline-block align-baseline opacity-60"
-                          />
-                        </a>
-                      )}
-                    </div>
+                        「株式会社◯◯」が並ぶより何をやったかで拾い読みできる。 */}
+                    <h4 className="font-bold">{t(exp.position)}</h4>
                     {/* 期間は見出しの右ではなく下。同じ行に置くと狭い幅で
                         見出しの折り返しが増えるため。 */}
                     <p className="mt-0.5 text-sm text-muted-foreground">
@@ -152,6 +131,27 @@ export default async function ExperiencePage() {
                           </span>
                         ))}
                       </div>
+                    )}
+                    {/* 体験記などの外部記事はカードの末尾に 1 行で置く。
+                        以前は見出しの右端に shrink-0 で並べていたが、長い
+                        見出しが狭い幅に押し込まれて何行にも折れ、リンクだけが
+                        右上に取り残されていた。読み終えた位置から次に進む
+                        導線なので、末尾の方が流れにも合う。
+                        カードごと <a> にはしない ── URL を持つカードと
+                        持たないカードでクリック可否が変わると迷わせるため。 */}
+                    {exp.url && (
+                      <a
+                        href={exp.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-3 inline-block text-sm text-accent transition-opacity hover:opacity-70"
+                      >
+                        {t(DICT.experience.report)}
+                        <ExternalLink
+                          size={14}
+                          className="ml-1 inline-block align-baseline opacity-60"
+                        />
+                      </a>
                     )}
                   </div>
                 </li>

@@ -6,8 +6,8 @@ import {
   DetailPager,
   PAGER_BACK_LINK,
 } from "@/components/layout/DetailPager";
+import { BackLink } from "@/components/layout/BackLink";
 import { PageShell } from "@/components/layout/PageShell";
-import { BackToWorksLink } from "@/components/works/BackToWorksLink";
 import { workImageTransitionName } from "@/components/works/workImageTransition";
 import {
   getExperienceBySlug,
@@ -73,13 +73,19 @@ export default async function WorkDetailPage({
   return (
     <PageShell>
       <article>
-        <BackToWorksLink
+        <BackLink
           href={localePath(locale, "/works")}
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
+          elsewhere={
+            <>
+              <ArrowLeft size={16} />
+              {t(DICT.common.back)}
+            </>
+          }
         >
           <ArrowLeft size={16} />
           {t(DICT.works.back)}
-        </BackToWorksLink>
+        </BackLink>
 
         {work.image && (
           // 一覧タイルと同じ name。一覧から来たときは画像がそのまま拡大し、
@@ -198,12 +204,12 @@ export default async function WorkDetailPage({
         next={toPagerLink(next)}
         ariaLabel={t(DICT.aria.pager)}
         back={
-          <BackToWorksLink
+          <BackLink
             href={localePath(locale, "/works")}
             className={PAGER_BACK_LINK}
           >
             {t(DICT.works.otherWorks)}
-          </BackToWorksLink>
+          </BackLink>
         }
       />
     </PageShell>

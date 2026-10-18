@@ -5,24 +5,39 @@ import { usePathname, useRouter } from "next/navigation";
 import { stripLocale } from "@/lib/i18n/paths";
 
 /**
- * ブラウザの「戻る/進む」でも一覧 <-> 詳細の画像モーフを走らせるための橋渡し。
+ * ブラウザの「戻る/進む」でも一覧・トップ <-> 作品詳細の画像モーフを走らせるための橋渡し。
  *
  * Next は popstate を ACTION_RESTORE として処理するが、この経路だけは React の
  * transition の外で state を差し替えるため <ViewTransition> が起動せず、画像が
- * ハードカットで入れ替わる (vercel/next.js#94369)。そこで一覧 <-> 詳細の移動に
+ * ハードカットで入れ替わる (vercel/next.js#94369)。そこでこの組の移動に
  * 限って popstate を横取りし、同じ URL への router.replace() ── リンクを押した
  * ときと同じ経路 ── としてやり直す。
  *
- * ルートレイアウトに置く。works 配下でしか効かない仕組みだが、下の
+ * ついでに「どこから来たか」(arrivedFrom) も控える。こちらは works に限らず
+ * 詳細ページの「戻る」(BackLink) が全ページで使う。
+ *
+ * ルートレイアウトに置く。モーフは作品のタイルがあるページでしか効かない仕組みだが、下の
  * addEventListener が Next の購読 (AppRouter の useEffect = ハイドレーション後)
  * より先に走らないと横取りできないので、最初のバンドルに入る位置から読み込む。
  */
 
-/** いま居るパスと 1 つ前。ロケール接頭辞込み。 */
+/** いま居るパス。ロケール接頭辞込み。 */
 let currentPath: string | null = null;
-let previousPath: string | null = null;
 
-/** パスごとの最後のスクロール位置。works のページはこれを自分で戻す。 */
+/**
+ * いまのエントリに「どこから来たか」。ロケール接頭辞込み。
+ *
+ * リンクで来たときだけ埋まる。戻る/進むで着いたときは null ── そのエントリの
+ * 1 つ前が何かは popstate からは分からない (top -> 詳細 -> about と進んでから
+ * 戻ると、直前に居たのは about だが、履歴の 1 つ前は top)。直リンクや
+ * リロードで着いたときも null。
+ */
+let entryFrom: string | null = null;
+
+/** 戻る/進むの行き先。着地の layout effect で entryFrom を決めたら捨てる。 */
+let popTarget: string | null = null;
+
+/** パスごとの最後のスクロール位置。ownsScroll のページはこれを自分で戻す。 */
 const scrollByPath = new Map<string, number>();
 
 /** popstate を横取りする関数。Bridge がマウントされている間だけ立つ。 */
@@ -35,6 +50,7 @@ if (typeof window !== "undefined") {
   // 万一あとから登録されても、Next の復元が普通に走るだけで壊れはしない
   // (モーフが付かない従来の挙動に戻る)。
   window.addEventListener("popstate", (event) => {
+    popTarget = window.location.pathname;
     if (takeOver?.(window.location.href)) {
       event.stopImmediatePropagation();
     }
@@ -45,25 +61,40 @@ function isWorkDetail(path: string): boolean {
   return path.startsWith("/works/");
 }
 
-/** 画像モーフのペアが在る組み合わせ (一覧 <-> 詳細) か。 */
+/** 作品のタイルを並べていて、詳細と画像モーフのペアを持つページ。
+    トップの「作ったもの」も同じ WorkTile なので、一覧と同じ名前を持つ。 */
+function hasWorkTiles(path: string): boolean {
+  return path === "/works" || path === "/";
+}
+
+/** 画像モーフのペアが在る組み合わせ (一覧・トップ <-> 詳細) か。 */
 function isMorphPair(from: string | null, to: string): boolean {
   if (from === null) return false;
   const a = stripLocale(from);
   const b = stripLocale(to);
   return (
-    (a === "/works" && isWorkDetail(b)) || (isWorkDetail(a) && b === "/works")
+    (hasWorkTiles(a) && isWorkDetail(b)) || (isWorkDetail(a) && hasWorkTiles(b))
   );
 }
 
 /** スクロールの復元を自分で持つページか (= scrollRestoration を manual にする)。 */
 function ownsScroll(path: string): boolean {
   const p = stripLocale(path);
-  return p === "/works" || isWorkDetail(p);
+  return hasWorkTiles(p) || isWorkDetail(p);
 }
 
-/** 1 つ前に居たのが Works 一覧か。詳細ページの「戻る」がこれを見る。 */
-export function cameFromWorksList(): boolean {
-  return previousPath !== null && stripLocale(previousPath) === "/works";
+/**
+ * `pathname` のページに、サイト内のどこからリンクで来たか。分からなければ null。
+ * 詳細ページの「戻る」(BackLink) がこれを見て、履歴を戻るか一覧へ進むかを決める。
+ *
+ * 行き先の render 中 ── currentPath の更新 (layout effect) より前 ── にも
+ * 呼べるよう、その場合は「いま着こうとしている」として計算する。
+ */
+export function arrivedFrom(pathname: string): string | null {
+  if (currentPath !== pathname) {
+    return popTarget === pathname ? null : currentPath;
+  }
+  return entryFrom;
 }
 
 /**
@@ -86,7 +117,8 @@ export function WorksHistoryBridge() {
   // 「戻す前のタイルの位置」へ飛んでから画面が跳ねる。
   useLayoutEffect(() => {
     if (currentPath !== pathname) {
-      previousPath = currentPath;
+      entryFrom = popTarget === pathname ? null : currentPath;
+      popTarget = null;
       currentPath = pathname;
     }
     if (pendingScroll.current !== null) {
@@ -95,7 +127,7 @@ export function WorksHistoryBridge() {
     }
   }, [pathname]);
 
-  /* --- ブラウザの履歴スクロール復元を works のページでだけ止める ---
+  /* --- ブラウザの履歴スクロール復元を、位置を自分で戻すページ (ownsScroll) でだけ止める ---
      この復元は popstate を配った「次のタスク」で走る。つまり行き先の DOM が
      入る前 ── まだ行き元のページが映っている状態 ── で行き先の位置まで飛ばす
      ので、行き先の方が長いと丈が足りずに丸められ、行き元が一番下まで送られる。
@@ -146,7 +178,7 @@ export function WorksHistoryBridge() {
       const to = new URL(href).pathname;
       const saved = scrollByPath.get(to);
 
-      // 行き先が works のページなら、ブラウザの復元は切ってあるので自分で戻す。
+      // 行き先が ownsScroll のページなら、ブラウザの復元は切ってあるので自分で戻す。
       // (横取りするかどうかとは別。一覧へ普通に戻るだけの移動もここを通る)
       if (ownsScroll(to) && saved !== undefined) {
         pendingScroll.current = saved;

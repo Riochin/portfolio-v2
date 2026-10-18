@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Pencil } from "lucide-react";
+import { BackLink } from "@/components/layout/BackLink";
 import {
   DetailPager,
   PAGER_BACK_LINK,
@@ -83,13 +84,21 @@ export default async function ArticlePage({
     <PageShell>
       <article>
         <div className="mb-6 flex items-center justify-between gap-4">
-          <Link
-            href={localePath(locale, "/output")}
+          {/* 直リンクで来たときの行き先も、ページャと同じく「書いた記事」の
+              見出し。名乗りが「記事一覧」なので、登壇資料から始めない。 */}
+          <BackLink
+            href={`${localePath(locale, "/output")}#${ARTICLES_ANCHOR}`}
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
+            elsewhere={
+              <>
+                <ArrowLeft size={16} />
+                {t(DICT.common.back)}
+              </>
+            }
           >
             <ArrowLeft size={16} />
             {t(DICT.blog.back)}
-          </Link>
+          </BackLink>
 
           {/* 読んでいて直したくなったらそのまま studio へ渡る導線。dev だけ。
               本番では studio 自体が notFound() になるので出さない。 */}
