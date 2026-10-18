@@ -33,31 +33,40 @@ export default async function ExperiencePage() {
     <PageShell>
       <h1 className="sr-only">{t(DICT.pages.experience)}</h1>
 
-      {/* 年見出しは Output の Talks / Articles と同じ h2 の作りに揃える。
-          セクションの間隔も Works ページと同じ mt-16。 */}
-      {years.map((group, groupIndex) => (
-        <section key={group.year} className={groupIndex === 0 ? "" : "mt-16"}>
-          <h2 className="text-lg font-bold">{group.year}</h2>
-          {/* 写真はカードの左端まで裁ち落とす。カード側に padding を持たせず、
+      {/* 中身の見出しは「経歴」。Works の「個人で開発した作品」や Output の
+          「登壇資料」と同じ h2 の作りで、トップの経歴とも同じ言葉にそろえる。
+          年はその下の小見出し (h3) に下げ、数字だけの見出しが「経歴」と
+          同じ強さで並ばないよう、一段小さく薄くする。 */}
+      <section>
+        <h2 className="text-lg font-bold">{t(DICT.experience.heading)}</h2>
+        {years.map((group, groupIndex) => (
+          <section
+            key={group.year}
+            className={groupIndex === 0 ? "mt-6" : "mt-12"}
+          >
+            <h3 className="font-bold tabular-nums text-muted-foreground">
+              {group.year}
+            </h3>
+            {/* 写真はカードの左端まで裁ち落とす。カード側に padding を持たせず、
                 本文の p-4 が写真との間隔も兼ねる (写真が無い経験は全周 p-4)。 */}
-          {/* 高さは各カードの本文なり。以前は auto-rows-fr で全カードを
+            {/* 高さは各カードの本文なり。以前は auto-rows-fr で全カードを
               揃えていたが、写真の無いカードまで一番高いカードに引き伸ばされ、
               中身に対して間延びして見えたためやめた。
               写真のあるカードは写真が高さいっぱいに伸びるので余白は出ない。 */}
-          <ul className="mt-4 space-y-5">
-            {group.experiences.map((exp, index) => (
-              <li
-                key={exp.slug}
-                className={`reveal-rise @container relative overflow-hidden rounded-xl bg-surface ${
-                  exp.image ? "@[37rem]:min-h-44" : ""
-                }`}
-                style={
-                  {
-                    "--reveal-delay": `${(revealOffsets[groupIndex] + index) * STAGGER_MS}ms`,
-                  } as React.CSSProperties
-                }
-              >
-                {/* sm 以上では写真をレイアウトから外す (absolute)。
+            <ul className="mt-4 space-y-5">
+              {group.experiences.map((exp, index) => (
+                <li
+                  key={exp.slug}
+                  className={`reveal-rise @container relative overflow-hidden rounded-xl bg-surface ${
+                    exp.image ? "@[37rem]:min-h-44" : ""
+                  }`}
+                  style={
+                    {
+                      "--reveal-delay": `${(revealOffsets[groupIndex] + index) * STAGGER_MS}ms`,
+                    } as React.CSSProperties
+                  }
+                >
+                  {/* sm 以上では写真をレイアウトから外す (absolute)。
                     フローに置くと写真の「本来の高さ」(縦長の原寸だと幅 176px で
                     264px) がカードの高さを押し上げ、本文の下に余白ができる。
                     外に出すとカードの高さは本文だけで決まり、写真はその高さに
@@ -73,81 +82,84 @@ export default async function ExperiencePage() {
                     ままになり、176px の写真を引くと本文に 207px しか残らず
                     見出しが折れていた。37rem = 592px は sm: で切り替わっていた
                     瞬間のカラム幅 (640 - px-6 の 48) で、閾値は変えていない。 */}
-                {exp.image && (
-                  <Image
-                    src={exp.image.src}
-                    alt={t(exp.image.alt)}
-                    width={exp.image.width}
-                    height={exp.image.height}
-                    sizes="(min-width: 1096px) 176px, (min-width: 768px) 100vw, (min-width: 640px) 176px, 100vw"
-                    // 1 件目だけ先読みする。next/image の既定は lazy で、
-                    // 画面に映っているカードまで遅延にすると写真が後乗せに
-                    // なり、リロードのたびに読み込み直しているように見える。
-                    priority={groupIndex === 0 && index === 0}
-                    className="photo-frame aspect-video w-full object-cover @[37rem]:absolute @[37rem]:inset-y-0 @[37rem]:left-0 @[37rem]:aspect-auto @[37rem]:h-full @[37rem]:max-h-[19.5rem] @[37rem]:w-44"
-                  />
-                )}
-                <div className={`min-w-0 p-4 ${exp.image ? "@[37rem]:ml-44" : ""}`}>
-                  {/* 見出しは所属ではなくプログラム名。
+                  {exp.image && (
+                    <Image
+                      src={exp.image.src}
+                      alt={t(exp.image.alt)}
+                      width={exp.image.width}
+                      height={exp.image.height}
+                      sizes="(min-width: 1096px) 176px, (min-width: 768px) 100vw, (min-width: 640px) 176px, 100vw"
+                      // 1 件目だけ先読みする。next/image の既定は lazy で、
+                      // 画面に映っているカードまで遅延にすると写真が後乗せに
+                      // なり、リロードのたびに読み込み直しているように見える。
+                      priority={groupIndex === 0 && index === 0}
+                      className="photo-frame aspect-video w-full object-cover @[37rem]:absolute @[37rem]:inset-y-0 @[37rem]:left-0 @[37rem]:aspect-auto @[37rem]:h-full @[37rem]:max-h-[19.5rem] @[37rem]:w-44"
+                    />
+                  )}
+                  <div
+                    className={`min-w-0 p-4 ${exp.image ? "@[37rem]:ml-44" : ""}`}
+                  >
+                    {/* 見出しは所属ではなくプログラム名。
                         「株式会社◯◯」が並ぶより何をやったかで拾い読みできる。
                         体験記などの外部記事はその右端に。absolute で右上に
                         浮かせると長い見出しの下に潜るので、同じ行に並べて
                         shrink-0 で押し出す (見出しが折り返して逃げる)。
                         カードごと <a> にはしない ── URL を持つカードと
                         持たないカードでクリック可否が変わると迷わせるため。 */}
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="font-bold">{t(exp.position)}</h3>
-                    {exp.url && (
-                      <a
-                        href={exp.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="shrink-0 text-sm text-accent transition-opacity hover:opacity-70"
-                      >
-                        {t(DICT.experience.report)}
-                        <ExternalLink
-                          size={14}
-                          className="ml-1 inline-block align-baseline opacity-60"
-                        />
-                      </a>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <h4 className="font-bold">{t(exp.position)}</h4>
+                      {exp.url && (
+                        <a
+                          href={exp.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="shrink-0 text-sm text-accent transition-opacity hover:opacity-70"
+                        >
+                          {t(DICT.experience.report)}
+                          <ExternalLink
+                            size={14}
+                            className="ml-1 inline-block align-baseline opacity-60"
+                          />
+                        </a>
+                      )}
+                    </div>
+                    {/* 期間は見出しの右ではなく下。同じ行に置くと狭い幅で
+                        見出しの折り返しが増えるため。 */}
+                    <p className="mt-0.5 text-sm text-muted-foreground">
+                      {t(exp.organization)}
+                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {formatPeriod(exp.period, locale)}
+                    </p>
+                    <ul className="mt-2 space-y-1 text-sm leading-relaxed">
+                      {exp.highlights.map((highlight) => (
+                        <li key={highlight.en} className="flex gap-2">
+                          <span aria-hidden className="text-accent">
+                            ·
+                          </span>
+                          <span>{t(highlight)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {exp.stack && (
+                      <div className="mt-2.5 flex flex-wrap gap-1.5">
+                        {getSkills(exp.stack).map((skill) => (
+                          <span
+                            key={skill.slug}
+                            className="rounded-xl border border-border px-2 py-0.5 text-xs"
+                          >
+                            {skill.label}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
-                  {/* 期間は見出しの右ではなく下。同じ行に置くと狭い幅で
-                        見出しの折り返しが増えるため。 */}
-                  <p className="mt-0.5 text-sm text-muted-foreground">
-                    {t(exp.organization)}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {formatPeriod(exp.period, locale)}
-                  </p>
-                  <ul className="mt-2 space-y-1 text-sm leading-relaxed">
-                    {exp.highlights.map((highlight) => (
-                      <li key={highlight.en} className="flex gap-2">
-                        <span aria-hidden className="text-accent">
-                          ·
-                        </span>
-                        <span>{t(highlight)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {exp.stack && (
-                    <div className="mt-2.5 flex flex-wrap gap-1.5">
-                      {getSkills(exp.stack).map((skill) => (
-                        <span
-                          key={skill.slug}
-                          className="rounded-xl border border-border px-2 py-0.5 text-xs"
-                        >
-                          {skill.label}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </section>
     </PageShell>
   );
 }

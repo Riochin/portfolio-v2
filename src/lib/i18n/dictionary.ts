@@ -71,6 +71,10 @@ export const DICT = {
     slides: { ja: "スライド", en: "Slides" },
   },
   experience: {
+    /** 中身の見出し。ページ名 (pages.experience) は英語のまま、中身の見出しは
+     *  日本語にする (「主な作品」「登壇資料」と同じ決まり)。トップと
+     *  Experience ページで共通。 */
+    heading: { ja: "経歴", en: "Experience" },
     /** 経験カードから外部記事へ飛ばすリンクのラベル。 */
     report: { ja: "参加体験記", en: "Write-up" },
   },
