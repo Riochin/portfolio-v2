@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { formatPublishedAt } from "@/lib/output/format";
 import type { OutputItem } from "@/lib/output/types";
 import { useCollapseMotion } from "@/lib/useCollapseMotion";
 
@@ -54,12 +55,6 @@ const STAGGER_MS = 60;
 const PREVIEW_COUNT = 5;
 
 /**
- * 日付だけの値 ("2025-06-05")。SpeakerDeck の発表日がこの形で来る。
- * Zenn / Qiita は時刻まで持つ ISO 文字列。
- */
-const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
-
-/**
  * 「もっとみる」を開いているかをセクションごとに控えておく場所。
  *
  * 自前記事のタイルはサイト内の記事へ飛ぶので、一覧はそこで unmount される。
@@ -71,21 +66,6 @@ const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
  * 空のまま。SSR は必ず畳んだ状態を返し、ハイドレーションもずれない。
  */
 const expandedBySection = new Map<string, boolean>();
-
-function formatDate(value: string) {
-  // 日付だけのものは Date を通さず、そのまま組み替える。
-  // new Date("2025-06-05") は UTC 深夜と解釈されるので、getDate() で
-  // 読み直すと UTC より西の環境で 1 日前になってしまう
-  // (このコンポーネントは SSR されてから hydrate されるので、
-  //  サーバーとブラウザで時間帯が違うと表示がずれる)。
-  const parts = value.match(DATE_ONLY);
-  if (parts) {
-    const [, year, month, day] = parts;
-    return `${year}/${month}/${day}`;
-  }
-  const d = new Date(value);
-  return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
-}
 
 /**
  * Works の一覧タイルと同じ見た目で外部のアウトプットを並べる。
@@ -179,7 +159,7 @@ export function OutputGrid({
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
               <time dateTime={item.publishedAt}>
-                {formatDate(item.publishedAt)}
+                {formatPublishedAt(item.publishedAt)}
               </time>
             </p>
           </>
