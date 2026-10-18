@@ -230,10 +230,6 @@ export const WORKS = {
         ja: "希望価格と自分のAIの性格を決めて送り出すと、あとは出品者のAIとその場でやり取りし、合意できたら「お知らせ」に届きます。伝え方を気にせず、複数の出品者と同時に交渉できるのが一番の狙いです。",
         en: "You set your target price and your agent's personality, then send it off; it trades offers with the seller's agent on the spot and drops a notification once they agree. The point is that you stop worrying about tone — and can negotiate with several sellers at the same time.",
       },
-      {
-        ja: "AIエージェントのハッカソンらしく、作り方の側もAIに寄せました。Figma MCP を繋いだアイデアボードで壁打ちし、Claude Design で全く違う3案のモックアップを並べて検証してから、Claude Code で実装しています。",
-        en: "In the spirit of an AI agent hackathon, we leaned on AI for the making as well: bouncing ideas off a Figma-MCP-connected board, laying out three very different mockups in Claude Design to compare, and then writing the app with Claude Code.",
-      },
     ],
     category: "hackathon",
     period: { start: "2026-08", end: "2026-09" },
