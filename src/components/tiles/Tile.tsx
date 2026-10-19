@@ -49,7 +49,8 @@ export function Tile({
   children?: ReactNode;
   /**
    * トップ用。4 件を 1 段に詰めるので、写真とタイトルと meta だけを残し、
-   * 文字も一段小さくする。
+   * 文字も一段小さくする。タイトルは 3 行で切る ── 長い登壇タイトルで行の
+   * 高さがばらつくのを防ぐ。表紙にタイトルが載っているので切っても困らない。
    */
   compact?: boolean;
   /** ファーストビューに入るタイルだけ true (TileGrid の priorityCount を参照) */
@@ -75,7 +76,7 @@ export function Tile({
       </ViewTransition>
 
       <p
-        className={`font-medium group-hover:text-accent ${compact ? "mt-2 text-sm" : "mt-2.5"}`}
+        className={`font-medium group-hover:text-accent ${compact ? "mt-2 line-clamp-3 text-sm" : "mt-2.5"}`}
       >
         {title}
         {srLabel && <span className="sr-only">（{srLabel}）</span>}
