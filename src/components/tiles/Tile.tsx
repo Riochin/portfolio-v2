@@ -4,6 +4,7 @@ import { ViewTransition, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { ClampedTitle } from "@/components/tiles/ClampedTitle";
 
 /** 一覧 (2〜3 列) に並べるときの sizes。 */
 const SIZES_GRID = "(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw";
@@ -49,13 +50,21 @@ export function Tile({
   children?: ReactNode;
   /**
    * トップ用。4 件を 1 段に詰めるので、写真とタイトルと meta だけを残し、
-   * 文字も一段小さくする。タイトルは 3 行で切る ── 長い登壇タイトルで行の
-   * 高さがばらつくのを防ぐ。表紙にタイトルが載っているので切っても困らない。
+   * 文字も一段小さくする。タイトルは外部リンクの印まで含めて 3 行で切る
+   * (ClampedTitle) ── 長い登壇タイトルで行の高さがばらつくのを防ぐ。
+   * 表紙にタイトルが載っているので切っても困らない。
    */
   compact?: boolean;
   /** ファーストビューに入るタイルだけ true (TileGrid の priorityCount を参照) */
   priority?: boolean;
 }) {
+  const externalIcon = external && (
+    <ExternalLink
+      size={compact ? 13 : 14}
+      className="ml-1 inline align-[-0.125em] opacity-60"
+    />
+  );
+
   const body = (
     <>
       <ViewTransition name={transitionName} share="morph" default="none">
@@ -75,18 +84,21 @@ export function Tile({
         </div>
       </ViewTransition>
 
-      <p
-        className={`font-medium group-hover:text-accent ${compact ? "mt-2 line-clamp-3 text-sm" : "mt-2.5"}`}
-      >
-        {title}
-        {srLabel && <span className="sr-only">（{srLabel}）</span>}
-        {external && (
-          <ExternalLink
-            size={compact ? 13 : 14}
-            className="ml-1 inline align-[-0.125em] opacity-60"
-          />
-        )}
-      </p>
+      {compact ? (
+        <ClampedTitle
+          title={title}
+          lines={3}
+          className="mt-2 line-clamp-3 text-sm font-medium group-hover:text-accent"
+          srLabel={srLabel}
+          trailing={externalIcon}
+        />
+      ) : (
+        <p className="mt-2.5 font-medium group-hover:text-accent">
+          {title}
+          {srLabel && <span className="sr-only">（{srLabel}）</span>}
+          {externalIcon}
+        </p>
+      )}
       {meta && (
         <p className="mt-0.5 text-xs tabular-nums text-muted-foreground">
           {meta}
