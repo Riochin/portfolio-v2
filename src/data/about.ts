@@ -95,7 +95,7 @@ Kurihara Lab`,
   } satisfies Localized<string>,
 
   /**
-   * トップの Experience に出す「道のり」。古い順。
+   * トップの Experience に出す「道のり」。新しい順 (Experience ページの並びに揃える)。
    *
    * 全部の経歴を並べる場所ではない (それは Experience ページ)。トップしか
    * 見ない人に「どう来た人か」が伝わる節目だけを拾う。
@@ -106,21 +106,33 @@ Kurihara Lab`,
    */
   journey: [
     {
-      date: "2005-05",
-      text: { ja: "誕生", en: "Born" },
+      date: EXPERIENCES["mixi-internship"].period.start,
+      text: {
+        ja: "MIXI 就業型インターン",
+        en: "MIXI Work-based Internship",
+      },
+      href: EXPERIENCES["mixi-internship"].url,
     },
     {
-      date: EXPERIENCES["tsuda-university"].period.start,
+      date: EXPERIENCES["cyberagent-go-college"].period.start,
       text: {
-        ja: "津田塾大学 情報科学科",
-        en: "Tsuda University, Information Science",
+        ja: "CA Go College",
+        en: "CA Go College",
+      },
+      href: EXPERIENCES["cyberagent-go-college"].url,
+    },
+    {
+      date: EXPERIENCES["google-swe-internship"].period.start,
+      text: {
+        ja: "Google STEP インターンシップ",
+        en: "Google STEP Internship",
       },
     },
     {
-      date: EXPERIENCES["waffle-college"].period.start,
+      date: EXPERIENCES["cyberagent-tech-lounge"].period.start,
       text: {
-        ja: "WaffleCollege テックキャリアコース",
-        en: "WaffleCollege Tech Career Course",
+        ja: "CA Tech Lounge",
+        en: "CA Tech Lounge",
       },
     },
     {
@@ -132,34 +144,22 @@ Kurihara Lab`,
       href: "/works/off",
     },
     {
-      date: EXPERIENCES["cyberagent-tech-lounge"].period.start,
+      date: EXPERIENCES["waffle-college"].period.start,
       text: {
-        ja: "CA Tech Lounge",
-        en: "CA Tech Lounge",
+        ja: "WaffleCollege テックキャリアコース",
+        en: "WaffleCollege Tech Career Course",
       },
     },
     {
-      date: EXPERIENCES["google-swe-internship"].period.start,
+      date: EXPERIENCES["tsuda-university"].period.start,
       text: {
-        ja: "Google STEP インターンシップ",
-        en: "Google STEP Internship",
+        ja: "津田塾大学 情報科学科",
+        en: "Tsuda University, Information Science",
       },
     },
     {
-      date: EXPERIENCES["cyberagent-go-college"].period.start,
-      text: {
-        ja: "CA Go College",
-        en: "CA Go College",
-      },
-      href: EXPERIENCES["cyberagent-go-college"].url,
-    },
-    {
-      date: EXPERIENCES["mixi-internship"].period.start,
-      text: {
-        ja: "MIXI 就業型インターン",
-        en: "MIXI Work-based Internship",
-      },
-      href: EXPERIENCES["mixi-internship"].url,
+      date: "2005-05",
+      text: { ja: "誕生", en: "Born" },
     },
   ] satisfies readonly JourneyStep[],
 
