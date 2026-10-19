@@ -2,7 +2,7 @@
 
 import { TileGrid } from "@/components/tiles/TileGrid";
 import { WorkTile } from "./WorkTile";
-import { isReturningFromWorkDetail } from "./WorksHistoryBridge";
+import { isReturningFromWorkDetail } from "@/components/layout/MorphHistoryBridge";
 
 /**
  * 一覧タイル 1 件分。
@@ -25,7 +25,7 @@ export type WorkGridItem = {
 
 /**
  * Works の一覧。並べ方と動きは TileGrid に任せ、ここは作品のタイルを渡すだけ。
- * 詳細ページから戻ってきた回かどうかは WorksHistoryBridge が知っている。
+ * 詳細ページから戻ってきた回かどうかは MorphHistoryBridge が知っている。
  */
 export function WorkGrid({
   sectionKey,

@@ -8,7 +8,7 @@ import { workImageTransitionName } from "./workImageTransition";
  *
  * 写真には詳細ページの hero と同じ name を付けるので、クリック時に画像が
  * そのまま拡大するモーフになる。戻るときは同じモーフが逆再生される
- * (ブラウザの戻るボタンも WorksHistoryBridge が同じ経路に乗せる)。
+ * (ブラウザの戻るボタンも MorphHistoryBridge が同じ経路に乗せる)。
  */
 export function WorkTile({
   work,

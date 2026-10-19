@@ -5,7 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { stripLocale } from "@/lib/i18n/paths";
 
 /**
- * ブラウザの「戻る/進む」でも一覧・トップ <-> 作品詳細の画像モーフを走らせるための橋渡し。
+ * ブラウザの「戻る/進む」でも画像モーフを走らせるための橋渡し。
+ * 対象は一覧・トップ <-> 作品詳細と、トップ <-> /about (プロフィール写真)。
  *
  * Next は popstate を ACTION_RESTORE として処理するが、この経路だけは React の
  * transition の外で state を差し替えるため <ViewTransition> が起動せず、画像が
@@ -16,7 +17,7 @@ import { stripLocale } from "@/lib/i18n/paths";
  * ついでに「どこから来たか」(arrivedFrom) も控える。こちらは works に限らず
  * 詳細ページの「戻る」(BackLink) が全ページで使う。
  *
- * ルートレイアウトに置く。モーフは作品のタイルがあるページでしか効かない仕組みだが、下の
+ * ルートレイアウトに置く。モーフはペアを持つページでしか効かない仕組みだが、下の
  * addEventListener が Next の購読 (AppRouter の useEffect = ハイドレーション後)
  * より先に走らないと横取りできないので、最初のバンドルに入る位置から読み込む。
  */
@@ -67,20 +68,27 @@ function hasWorkTiles(path: string): boolean {
   return path === "/works" || path === "/";
 }
 
-/** 画像モーフのペアが在る組み合わせ (一覧・トップ <-> 詳細) か。 */
+/** プロフィール写真のモーフのペア。トップの小さな丸と /about の写真。 */
+function hasProfilePhoto(path: string): boolean {
+  return path === "/" || path === "/about";
+}
+
+/** 画像モーフのペアが在る組み合わせ (一覧・トップ <-> 詳細、トップ <-> /about) か。 */
 function isMorphPair(from: string | null, to: string): boolean {
   if (from === null) return false;
   const a = stripLocale(from);
   const b = stripLocale(to);
   return (
-    (hasWorkTiles(a) && isWorkDetail(b)) || (isWorkDetail(a) && hasWorkTiles(b))
+    (hasWorkTiles(a) && isWorkDetail(b)) ||
+    (isWorkDetail(a) && hasWorkTiles(b)) ||
+    (a !== b && hasProfilePhoto(a) && hasProfilePhoto(b))
   );
 }
 
 /** スクロールの復元を自分で持つページか (= scrollRestoration を manual にする)。 */
 function ownsScroll(path: string): boolean {
   const p = stripLocale(path);
-  return hasWorkTiles(p) || isWorkDetail(p);
+  return hasWorkTiles(p) || isWorkDetail(p) || hasProfilePhoto(p);
 }
 
 /**
@@ -107,7 +115,7 @@ export function isReturningFromWorkDetail(): boolean {
   return currentPath !== null && isWorkDetail(stripLocale(currentPath));
 }
 
-export function WorksHistoryBridge() {
+export function MorphHistoryBridge() {
   const router = useRouter();
   const pathname = usePathname();
   const pendingScroll = useRef<number | null>(null);

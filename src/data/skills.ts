@@ -62,19 +62,9 @@ export const SKILLS = {
     featured: true,
     icon: "react",
   },
-  nextjs: {
-    label: "Next.js",
-    category: "framework",
-    featured: true,
-    icon: "nextdotjs",
-  },
+  nextjs: { label: "Next.js", category: "framework", icon: "nextdotjs" },
   swiftui: { label: "SwiftUI", category: "framework", icon: "swift" },
-  fastapi: {
-    label: "FastAPI",
-    category: "framework",
-    featured: true,
-    icon: "fastapi",
-  },
+  fastapi: { label: "FastAPI", category: "framework", icon: "fastapi" },
   flask: { label: "Flask", category: "framework", icon: "flask" },
   flutter: { label: "Flutter", category: "framework", icon: "flutter" },
   unity: { label: "Unity", category: "framework", icon: "unity" },
@@ -99,12 +89,7 @@ export const SKILLS = {
     featured: true,
     icon: "docker",
   },
-  kubernetes: {
-    label: "Kubernetes",
-    category: "infra",
-    featured: true,
-    icon: "kubernetes",
-  },
+  kubernetes: { label: "Kubernetes", category: "infra", icon: "kubernetes" },
   terraform: {
     label: "Terraform",
     category: "infra",
@@ -113,17 +98,18 @@ export const SKILLS = {
   },
   // AWS 系は商標の都合で simple-icons から削除済みなので icon を持たない
   aws: { label: "AWS", category: "infra", featured: true },
+  cloudflare: {
+    label: "Cloudflare",
+    category: "infra",
+    featured: true,
+    icon: "cloudflare",
+  },
   gcp: { label: "GCP", category: "infra", icon: "googlecloud" },
   ecr: { label: "Amazon ECR", category: "infra" },
   agones: { label: "Agones", category: "infra" },
 
   // サービス・データストア
-  supabase: {
-    label: "Supabase",
-    category: "service",
-    featured: true,
-    icon: "supabase",
-  },
+  supabase: { label: "Supabase", category: "service", icon: "supabase" },
   firebase: { label: "Firebase", category: "service", icon: "firebase" },
   postgresql: {
     label: "PostgreSQL",
