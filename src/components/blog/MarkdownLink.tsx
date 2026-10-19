@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { LinkCard } from "./LinkCard";
+import { sitePath } from "@/lib/site-path";
 import type { ComponentPropsWithoutRef } from "react";
 
 /**
  * 本文中のリンク。サイト内は next/link でクライアント遷移、外部は別タブ。
+ * `https://riochin.dev/...` と絶対 URL で書かれていてもサイト内として扱う。
  *
  * OutputGrid が外部リンクにだけ target と ExternalLink の印を付けるのと同じ判断を、
  * 本文でも揃える。印を inline-block にするのは位置合わせのためだけではない ──
@@ -43,8 +45,8 @@ export function MarkdownLink({
     );
   }
 
-  const internal = href.startsWith("/") && !href.startsWith("//");
-  if (internal) return <Link href={href}>{children}</Link>;
+  const internal = sitePath(href);
+  if (internal) return <Link href={internal}>{children}</Link>;
 
   return (
     <a href={href} target="_blank" rel="noopener noreferrer">

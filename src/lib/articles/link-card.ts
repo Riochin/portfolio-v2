@@ -2,6 +2,7 @@ import { getArticleBySlug } from "@/lib/articles";
 import { localePath, stripLocale } from "@/lib/i18n/paths";
 import { fetchHeadMeta } from "@/lib/meta-tags";
 import { SITE } from "@/data/site";
+import { sitePath } from "@/lib/site-path";
 import type { Locale } from "@/lib/i18n/config";
 
 /**
@@ -41,15 +42,8 @@ const clamp = (value: string, max: number) => {
 const BLOG_PATH = /^\/blog\/([^/]+)$/;
 
 function internalArticleSlug(href: string): string | undefined {
-  let path: string;
-  if (href.startsWith(`${SITE.url}/`) || href === SITE.url) {
-    path = href.slice(SITE.url.length) || "/";
-  } else if (href.startsWith("/") && !href.startsWith("//")) {
-    // `//example.com/x` はプロトコル相対の外部 URL なので外す。
-    path = href;
-  } else {
-    return undefined;
-  }
+  const path = sitePath(href);
+  if (!path) return undefined;
 
   // クエリとフラグメントは記事の同定に関係しない。
   const [pathname] = path.split(/[?#]/);
