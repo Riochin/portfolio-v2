@@ -169,12 +169,12 @@ Kurihara Lab`,
       en: "In December 2024 I went to my first ever hackathon, and that was it — I was hooked on web development. (Hackathons are so much fun!)",
     },
     {
-      // 「わかりやすさ」の対象はあえて絞らない。発表も SNS の投稿も
-      // ページもコードも同じこだわりなので、EN も "easy to use" や
-      // "easy to read" に落とさず "easy to understand" のままにしてある。
+      // 「わかりやすく伝える」の対象はあえて絞らない。発表も SNS の投稿も
+      // ページもコードも、誰かに伝えるものとして同じ熱意で向き合っているので、
+      // EN も "presentations" などに落とさず "communicating clearly" にしてある。
       // `**…**` は About ページ側で <strong> に開かれる強調記法 (本文ではない)。
-      ja: "プロダクトをつくること自体が大好きで、つくりたいものに必要であればデザインからインフラまでフルスタックに触ります。**「わかりやすくする」**ことに強いこだわりがあります。",
-      en: "What I love is building products themselves, so I reach for whatever a project needs — from design all the way through to infrastructure. Above all, I care about making things **easy to understand**.",
+      ja: "プロダクトをつくること自体が大好きで、つくりたいものに必要であればデザインからインフラまでフルスタックに触ります。**「わかりやすく伝える」**ことに熱意を持っています。",
+      en: "What I love is building products themselves, so I reach for whatever a project needs — from design all the way through to infrastructure. Above all, I'm passionate about **communicating clearly**.",
     },
     {
       ja: "ひとりで開発するのも好きですが、誰かと開発するのはもっと好きです❗️😸",
