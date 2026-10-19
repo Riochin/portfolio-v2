@@ -3,7 +3,7 @@ import { Zen_Maru_Gothic, Alex_Brush } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
-import { WorksHistoryBridge } from "@/components/works/WorksHistoryBridge";
+import { MorphHistoryBridge } from "@/components/layout/MorphHistoryBridge";
 import { SITE } from "@/data/site";
 import { LOCALES, OG_LOCALE } from "@/lib/i18n/config";
 import { getT } from "@/lib/i18n/server";
@@ -97,7 +97,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           {/* Works のモーフと詳細ページの「戻る」の仕組み。Next より先に
               popstate を購読する必要があるので最初のバンドルに入るここから
               読み込む (詳細は同ファイル)。 */}
-          <WorksHistoryBridge />
+          <MorphHistoryBridge />
           <SiteChrome />
           {children}
         </ThemeProvider>

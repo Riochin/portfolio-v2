@@ -90,7 +90,7 @@ export default async function WorkDetailPage({
         {work.image && (
           // 一覧タイルと同じ name。一覧から来たときは画像がそのまま拡大し、
           // 戻るときは同じモーフが逆再生される (ブラウザの戻るボタンも
-          // WorksHistoryBridge が同じ経路に乗せる)。
+          // MorphHistoryBridge が同じ経路に乗せる)。
           <ViewTransition
             name={workImageTransitionName(work.slug)}
             share="morph"

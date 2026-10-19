@@ -1,6 +1,8 @@
+import { ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ExternalLink } from "lucide-react";
+import { PROFILE_PHOTO_TRANSITION_NAME } from "@/components/about/profilePhotoTransition";
 import { HeroSection } from "@/components/hero/HeroSection";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -113,14 +115,26 @@ export default async function Home() {
         <div className="px-6 pb-16 pt-12 md:pl-[28%] md:pr-[18%] md:pt-16">
           <section className="max-w-3xl">
             <div className="flex items-center gap-5">
-              <Image
-                src={ABOUT.photo.src}
-                alt={t(ABOUT.photo.alt)}
-                width={ABOUT.photo.width}
-                height={ABOUT.photo.height}
-                sizes="80px"
-                className="h-20 w-20 shrink-0 rounded-full object-cover"
-              />
+              {/* /about の写真と同じ name。About へ移ると、この丸がそのまま
+                  /about の大きな丸へ膨らむ (ブラウザの戻るも MorphHistoryBridge が
+                  同じ経路に乗せる)。丸く抜くのは name を持つ要素自身にする
+                  (ProfilePhoto と同じ。外で抜くとモーフ中だけ角張る)。 */}
+              <ViewTransition
+                name={PROFILE_PHOTO_TRANSITION_NAME}
+                share="morph"
+                default="none"
+              >
+                <div className="photo-frame h-20 w-20 shrink-0 overflow-hidden rounded-full">
+                  <Image
+                    src={ABOUT.photo.src}
+                    alt={t(ABOUT.photo.alt)}
+                    width={ABOUT.photo.width}
+                    height={ABOUT.photo.height}
+                    sizes="80px"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </ViewTransition>
               <div>
                 <h2 className="text-lg font-bold">{SITE.name}</h2>
                 <p className="mt-0.5 text-sm text-muted-foreground">

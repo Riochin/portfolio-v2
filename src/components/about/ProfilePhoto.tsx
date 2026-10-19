@@ -10,17 +10,18 @@ import {
 import Image from "next/image";
 import { X } from "lucide-react";
 import type { ImageRef } from "@/data/types";
+import { PROFILE_PHOTO_TRANSITION_NAME } from "./profilePhotoTransition";
 
 /** 拡大したときの一辺。ビューポートからはみ出さない範囲で、顔が見える大きさ。 */
 const EXPANDED_SIZE = "min(80vw, 80vh, 30rem)";
 
-/** サムネイルと拡大側を結ぶ view transition の名前。ページ内で 1 枚きり。 */
-const TRANSITION_NAME = "profile-photo";
 
 /**
  * プロフィール写真。押すと画面中央で拡大する。
  *
  * 演出は Works の一覧タイル -> 詳細 hero と同じ ViewTransition のモーフ。
+ * 同じ名前をトップの小さな丸も名乗っているので、トップ <-> /about の
+ * 遷移でも写真がつながって動く。
  * 丸い枠がその場から画面中央へ膨らみ、閉じると同じ道を逆に辿って元の位置に
  * 収まる (globals.css の ::view-transition-group(.morph) を共有しているので、
  * 尺も曲線もブラーも Works と揃う)。幕の出入りは root のクロスフェードが
@@ -94,7 +95,7 @@ export function ProfilePhoto({
             いると、スナップショットは抜かれる前の四角い絵になり、モーフの
             あいだだけ写真が角張って見える。 */}
         {!open && (
-          <ViewTransition name={TRANSITION_NAME} share="morph" default="none">
+          <ViewTransition name={PROFILE_PHOTO_TRANSITION_NAME} share="morph" default="none">
             <div className="photo-frame h-full w-full overflow-hidden rounded-full">
               <Image
                 src={photo.src}
@@ -127,7 +128,7 @@ export function ProfilePhoto({
           onClick={close}
           className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 p-6 backdrop-blur-sm"
         >
-          <ViewTransition name={TRANSITION_NAME} share="morph" default="none">
+          <ViewTransition name={PROFILE_PHOTO_TRANSITION_NAME} share="morph" default="none">
             <div
               style={{ width: EXPANDED_SIZE, height: EXPANDED_SIZE }}
               className="photo-frame overflow-hidden rounded-full"

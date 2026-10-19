@@ -32,7 +32,7 @@ const MOBILE_PREVIEW_COUNT = 3;
  * 詳細ページ (や自前記事) へ移ると一覧は unmount されるので、useState だけだと
  * 戻ってきたときに畳まれた状態から始まる ── 開いて 7 件目を押した人は、戻ると
  * 自分の押したタイルが消えている (モーフの相手も居ないので画像が飛ぶ先を失う)。
- * WorksHistoryBridge のスクロール位置と同じく、モジュールスコープに置いて
+ * MorphHistoryBridge のスクロール位置と同じく、モジュールスコープに置いて
  * クライアント遷移のあいだだけ持たせる。リロードで消えるのも同じで、
  * そのときはモーフも戻り扱いも走らないので辻褄が合う。
  *
@@ -76,7 +76,7 @@ export function TileGrid<T>({
   priorityCount?: number;
   /**
    * 詳細ページから戻ってきた回か。マウント時に 1 回だけ呼ぶ。
-   * Works は WorksHistoryBridge が知っている。渡さなければ常に初回扱い。
+   * Works は MorphHistoryBridge が知っている。渡さなければ常に初回扱い。
    */
   isReturning?: () => boolean;
 }) {

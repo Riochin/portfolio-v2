@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { arrivedFrom } from "@/components/works/WorksHistoryBridge";
+import { arrivedFrom } from "@/components/layout/MorphHistoryBridge";
 import { stripLocale } from "@/lib/i18n/paths";
 
 /**
@@ -14,7 +14,7 @@ import { stripLocale } from "@/lib/i18n/paths";
  *
  * そこで来た道で振る舞いを分ける:
  * - 一覧から来た: 履歴を 1 つ戻る ── ブラウザの戻るボタンと同じ扱い ── に
- *   して、読んでいた位置に帰す (Works のモーフは WorksHistoryBridge が面倒をみる)
+ *   して、読んでいた位置に帰す (Works のモーフは MorphHistoryBridge が面倒をみる)
  * - 一覧以外のサイト内 (トップなど) から来た: `elsewhere` を渡していれば
  *   その表示 (「戻る」) に替えて、同じく履歴を戻る
  * - 直リンク・リロード・戻る/進むで着いた: 戻り先が分からないので、
