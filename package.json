@@ -11,7 +11,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run"
   },
   "dependencies": {
     "@next/third-parties": "^16.3.4",
@@ -59,6 +60,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "sharp": "^0.35.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.5"
   }
 }

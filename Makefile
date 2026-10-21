@@ -7,7 +7,7 @@
 .DEFAULT_GOAL := help
 
 .PHONY: help install dev build start \
-        lint typecheck check \
+        lint typecheck test check \
         icons water-normals signature \
         clean
 
@@ -23,7 +23,8 @@ help:
 	@echo "  検証 -----------------------"
 	@echo "  make typecheck       # tsc --noEmit"
 	@echo "  make lint            # eslint"
-	@echo "  make check           # typecheck + lint + build"
+	@echo "  make test            # vitest"
+	@echo "  make check           # typecheck + lint + test + build"
 	@echo ""
 	@echo "  素材の焼き直し -------------"
 	@echo "  make icons           # ホーム画面のアイコン 3 枚"
@@ -52,7 +53,10 @@ typecheck:
 lint:
 	pnpm lint
 
-check: typecheck lint build
+test:
+	pnpm test
+
+check: typecheck lint test build
 
 # ── 素材の焼き直し ────────────────────────────────────────
 # 生成物はいずれもコミット済み。素材や係数を変えたときだけ叩く。
