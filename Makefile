@@ -7,7 +7,7 @@
 .DEFAULT_GOAL := help
 
 .PHONY: help install dev build start \
-        lint typecheck test check \
+        lint typecheck test e2e check \
         icons water-normals signature \
         clean
 
@@ -24,6 +24,7 @@ help:
 	@echo "  make typecheck       # tsc --noEmit"
 	@echo "  make lint            # eslint"
 	@echo "  make test            # vitest"
+	@echo "  make e2e             # playwright (build して 3210 番で開く)"
 	@echo "  make check           # typecheck + lint + test + build"
 	@echo ""
 	@echo "  素材の焼き直し -------------"
@@ -55,6 +56,9 @@ lint:
 
 test:
 	pnpm test
+
+e2e:
+	pnpm test:e2e
 
 check: typecheck lint test build
 

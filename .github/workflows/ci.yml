@@ -1,4 +1,5 @@
-# PR ごとに make check と同じ 4 つ (typecheck / lint / test / build) を回す。
+# PR ごとに make check と同じ 4 つ (typecheck / lint / test / build) を回し、
+# 通ったらビルドしたサイトを Playwright で一周する (e2e)。
 # 手元では dev サーバーと .next を奪い合うので build は既定で走らせていないが、
 # CI は毎回まっさらなので気にせず通せる。
 name: CI
@@ -45,3 +46,58 @@ jobs:
 
       # build は手前の検査が全部通ってから (既定の挙動に任せる)。
       - run: pnpm build
+
+  # ビルドしたサイトを開いて回る。react / next / three / framer-motion の更新は
+  # 型も Vitest も素通りするので、ここで拾う。テストは e2e/、設定は playwright.config.ts。
+  e2e:
+    name: e2e (Playwright)
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # ブラウザは 100MB 近くあるので、Playwright のバージョンごとに使い回す。
+      # OS の依存 (フォントやライブラリ) はキャッシュに乗らないので毎回入れる。
+      - name: Playwright のバージョン
+        id: playwright
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v6
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+
+      - if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      # check ジョブのビルドは別のランナーにあるので、ここでも作る。
+      # playwright.config.ts は CI では start だけするので、二重にはならない。
+      - run: pnpm build
+
+      - run: pnpm test:e2e
+
+      # 落ちたときに trace (画面・ネットワーク・console) を見られるようにする。
+      - if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
