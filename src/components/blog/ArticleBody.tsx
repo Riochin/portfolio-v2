@@ -1,13 +1,5 @@
 import { MarkdownAsync } from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
-import { rehypeDemoteH1 } from "@/lib/articles/rehype-demote-h1";
-import { rehypeLowercaseLang } from "@/lib/articles/rehype-lowercase-lang";
-import { rehypeUnwrapImage } from "@/lib/articles/rehype-unwrap-image";
-import { rehypeImageSize } from "@/lib/articles/rehype-image-size";
-import { rehypeLinkCard } from "@/lib/articles/rehype-link-card";
-import { CODE_THEMES, getHighlighter } from "@/lib/articles/highlighter";
+import { articleMarkdownOptions } from "@/lib/articles/markdown";
 import type { Locale } from "@/lib/i18n/config";
 import { MarkdownImage } from "./MarkdownImage";
 import { MarkdownLink } from "./MarkdownLink";
@@ -26,6 +18,8 @@ import { MarkdownLink } from "./MarkdownLink";
  * プラグインが非同期だから ── 同期版は内部で runSync() を呼ぶので例外になる。
  * リンクカードが他所のページを取りに行けるのも、この形になっているおかげ。
  *
+ * 変換の並びは lib/articles/markdown.ts にある。
+ *
  * locale を受け取るのはリンクカードのため。lib/articles/ は OG 画像から呼べるよう
  * ロケール非依存を守る必要があるので、サイト内リンクの行き先を
  * `/ja/blog/...` に直す変換はここから下でだけ行う (lib/output/self.ts と同じ)。
@@ -37,42 +31,12 @@ export async function ArticleBody({
   markdown: string;
   locale: Locale;
 }) {
-  const highlighter = await getHighlighter();
+  const options = await articleMarkdownOptions(locale);
 
   return (
     <div className="article-body">
       <MarkdownAsync
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[
-          // raw を本物の要素に開くのが先。後ろの 2 つは要素を見て回るので、
-          // ここが後回しだと HTML の中の img やコードに手が届かない。
-          rehypeRaw,
-          // raw を開いた後に落とす。生の <h1> で書かれていても拾えるように。
-          rehypeDemoteH1,
-          // figure で包めるように、画像だけの段落から p を外しておく。
-          rehypeUnwrapImage,
-          // 同じく「子が 1 つだけの段落」をほどく側なので隣に置く。
-          // こちらはリンクだけの段落をカードに差し替える。
-          [rehypeLinkCard, { locale }],
-          rehypeImageSize,
-          // 言語名の大小を均してから shiki に渡す。
-          rehypeLowercaseLang,
-          [
-            rehypeShikiFromHighlighter,
-            highlighter,
-            {
-              themes: CODE_THEMES,
-              // 片方を既定色に焼かず、両方を CSS 変数として出す。
-              // globals.css の .dark が切り替える。
-              defaultColor: false,
-              // 言語を書き忘れたブロックと、積んでいない言語のブロック。
-              // どちらも色は付かないが、地の色は他と揃えたいので text として通す
-              // (揃えないと、そこだけ明るい面になって記事の中で目立ってしまう)。
-              defaultLanguage: "text",
-              fallbackLanguage: "text",
-            },
-          ],
-        ]}
+        {...options}
         components={{ img: MarkdownImage, a: MarkdownLink }}
       >
         {markdown}
