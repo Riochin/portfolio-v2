@@ -1,4 +1,4 @@
-# PR ごとに make check と同じ 3 つ (typecheck / lint / build) を回す。
+# PR ごとに make check と同じ 4 つ (typecheck / lint / test / build) を回す。
 # 手元では dev サーバーと .next を奪い合うので build は既定で走らせていないが、
 # CI は毎回まっさらなので気にせず通せる。
 name: CI
@@ -10,7 +10,7 @@ on:
 
 jobs:
   check:
-    name: typecheck / lint / build
+    name: typecheck / lint / test / build
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,5 +37,10 @@ jobs:
       - if: ${{ !cancelled() }}
         run: pnpm lint
 
-      # build は静的な検査が両方通ってから (既定の挙動に任せる)。
+      # 依存の出力の形を固定しているテスト。Dependabot の更新で挙動が変わったら
+      # ここで落ちる。型や lint で落ちていても結果は見たいので、同じく続行する。
+      - if: ${{ !cancelled() }}
+        run: pnpm test
+
+      # build は手前の検査が全部通ってから (既定の挙動に任せる)。
       - run: pnpm build
