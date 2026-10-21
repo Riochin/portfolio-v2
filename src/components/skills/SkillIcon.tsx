@@ -7,14 +7,18 @@ type SimpleIcon = { path: string; title: string };
  * simple-icons は path データ (React コンポーネントではない) を配るので、
  * データ側はスラッグ文字列だけ持てばよく、シリアライズ可能なまま保てる。
  * 旧サイトが Skill.icon に react-icons のコンポーネント参照を埋めていたのとは対照的。
+ *
+ * 見つからなければ undefined で、呼ぶ側は文字に落とす。スラッグが上流で改名されても
+ * 黙って文字になるだけなので、登録簿の全スラッグが引けることはテストで見ている
+ * (src/data/data.test.ts)。
  */
-function lookup(slug: string): SimpleIcon | undefined {
+export function findSimpleIcon(slug: string): SimpleIcon | undefined {
   const key = `si${slug.charAt(0).toUpperCase()}${slug.slice(1)}`;
   return (simpleIcons as unknown as Record<string, SimpleIcon | undefined>)[key];
 }
 
 export function SkillIcon({ skill, size = 22 }: { skill: Skill; size?: number }) {
-  const icon = skill.icon ? lookup(skill.icon) : undefined;
+  const icon = skill.icon ? findSimpleIcon(skill.icon) : undefined;
 
   // AWS などブランド都合でアイコンが配られていない技術は文字にフォールバックする。
   //
