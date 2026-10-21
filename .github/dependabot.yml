@@ -34,6 +34,15 @@ updates:
       # 記事のコードブロックのハイライタ。
       shiki:
         patterns: ["shiki", "@shikijs/*"]
+      # テストの道具。どちらも本番には載らないので、まとめて 1 本で見る。
+      test:
+        patterns: ["vitest", "@playwright/test"]
+
+    ignore:
+      # 型は実行する Node に合わせる (CI も Vercel も 24)。上がると、実際には
+      # 無い API まで型の上では使えてしまう。Node を上げるときに手で動かす。
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
