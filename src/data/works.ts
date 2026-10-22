@@ -27,8 +27,8 @@ export const WORKS = {
         en: "You can filter by title, prefecture and municipality, store name, or your current location, and each venue lists the things you want to know before heading out — cabinet count, recording and streaming setups, smoking areas.",
       },
       {
-        ja: "データは公式サイトから自動更新し、ユーザーからの報告は確認のうえ反映。掲載店舗数・最終更新日時・出典を画面に明示しています。公開から約1か月で延べ3,300人以上に使われました。",
-        en: "Data is refreshed automatically from the official sites, and user reports are reviewed before being applied. The venue count, last update time, and data sources are all shown on screen. Over 3,300 people used it in the first month or so after launch.",
+        ja: "データは公式サイトから自動更新し、ユーザーからの報告は確認のうえ反映。掲載店舗数・最終更新日時・出典を画面に明示しています。公開から4ヶ月、2026年10月時点で4,500人が利用しています。",
+        en: "Data is refreshed automatically from the official sites, and user reports are reviewed before being applied. The venue count, last update time, and data sources are all shown on screen. 4,500 people have used it as of October 2026, four months after launch.",
       },
     ],
     category: "personal",
