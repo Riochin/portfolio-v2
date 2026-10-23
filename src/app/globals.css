@@ -89,6 +89,13 @@ body {
   font-family: var(--font-sans);
 }
 
+/* 文字を選んだときの色もアクセントに揃える。文字色は背景色を使い、ライトでは
+   青地に明るい字、ダークでは紫地に暗い字になるよう反転させる。 */
+::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
 /* --- 写真に枠線をつけない ---
    写真は作品そのものなので、カードやチップと同じ border-border で縁取らない。
    写真とそのラッパーには必ず photo-frame を付ける。あとから border ユーティリティ
