@@ -3,6 +3,9 @@ import { OG_IMAGE_HOSTS } from "./src/lib/output/images";
 import { SPOTIFY_IMAGE_HOSTS } from "./src/lib/spotify/images";
 
 const nextConfig: NextConfig = {
+  // dev のインジケータ (左下の N)。studio が文字数を左下に置くので右下へ。
+  devIndicators: { position: "bottom-right" },
+
   /**
    * public/ に無い記事画像を studio の口へ回す。
    *

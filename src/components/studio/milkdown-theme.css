@@ -105,3 +105,22 @@
   line-height: 1.6;
   margin-top: 2rem;
 }
+
+/* --- 書く画面 (StudioEditor) の中だけ ---
+   しずかなインターネットのように、枠も面も無い 1 枚の紙に書く。
+   書字面の色を画面の地と同じにし、左右の内側余白を外す (段幅は親の
+   max-width と padding が決めるので、ここで持つと二重になる)。
+   ブロックのハンドルは Crepe が書字面の外側に絶対配置するので、
+   余白を外しても本文に重ならない。 */
+.studio-editor .milkdown {
+  --crepe-color-background: var(--background);
+}
+
+.studio-editor .milkdown .ProseMirror {
+  padding: 0.5rem 0 8rem;
+}
+
+/* 本文の読み味を公開後 (.article-body の line-height: 1.9) に寄せる。 */
+.studio-editor .milkdown .ProseMirror p {
+  line-height: 1.9;
+}
