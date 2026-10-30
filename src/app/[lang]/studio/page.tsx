@@ -1,22 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { PageShell } from "@/components/layout/PageShell";
-import { getArticles } from "@/lib/articles";
 import { formatYearMonthDay } from "@/lib/date";
 import { localePath } from "@/lib/i18n/paths";
 import { getT } from "@/lib/i18n/server";
+import { requireStudioPage } from "@/lib/studio/guard";
+import { describeStore, getStore } from "@/lib/studio/store";
 
 /**
- * 記事を書くための開発専用画面の入り口。/hero-capture と同じく本番では存在しない。
+ * 記事を書くための画面の入り口。
+ *
+ * dev では誰でも開ける。本番は studio.riochin.dev を Cloudflare Access で守り、
+ * 通っていなければ 404 (lib/studio/guard)。
  *
  * 文言を DICT に足していないのは、ここが公開ページではなく著者ひとりの道具で、
- * 日英に訳す相手が居ないため。dev でしか描かれないので翻訳漏れも表に出ない。
+ * 日英に訳す相手が居ないため。
  */
+
+export const metadata: Metadata = {
+  title: "Studio",
+  robots: { index: false, follow: false },
+};
+
 export default async function StudioIndexPage() {
-  if (process.env.NODE_ENV === "production") notFound();
+  await requireStudioPage();
 
   const { locale } = await getT();
-  const articles = getArticles();
+  const store = await getStore();
+  const articles = await store.list();
 
   return (
     <PageShell wide>
@@ -30,10 +41,7 @@ export default async function StudioIndexPage() {
         </Link>
       </div>
 
-      <p className="mt-2 text-sm text-muted-foreground">
-        書いたものは content/articles/ に .md として残ります。commit して push
-        すると公開されます。
-      </p>
+      <p className="mt-2 text-sm text-muted-foreground">{describeStore()}</p>
 
       {articles.length === 0 ? (
         <p className="mt-8 text-muted-foreground">まだ 1 本もありません。</p>

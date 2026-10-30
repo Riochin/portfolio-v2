@@ -4,11 +4,13 @@ import { Crepe } from "@milkdown/crepe";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { languages } from "@codemirror/language-data";
 import { rosePineDawn } from "./rosePineDawnCodeMirror";
-import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import { editorViewCtx, remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import { imageBlockSchema } from "@milkdown/kit/component/image-block";
 import {
   remarkImageBlockHtml,
   configureAltPreservingImageBlock,
 } from "./imageBlockMarkdown";
+import { shrinkImage } from "./shrinkImage";
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
 
 import "@milkdown/crepe/theme/common/style.css";
@@ -17,7 +19,7 @@ import "@milkdown/crepe/theme/frame.css";
 import "./milkdown-theme.css";
 
 /**
- * ブロックエディタ本体。dev 専用の /studio でしか読み込まれない。
+ * ブロックエディタ本体。/studio でしか読み込まれない。
  *
  * Milkdown (Crepe) を選んだのは、内部表現が remark ── つまり Markdown そのもの
  * だから。content/articles/*.md を情報源にする以上、開いて保存するだけで本文が
@@ -33,23 +35,36 @@ import "./milkdown-theme.css";
 export type EditorApi = {
   /** 現在の本文を Markdown で取り出す。保存ボタンから呼ぶ。 */
   getMarkdown: () => string;
+  /** 画像を送って、カーソル位置に画像ブロックとして入れる。画像ボタンから呼ぶ。 */
+  insertImage: (file: File) => Promise<void>;
 };
 
 type Props = {
   defaultValue: string;
+  /** 本文が空のときに薄く出す文言。 */
+  placeholder: string;
   /**
    * 画像の保存先を決めるための slug。関数で受け取るのは、
    * エディタの生成が初回マウント 1 回きりで、その時点の slug を閉じ込めてしまうから
-   * (新規作成では slug を後から打つ)。
+   * (新規作成では slug を後から変えられる)。
    */
   getSlug: () => string;
   onReady: (api: EditorApi) => void;
+  /** 本文が変わるたびに呼ばれる。未保存の判定と文字数に使う。 */
+  onChange: (markdown: string) => void;
   onError: (message: string) => void;
 };
 
-function CrepeEditor({ defaultValue, getSlug, onReady, onError }: Props) {
+function CrepeEditor({
+  defaultValue,
+  placeholder,
+  getSlug,
+  onReady,
+  onChange,
+  onError,
+}: Props) {
   useEditor((root) => {
-    /** 落とした画像を dev 専用の口に送り、本文に入れる URL を返す。 */
+    /** 落とした画像を保存の口に送り、本文に入れる URL を返す。 */
     const upload = async (file: File): Promise<string> => {
       const slug = getSlug();
       if (slug === "") {
@@ -60,13 +75,13 @@ function CrepeEditor({ defaultValue, getSlug, onReady, onError }: Props) {
 
       const form = new FormData();
       form.append("slug", slug);
-      form.append("file", file);
+      form.append("file", await shrinkImage(file));
 
       const response = await fetch("/studio/upload", {
         method: "POST",
         body: form,
       });
-      const payload = (await response.json()) as {
+      const payload = (await response.json().catch(() => ({}))) as {
         url?: string;
         error?: string;
       };
@@ -88,6 +103,9 @@ function CrepeEditor({ defaultValue, getSlug, onReady, onError }: Props) {
         // 残る ── そちらは milkdown-theme.css が h1 を h2 と同じ見た目にして、
         // 公開側は rehypeDemoteH1 が h2 に落とすことで辻褄を合わせている。
         [Crepe.Feature.BlockEdit]: { textGroup: { h1: null } },
+        // 本文が空のときだけ 1 行出す (doc)。block にすると空行のたびに出て
+        // 書字面がうるさい。
+        [Crepe.Feature.Placeholder]: { text: placeholder, mode: "doc" },
         // 公開後と同じ配色にする ── ダークは Dracula、ライトは rose-pine-dawn
         // (lib/articles/highlighter.ts)。別のテーマだと仕上がりを想像しながら
         // 書けない。
@@ -127,7 +145,33 @@ function CrepeEditor({ defaultValue, getSlug, onReady, onError }: Props) {
     // (Milkdown 本体のものは Markdown 記法の画像しか見ない)
     crepe.editor.use(remarkImageBlockHtml);
 
-    onReady({ getMarkdown: () => crepe.getMarkdown() });
+    crepe.on((listener) => {
+      listener.markdownUpdated((_ctx, markdown) => onChange(markdown));
+    });
+
+    /**
+     * 画像ボタンから呼ぶ挿入。Crepe に挿入コマンドは無いので、スキーマから
+     * ノードを作って選択位置に置く。ドロップやスラッシュメニューからの挿入と
+     * 同じ image-block なので、保存される Markdown も同じ形になる。
+     */
+    const insertImage = async (file: File) => {
+      const src = await upload(file);
+      crepe.editor.action((ctx) => {
+        const view = ctx.get(editorViewCtx);
+        const node = imageBlockSchema.type(ctx).create({
+          src,
+          alt: "",
+          caption: "",
+          ratio: 1,
+        });
+        view.dispatch(
+          view.state.tr.replaceSelectionWith(node).scrollIntoView(),
+        );
+        view.focus();
+      });
+    };
+
+    onReady({ getMarkdown: () => crepe.getMarkdown(), insertImage });
     return crepe;
     // 生成は 1 回きり。本文の再読み込みが要るときは親が key を変えて作り直す。
   }, []);

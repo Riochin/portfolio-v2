@@ -48,7 +48,7 @@ Output                      中央: 筆記体ロゴ "Riochin"
 | `/experience` | 経験(インターンなど、所属単位) |
 | `/output` | 登壇(SpeakerDeck) + 記事(Zenn/Qiita/自前)の統合一覧。登壇が主戦場なので登壇を上位表示 |
 | `/blog/[slug]` | 自前記事の本文。一覧は持たず、`/output` の「書いた記事」から入る |
-| `/studio`, `/studio/[slug]` | 記事を書く開発専用の画面。本番では 404 |
+| `/studio`, `/studio/[slug]` | 記事を書く画面。dev は誰でも、本番は `studio.riochin.dev` を Cloudflare Access で守り、通っていなければ 404 |
 
 `/contact` なし。`/output` は当初 `/articles` を検討したが、登壇 > 執筆という実態に合わせて改名。
 
@@ -377,7 +377,7 @@ type ExperienceEntry = {
 
 ## 記事 (自前コンテンツ)
 
-`/studio` で書き、`content/articles/<slug>.md` として残る。commit してデプロイすると公開される。
+`/studio` で書き、`content/articles/<slug>.md` として残る。dev では作業ツリーに書いて自分で commit し、本番では GitHub に commit される。どちらも push でデプロイされて公開になる。
 
 ### 情報源を TS ではなく Markdown にした
 
@@ -407,15 +407,28 @@ Markdown を情報源にする以上、**開いて保存しただけで本文が
 - `@blocknote/core` は Markdown 変換が公式に lossy と明記されている
 - 素の `@milkdown/kit` は採らない。`plugin-block` / `plugin-slash` は `content: HTMLElement` を要求するヘッドレスな配置機構でしかなく、ドラッグハンドルもスラッシュメニューの中身も自前になる。Vue が依存に入るのは kit でも同じ (`@milkdown/components` 経由) なので、Crepe を避けても減らない
 - `remarkStringifyOptionsCtx` で箇条書きと水平線を `-` に寄せる。既定の `*` のままだと、手書きのファイルを一度開くだけで全行が書き換わって diff が汚れる
-- エディタは `devDependencies`。dev 専用ルートでしか読まないので本番の依存には出さない
+- エディタは `dependencies`。本番の studio でも読むため (当初は dev 専用だったので `devDependencies` に置いていた)
 
-### studio の作りは hero-capture に倣う
+### studio は本番でも開ける (スマホから書くため)
 
-本番では素の 404 を返し、認証は持たない。書き込み先はリポジトリの作業ツリーで、著者が `git diff` で確かめて commit する (Vercel の実行時ファイルシステムは読み取り専用なので、この作りは本番に持ち上がらない)。
+当初は hero-capture と同じく dev 専用 (本番は素の 404) だったが、PC が無くても書けるように本番にも持ち上げた。unvalley.me の「git 管理しているブログをブラウザから編集可能にする」に倣う。
 
-- 保存口は `[lang]` の外 (`/studio/save`, `/studio/upload`)。Route Handler では `root-params` が使えないため。`proxy.ts` の matcher でも素通しにする ── リダイレクトされると 307 がメソッドを保って `/ja/studio/save` へ POST し直され 404 になる
+- 認証は Cloudflare Access。riochin.dev 本体は Vercel に直結していて Cloudflare を通らないので、`studio.riochin.dev` だけを proxy に乗せ、その前に Access (メールのワンタイムコード、著者のアドレスのみ) を置く。アプリ側でも `Cf-Access-Jwt-Assertion` を jose で検証する (`src/lib/studio/access.ts`: 署名・発行元・audience・期限)。riochin.dev/studio に直接来た要求にはこの JWT が無いので 404 になる
+- フェイルクローズ。環境変数 (Access と GitHub) のどれかが欠けていれば 404 で、道具があることすら見せない (`src/lib/studio/guard.ts`)。段取りは `.env.example`
+- 保存先は `src/lib/studio/store.ts` の 2 実装。dev は作業ツリー (fs-store、著者が `git diff` で確かめて commit)、本番は GitHub の Contents API で main に commit (github-store)。Vercel の実行時ファイルシステムは読み取り専用なので本番で fs は使えない
+- 競合は git の blob SHA で見る。開いたときの sha を保存時に送り返し、その間に別の端末や手元の git から変わっていれば 409 を返して「上書きしますか」を聞く。fs-store も同じ blob SHA を計算して返すので、エディタ側の約束は保存先に関わらず 1 つ
+- 画像は貼った時点で 1 枚ずつ commit する (1 枚 = 1 commit = 1 ビルド)。まとめて commit するには未保存の画像を端末で抱える仕組みが要り、割に合わない。形式は sharp で webp に揃え、長辺 2000px に収める。送る前にブラウザでも縮める (`shrinkImage.ts`) ── Vercel の関数は本文 4.5MB までしか受けない
+- 貼った直後の画像はまだデプロイに乗っていないので、`next.config.ts` の fallback rewrite で public/ に無い `/articles/<slug>/<name>` を `/studio/image/…` に回し、保存層から直接読んで返す。読めるのは Access を通った本人だけ
+- 下書きも main に commit する。リポジトリは public なので GitHub 上では誰でも読めるが、サイトには出ない。端末だけに留めると他の端末で続きが書けない
+- 保存口は `[lang]` の外 (`/studio/save`, `/studio/upload`, `/studio/image`)。Route Handler では `root-params` が使えないため。`proxy.ts` の matcher でも素通しにする ── リダイレクトされると 307 がメソッドを保って `/ja/studio/save` へ POST し直され 404 になる
 - 改名は実装しない。`public/articles/<slug>/` の画像も一緒に動かす必要があるので `git mv` に任せる
-- `SiteChrome` は studio でも隠さない。ルートレイアウトの Server Component が無条件に描いており、パスを知るには `headers()` が要る ── サイト全体が静的プリレンダリングから外れてしまう
+- `SiteChrome` は隠さず、編集画面は fixed の面で上から覆う。ルートレイアウトの Server Component が無条件に描いており、パスを知るには `headers()` が要る ── サイト全体が静的プリレンダリングから外れてしまう
+
+### 書き味はしずかなインターネットに倣う
+
+画面には閉じる・保存の状態・公開範囲 (🔒 自分だけ = `draft: true`) だけを置き、slug と日付は ⋯ の中に隠す。slug の既定は日付 (`2026-10-30`、同じ日の 2 本目は `-2`)、タイトルの既定も日付 (`10月30日（金）`) で、何も決めずに本文から書き始められる。
+
+保存は 2 段。端末 (localStorage) には書くたびに自動で残し、タブを閉じても戻ってくる。保存先への保存は「保存する」か ⌘S で明示的に ── 本番は 1 回の保存が 1 commit とビルドになるので自動にはしない。スマホでは画面下がキーボードに隠れるので、文字数と画像ボタンはヘッダーのすぐ下に浮かべる。
 
 ### 本文の画像
 
@@ -477,4 +490,4 @@ Crepe の既定テーマ (frame) はサイトのトークンに繋ぎ替える (
 - 本文は 18px。サイト本体の `--text-base` と同じにして、書いている最中と公開後の行長を揃える
 - `--crepe-color-*` は全て `--background` / `--surface` / `--border` / `--foreground` / `--muted-foreground` / `--accent` に繋ぐ。これらは `globals.css` が `:root` と `.dark` の両方で定義しているので、テーマ切替には何も足さずに追随する
 - ホバーと選択は `color-mix` でアクセントを透過で被せる。地の色が明暗で入れ替わっても被せ方は変わらない
-- `globals.css` ではなく専用ファイルに置くのは、studio が dev 専用の道具だから。テーマ CSS の**後**に読ませ、セレクタも `.milkdown` の中に閉じてある
+- `globals.css` ではなく専用ファイルに置くのは、studio が著者ひとりの道具だから。テーマ CSS の**後**に読ませ、セレクタも `.milkdown` の中に閉じてある
