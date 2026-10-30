@@ -13,7 +13,8 @@ import type { Article } from "./types";
  * ここが非同期だったりロケールを知っていたりすると OG 画像から呼べなくなる。
  *
  * 記事だけは情報源が TS モジュールではなく content/articles/*.md にある。
- * dev 専用の studio (/studio) が書き、著者が commit してデプロイする。
+ * studio (/studio) が書く ── dev は作業ツリーに直接、本番は GitHub への commit
+ * (lib/studio/store)。どちらも push でデプロイされて公開になる。
  * .md はバンドラのグラフに載らないので、Vercel に載せるには next.config.ts の
  * outputFileTracingIncludes が要る (/output は ISR で実行時にもここを読む)。
  */

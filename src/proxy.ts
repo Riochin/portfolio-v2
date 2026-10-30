@@ -27,7 +27,13 @@ function negotiate(header: string | null): Locale {
 }
 
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname: requested } = request.nextUrl;
+  // studio.riochin.dev の入口は studio。本体と同じアプリなので、それ以外の
+  // パスはそのまま通す (本体と同じページが見えるだけ)。
+  const pathname =
+    requested === "/" && request.headers.get("host")?.startsWith("studio.")
+      ? "/studio"
+      : requested;
   const [, first] = pathname.split("/");
   if (isLocale(first)) return;
 

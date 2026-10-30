@@ -3,6 +3,22 @@ import { OG_IMAGE_HOSTS } from "./src/lib/output/images";
 import { SPOTIFY_IMAGE_HOSTS } from "./src/lib/spotify/images";
 
 const nextConfig: NextConfig = {
+  /**
+   * public/ に無い記事画像を studio の口へ回す。
+   *
+   * 本番で studio から画像を貼ると GitHub には入るが、public/ に現れるのは
+   * 次のデプロイの後。その間エディタに画像を見せるため、静的ファイルに
+   * 当たらなかったときだけ (fallback) GitHub から読んで返す口に流す。
+   * 読めるのは Access を通った本人だけで、他の人には今まで通り 404。
+   */
+  async rewrites() {
+    return {
+      fallback: [
+        { source: "/articles/:slug/:name", destination: "/studio/image/:slug/:name" },
+      ],
+    };
+  },
+
   images: {
     // Output の一覧に敷く外部サムネイルと、About のジャケット画像。
     // 許可ホストは lib 側と共有する。

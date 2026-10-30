@@ -1,36 +1,29 @@
 import { createHash } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
-import { join, normalize, sep } from "node:path";
 import { NextResponse } from "next/server";
-import { imageSize } from "image-size";
+import sharp from "sharp";
 import { isValidSlug } from "@/lib/articles/frontmatter";
+import { denyStudioRoute } from "@/lib/studio/guard";
+import { getStore } from "@/lib/studio/store";
 
 /**
- * /studio のエディタに落とした画像を public/articles/<slug>/ に保存する、
- * 開発専用のアップロード口。save と同じく本番では素の 404。
+ * /studio のエディタに落とした画像を public/articles/<slug>/ に保存する口。
+ *
+ * 形式は必ず webp に揃える。スマホの写真 (HEIC / 数 MB の JPEG) をそのまま
+ * リポジトリに入れると重いので、長辺 2000px に収めて再圧縮する。
+ * 名前には中身のハッシュを混ぜる ── 同じ画像をもう一度貼っても同じ名前に落ち、
+ * 保存層が「既にある」と判断して commit を増やさない。
  *
  * 記事本文には `![](/articles/<slug>/<name>)` として入る。寸法は Markdown に
  * 書かない ── ビルド時に rehypeImageSize が public/ の実ファイルから読むので、
  * 後から画像を差し替えても数字が古くならない。
+ *
+ * Vercel の関数は本文 4.5MB までしか受けないので、エディタ側 (shrinkImage.ts) が
+ * 送る前に縮める。ここの上限はその保険。
  */
 
-const PUBLIC_ARTICLES_DIR = join(process.cwd(), "public", "articles");
-
-/** 8MB。記事に貼るスクリーンショットや写真には十分で、事故は止まる大きさ。 */
 const MAX_BYTES = 8 * 1024 * 1024;
-
-/**
- * 受け入れる画像形式。判定は client が名乗る MIME ではなく image-size が
- * 中身から見抜いた型で行う (名乗りは当てにならないし、ここで絞ることが
- * image-size の ICNS / JXL / HEIF パーサの既知の無限ループを踏まない緩和にもなる)。
- */
-const EXTENSION: Record<string, string> = {
-  png: "png",
-  jpg: "jpg",
-  webp: "webp",
-  gif: "gif",
-  avif: "avif",
-};
+const MAX_EDGE = 2000;
+const WEBP_QUALITY = 82;
 
 /** ファイル名に残す元の名前。日本語やスペースが URL に出ないよう均す。 */
 function sanitizeBase(name: string): string {
@@ -44,16 +37,14 @@ function sanitizeBase(name: string): string {
 }
 
 export async function POST(request: Request) {
-  if (process.env.NODE_ENV === "production") {
-    return new NextResponse(null, { status: 404 });
-  }
+  const denied = await denyStudioRoute(request);
+  if (denied) return denied;
 
   const form = await request.formData();
   const slug = form.get("slug");
   const file = form.get("file");
 
   if (!isValidSlug(slug)) {
-    // studio 側は slug 欄を本文より上に置いてあるが、空のまま貼られることはある。
     return NextResponse.json(
       { error: "先に slug を決めてください" },
       { status: 400 },
@@ -69,44 +60,52 @@ export async function POST(request: Request) {
     );
   }
 
-  const bytes = Buffer.from(await file.arrayBuffer());
-
+  let webp: Buffer;
   let width: number | undefined;
   let height: number | undefined;
-  let type: string | undefined;
   try {
-    ({ width, height, type } = imageSize(bytes));
+    const source = Buffer.from(await file.arrayBuffer());
+    // animated: GIF を貼ったときに 1 コマ目だけにしない。
+    // rotate(): EXIF の向きを画素に焼き込む (webp には EXIF を残さないため)。
+    const image = sharp(source, { animated: true }).rotate();
+    webp = await image
+      .resize({
+        width: MAX_EDGE,
+        height: MAX_EDGE,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .webp({ quality: WEBP_QUALITY })
+      .toBuffer();
+    ({ width, height } = await sharp(webp).metadata());
   } catch {
     return NextResponse.json(
       { error: "画像として読めませんでした" },
       { status: 400 },
     );
   }
-
-  const extension = type && EXTENSION[type];
-  if (!extension || !width || !height) {
+  if (!width || !height) {
     return NextResponse.json(
-      { error: `対応していない画像形式です (${type ?? "不明"})` },
+      { error: "画像の寸法が取れませんでした" },
       { status: 400 },
     );
   }
 
-  // 中身のハッシュを名前に混ぜる。同じ画像をもう一度貼っても同じファイルに落ち、
-  // public/ が同一画像で膨らまない。
-  const digest = createHash("sha256").update(bytes).digest("hex").slice(0, 8);
-  const name = `${sanitizeBase(file.name)}-${digest}.${extension}`;
+  const digest = createHash("sha256").update(webp).digest("hex").slice(0, 8);
+  const name = `${sanitizeBase(file.name)}-${digest}.webp`;
 
-  const dir = normalize(join(PUBLIC_ARTICLES_DIR, slug));
-  if (!dir.startsWith(PUBLIC_ARTICLES_DIR + sep)) {
-    return NextResponse.json({ error: "不正な保存先です" }, { status: 400 });
+  try {
+    const store = await getStore();
+    await store.writeImage(slug, name, webp, `画像を足す: ${slug}/${name}`);
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "画像を保存できませんでした",
+      },
+      { status: 500 },
+    );
   }
 
-  await mkdir(dir, { recursive: true });
-  await writeFile(join(dir, name), bytes);
-
-  return NextResponse.json({
-    url: `/articles/${slug}/${name}`,
-    width,
-    height,
-  });
+  return NextResponse.json({ url: `/articles/${slug}/${name}`, width, height });
 }

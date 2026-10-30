@@ -1,72 +1,94 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { PageShell } from "@/components/layout/PageShell";
 import { StudioEditor } from "@/components/studio/StudioEditor";
-import { getArticleBySlug } from "@/lib/articles";
-import { localePath } from "@/lib/i18n/paths";
 import { getT } from "@/lib/i18n/server";
+import { requireStudioPage } from "@/lib/studio/guard";
+import { getStore } from "@/lib/studio/store";
 
 /**
- * 記事の編集画面。開発専用。
+ * 記事の編集画面。
  *
- * generateStaticParams を書かないので、記事が増えてもここは常に要求時に描かれる。
- * (本番では notFound() になるため、事前生成する意味がない)
+ * generateStaticParams を書かないので、記事が増えてもここは常に要求時に描かれる
+ * (認証に headers() を読むので、どのみち静的にはならない)。
  *
- * SiteChrome を隠そうとはしない。あれはルートレイアウトの Server Component が
- * 無条件に描いており、パスを知るには headers() が要る ── そうするとサイト全体が
- * 静的プリレンダリングから外れてしまう。PageShell wide の本文幅
- * (1440px で 700〜780px) はエディタの段幅としてもちょうどよい。
+ * PageShell を使わないのは、StudioEditor が fixed の面で画面全体を覆うため。
+ * ルートレイアウトの SiteChrome はその下に描かれたままになる。
  */
+
+export const metadata: Metadata = {
+  title: "Studio",
+  robots: { index: false, follow: false },
+};
 
 /** 新規作成の画面。同名の記事は frontmatter.ts の RESERVED_SLUGS が禁じている。 */
 const NEW = "new";
 
-/** 今日 (サーバー側で決める)。クライアントで new Date() すると hydration がずれる。 */
-function today(): string {
-  const now = new Date();
-  const pad = (value: number) => String(value).padStart(2, "0");
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+/**
+ * 今日 (日本時間)。サーバーで決める ── クライアントで new Date() すると
+ * hydration がずれるし、Vercel の時計は UTC なので朝のうちは前日になる。
+ */
+function todayInTokyo(): string {
+  return new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(
+    new Date(),
+  );
+}
+
+/**
+ * 新しい記事の slug の既定値は日付。同じ日に 2 本目を書くときは -2, -3 と
+ * 足していく。変えたければ編集画面の ⋯ から打ち直せる。
+ */
+function freeDateSlug(date: string, taken: ReadonlySet<string>): string {
+  if (!taken.has(date)) return date;
+  for (let n = 2; ; n += 1) {
+    const candidate = `${date}-${n}`;
+    if (!taken.has(candidate)) return candidate;
+  }
 }
 
 export default async function StudioEditorPage({
   params,
 }: PageProps<"/[lang]/studio/[slug]">) {
-  if (process.env.NODE_ENV === "production") notFound();
+  await requireStudioPage();
 
   const { slug } = await params;
   const { locale } = await getT();
+  const store = await getStore();
 
-  const creating = slug === NEW;
-  const article = creating ? undefined : getArticleBySlug(slug);
-  if (!creating && !article) notFound();
-
-  return (
-    <PageShell wide>
-      <Link
-        href={localePath(locale, "/studio")}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
-      >
-        <ArrowLeft size={16} />
-        Studio に戻る
-      </Link>
-
+  if (slug === NEW) {
+    const articles = await store.list();
+    const date = todayInTokyo();
+    return (
       <StudioEditor
-        slug={article?.slug ?? ""}
-        title={article?.title ?? ""}
-        publishedAt={article?.publishedAt ?? today()}
-        draft={article?.draft ?? false}
-        markdown={article?.markdown ?? ""}
-        existing={article !== undefined}
+        doc={{
+          slug: freeDateSlug(date, new Set(articles.map((a) => a.slug))),
+          title: "",
+          publishedAt: date,
+          draft: false,
+          markdown: "",
+        }}
+        sha={null}
+        existing={false}
         locale={locale}
       />
+    );
+  }
 
-      {article && (
-        <p className="mt-6 text-xs text-muted-foreground">
-          slug を変えたいときは git mv で名前を変えてください (public/articles/
-          の画像も一緒に動かす必要があるため、この画面では変えられません)。
-        </p>
-      )}
-    </PageShell>
+  const stored = await store.read(slug);
+  if (!stored) notFound();
+
+  const { article } = stored;
+  return (
+    <StudioEditor
+      doc={{
+        slug: article.slug,
+        title: article.title,
+        publishedAt: article.publishedAt,
+        draft: article.draft ?? false,
+        markdown: article.markdown,
+      }}
+      sha={stored.sha}
+      existing
+      locale={locale}
+    />
   );
 }
