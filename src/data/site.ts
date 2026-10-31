@@ -4,7 +4,7 @@ import type { Localized } from "@/lib/i18n/types";
  * X のユーザー名。名乗り (handle / handleUrl) と SNS リンクの両方がここを読む。
  * accounts の中に書けないのは、handle が accounts より前で組み立てられるため。
  */
-const X_USER = "riochin555";
+const X_USER = "riochin";
 
 /**
  * サイト全体のアイデンティティ情報。
