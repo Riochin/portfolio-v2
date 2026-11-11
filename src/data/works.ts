@@ -167,6 +167,60 @@ export const WORKS = {
     },
   },
 
+  yorido: {
+    title: { ja: "Yorido", en: "Yorido" },
+    tagline: {
+      ja: "陰謀論の話で大切な人とすれ違ってしまう人に、関わり方のヒントと相談先を案内するWebアプリ",
+      en: "A web app for people who keep clashing with loved ones over conspiracy theories, offering ways to stay in the conversation and places to get support",
+    },
+    body: [
+      {
+        ja: "身近な人が陰謀論にのめり込んでしまい、どう接すればいいか悩む「支える側」のためのWebアプリ。状況に合わせて、関わり方のヒント、近い状況の記事や本、電話で相談できる窓口を案内する。論破や説得ではなく、ひとりで抱え込まないための最初の一歩を目指した。",
+        en: "A web app for the people on the other side: those whose family or friends have fallen into conspiracy theories and who don't know how to respond. Based on their situation, it suggests ways to engage, articles and books about similar cases, and phone lines where they can talk to someone. The goal isn't to win arguments or change minds, but to be a first step so no one has to carry this alone.",
+      },
+      {
+        ja: "Code for Japanが運営するTOMODACHI Boeing Entrepreneurship Seminar 2026の2ヶ月間のプログラムで、Team Yuaiとして開発。エンジニア兼PMとして、チームづくり、技術選定、UXの改善を担当した。GitHub ProjectsとDiscordで進捗とアイデアを見えるようにして、役割の違うメンバーが一緒に進めやすい形をつくった。個人サイトを運営してきた経験を活かしてSEOを改善し、10,000PVを超えた。",
+        en: "Built as Team Yuai during the two-month TOMODACHI Boeing Entrepreneurship Seminar 2026, run by Code for Japan. As engineer and PM, I led team building, tech stack selection, and UX improvements. I set up GitHub Projects and a Discord server so everyone could see progress and share ideas, making it easier for members with different roles to work together. Drawing on my experience running my own website, I improved SEO and helped the site pass 10,000 page views.",
+      },
+      {
+        ja: "英語でのプレゼンを経て、Team YuaiとしてBest Overall Awardを受賞した。また、個人として米国研修メンバーに選抜された。",
+        en: "After pitching in English, Team Yuai won the Best Overall Award. I was also selected individually for the U.S. training program.",
+      },
+    ],
+    category: "hackathon",
+    period: { start: "2026-09", end: "2026-11" },
+    role: {
+      ja: "エンジニア兼PM",
+      en: "Engineer / PM",
+    },
+    stack: ["react", "tailwindcss", "cloudflare"],
+    links: {
+      demo: "https://yorido.app",
+    },
+    image: {
+      src: "/works/yorido.webp",
+      width: 1200,
+      height: 675,
+      alt: {
+        ja: "Yorido のタイトル画面",
+        en: "Yorido title screen",
+      },
+    },
+    awards: [
+      {
+        event: {
+          ja: "TOMODACHI Boeing Entrepreneurship Seminar 2026",
+          en: "TOMODACHI Boeing Entrepreneurship Seminar 2026",
+        },
+        prize: { ja: "Best Overall Award", en: "Best Overall Award" },
+        rank: "grand",
+        date: "2026-11",
+        day: "07",
+      },
+    ],
+    featured: true,
+  },
+
   iubeo: {
     title: { ja: "IUBEO", en: "IUBEO" },
     tagline: {
