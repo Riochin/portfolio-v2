@@ -175,15 +175,15 @@ export const WORKS = {
     },
     body: [
       {
-        ja: "身近な人が陰謀論にのめり込んでしまい、どう接すればいいか悩む「支える側」のためのWebアプリ。状況に合わせて、関わり方のヒント、近い状況の記事や本、電話で相談できる窓口を案内する。論破や説得ではなく、ひとりで抱え込まないための最初の一歩を目指した。",
+        ja: "身近な人が陰謀論にのめり込んでしまい、どう接すればいいか悩む「支える側」のためのWebアプリです。状況に合わせて、関わり方のヒント、近い状況の記事や本、電話で相談できる窓口を案内します。論破や説得ではなく、ひとりで抱え込まないための最初の一歩を目指しました。",
         en: "A web app for the people on the other side: those whose family or friends have fallen into conspiracy theories and who don't know how to respond. Based on their situation, it suggests ways to engage, articles and books about similar cases, and phone lines where they can talk to someone. The goal isn't to win arguments or change minds, but to be a first step so no one has to carry this alone.",
       },
       {
-        ja: "Code for Japanが運営するTOMODACHI Boeing Entrepreneurship Seminar 2026の2ヶ月間のプログラムで、Team Yuaiとして開発。エンジニア兼PMとして、チームづくり、技術選定、UXの改善を担当した。GitHub ProjectsとDiscordで進捗とアイデアを見えるようにして、役割の違うメンバーが一緒に進めやすい形をつくった。個人サイトを運営してきた経験を活かしてSEOを改善し、10,000PVを超えた。",
+        ja: "Code for Japanが運営するTOMODACHI Boeing Entrepreneurship Seminar 2026の2ヶ月間のプログラムで、Team Yuaiとして開発しました。エンジニア兼PMとして、チームづくり、技術選定、UXの改善を担当しました。GitHub ProjectsとDiscordで進捗とアイデアを見えるようにして、役割の違うメンバーが一緒に進めやすい形をつくりました。個人サイトを運営してきた経験を活かしてSEOを改善し、10,000PVを超えました。",
         en: "Built as Team Yuai during the two-month TOMODACHI Boeing Entrepreneurship Seminar 2026, run by Code for Japan. As engineer and PM, I led team building, tech stack selection, and UX improvements. I set up GitHub Projects and a Discord server so everyone could see progress and share ideas, making it easier for members with different roles to work together. Drawing on my experience running my own website, I improved SEO and helped the site pass 10,000 page views.",
       },
       {
-        ja: "英語でのプレゼンを経て、Team YuaiとしてBest Overall Awardを受賞した。また、個人として米国研修メンバーに選抜された。",
+        ja: "英語でのプレゼンを経て、Team YuaiとしてBest Overall Awardを受賞しました。また、個人として米国研修メンバーに選抜されました。",
         en: "After pitching in English, Team Yuai won the Best Overall Award. I was also selected individually for the U.S. training program.",
       },
     ],
