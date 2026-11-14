@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { prefersMarkdown } from "./negotiate";
+import { prefersMarkdown, VARY_ACCEPT_HEADERS } from "./negotiate";
 
 describe("prefersMarkdown", () => {
   it.each([
@@ -28,5 +28,14 @@ describe("prefersMarkdown", () => {
     "application/json",
   ])("%s → HTML", (accept) => {
     expect(prefersMarkdown(accept)).toBe(false);
+  });
+});
+
+describe("VARY_ACCEPT_HEADERS", () => {
+  it("next.config の headers() に並ぶ", async () => {
+    const { default: nextConfig } = await import("../../../next.config");
+    expect(await nextConfig.headers?.()).toEqual(
+      expect.arrayContaining(VARY_ACCEPT_HEADERS),
+    );
   });
 });

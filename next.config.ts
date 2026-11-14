@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import { OG_IMAGE_HOSTS } from "./src/lib/output/images";
 import { SPOTIFY_IMAGE_HOSTS } from "./src/lib/spotify/images";
+import { linkHeaders } from "./src/lib/link-headers";
 import { VARY_ACCEPT_HEADERS } from "./src/lib/markdown/negotiate";
 
 const nextConfig: NextConfig = {
@@ -23,9 +24,11 @@ const nextConfig: NextConfig = {
     };
   },
 
-  // 同じ URL が Accept で HTML と Markdown に分かれる (proxy.ts)。中身は lib/markdown/negotiate.ts。
+  // エージェント向けの Link ヘッダー (RFC 8288) と、同じ URL が Accept で
+  // HTML と Markdown に分かれることを伝える Vary (proxy.ts)。
+  // 中身は lib/link-headers.ts と lib/markdown/negotiate.ts。
   async headers() {
-    return VARY_ACCEPT_HEADERS;
+    return [...linkHeaders(), ...VARY_ACCEPT_HEADERS];
   },
 
   images: {
