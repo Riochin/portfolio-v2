@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import { OG_IMAGE_HOSTS } from "./src/lib/output/images";
 import { SPOTIFY_IMAGE_HOSTS } from "./src/lib/spotify/images";
+import { VARY_ACCEPT_HEADERS } from "./src/lib/markdown/negotiate";
 
 const nextConfig: NextConfig = {
   // dev のインジケータ (左下の N)。studio が文字数を左下に置くので右下へ。
@@ -20,6 +21,11 @@ const nextConfig: NextConfig = {
         { source: "/articles/:slug/:name", destination: "/studio/image/:slug/:name" },
       ],
     };
+  },
+
+  // 同じ URL が Accept で HTML と Markdown に分かれる (proxy.ts)。中身は lib/markdown/negotiate.ts。
+  async headers() {
+    return VARY_ACCEPT_HEADERS;
   },
 
   images: {
@@ -56,6 +62,8 @@ const nextConfig: NextConfig = {
       // 記事の OG 画像が名乗りの前に置く顔写真。
       "./public/profile-og.png",
     ],
+    // Accept: text/markdown の口。記事の Markdown を実行時に読む。
+    "/markdown": ["./content/articles/**/*"],
   },
 };
 

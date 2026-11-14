@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { LOCALES, DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/config";
+import { MARKDOWN_ROUTE_PREFIX, prefersMarkdown } from "@/lib/markdown/negotiate";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 
@@ -35,7 +36,7 @@ export function proxy(request: NextRequest) {
       ? "/studio"
       : requested;
   const [, first] = pathname.split("/");
-  if (isLocale(first)) return;
+  if (isLocale(first)) return negotiateFormat(request, pathname);
 
   // ユーザーが明示的に選んだ言語 (cookie) を Accept-Language より優先する
   const cookie = request.cookies.get(LOCALE_COOKIE)?.value;
@@ -46,6 +47,26 @@ export function proxy(request: NextRequest) {
   request.nextUrl.pathname =
     pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
   return NextResponse.redirect(request.nextUrl);
+}
+
+/**
+ * ロケール付きのパスを HTML と Markdown に振り分ける。
+ *
+ * `Accept: text/markdown` を名指ししてきた GET / HEAD だけ、Markdown を返す
+ * route handler (app/markdown/[...path]) へ rewrite する。URL はそのまま。
+ * それ以外は今まで通りページへ素通しする。
+ *
+ * HTML 側の `Vary: Accept` はここでは付けない。proxy の応答ヘッダーは
+ * プリレンダリング済みのページだと Next の Vary に上書きされて消えるので、
+ * next.config.ts の headers() で付ける (VARY_ACCEPT_HEADERS)。
+ */
+function negotiateFormat(request: NextRequest, pathname: string) {
+  const negotiable = request.method === "GET" || request.method === "HEAD";
+  if (!negotiable || !prefersMarkdown(request.headers.get("accept"))) return;
+
+  const target = request.nextUrl.clone();
+  target.pathname = `${MARKDOWN_ROUTE_PREFIX}${pathname}`;
+  return NextResponse.rewrite(target);
 }
 
 export const config = {
