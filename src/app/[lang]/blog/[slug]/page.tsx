@@ -9,6 +9,7 @@ import {
 import { PageShell } from "@/components/layout/PageShell";
 import { ArticleBody } from "@/components/blog/ArticleBody";
 import { ArticleShare } from "@/components/blog/ArticleShare";
+import { JsonLdScript } from "@/components/seo/JsonLdScript";
 import {
   getArticleBySlug,
   getArticleNeighbors,
@@ -19,6 +20,7 @@ import { formatYearMonthDay } from "@/lib/date";
 import { DICT } from "@/lib/i18n/dictionary";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { localePath } from "@/lib/i18n/paths";
+import { blogPostingJsonLd } from "@/lib/json-ld";
 import { getT } from "@/lib/i18n/server";
 
 /**
@@ -82,6 +84,7 @@ export default async function ArticlePage({
 
   return (
     <PageShell>
+      <JsonLdScript data={blogPostingJsonLd(article, locale)} />
       <article>
         <div className="mb-6 flex items-center justify-between gap-4">
           {/* 直リンクで来たときの行き先も、ページャと同じく「書いた記事」の
