@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { OG_IMAGE_HOSTS } from "./src/lib/output/images";
 import { SPOTIFY_IMAGE_HOSTS } from "./src/lib/spotify/images";
 import { linkHeaders } from "./src/lib/link-headers";
+import { VARY_ACCEPT_HEADERS } from "./src/lib/markdown/negotiate";
 
 const nextConfig: NextConfig = {
   // dev のインジケータ (左下の N)。studio が文字数を左下に置くので右下へ。
@@ -23,9 +24,11 @@ const nextConfig: NextConfig = {
     };
   },
 
-  // エージェント向けの Link ヘッダー (RFC 8288)。中身は lib/link-headers.ts。
+  // エージェント向けの Link ヘッダー (RFC 8288) と、同じ URL が Accept で
+  // HTML と Markdown に分かれることを伝える Vary (proxy.ts)。
+  // 中身は lib/link-headers.ts と lib/markdown/negotiate.ts。
   async headers() {
-    return linkHeaders();
+    return [...linkHeaders(), ...VARY_ACCEPT_HEADERS];
   },
 
   images: {
@@ -62,6 +65,8 @@ const nextConfig: NextConfig = {
       // 記事の OG 画像が名乗りの前に置く顔写真。
       "./public/profile-og.png",
     ],
+    // Accept: text/markdown の口。記事の Markdown を実行時に読む。
+    "/markdown": ["./content/articles/**/*"],
   },
 };
 

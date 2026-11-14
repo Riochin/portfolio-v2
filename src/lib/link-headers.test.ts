@@ -69,7 +69,8 @@ describe("linkHeaders", () => {
     ]);
   });
 
-  it("next.config の headers() がこれを返す", async () => {
-    expect(await nextConfig.headers?.()).toEqual(rules);
+  it("next.config の headers() がこれを含む", async () => {
+    // Vary: Accept の規則 (lib/markdown/negotiate.ts) も並ぶので、含むかを見る。
+    expect(await nextConfig.headers?.()).toEqual(expect.arrayContaining(rules));
   });
 });
