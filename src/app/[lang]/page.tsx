@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { PROFILE_PHOTO_TRANSITION_NAME } from "@/components/about/profilePhotoTransition";
 import { HeroSection } from "@/components/hero/HeroSection";
+import { JsonLdScript } from "@/components/seo/JsonLdScript";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { OutputTile } from "@/components/output/OutputTile";
@@ -13,6 +14,7 @@ import { getHomeWorks } from "@/data";
 import { ABOUT } from "@/data/about";
 import { SITE } from "@/data/site";
 import { formatYearMonth } from "@/lib/date";
+import { homeJsonLd } from "@/lib/json-ld";
 import { DICT } from "@/lib/i18n/dictionary";
 import { getT } from "@/lib/i18n/server";
 import { localePath } from "@/lib/i18n/paths";
@@ -48,6 +50,7 @@ export default async function Home() {
 
   return (
     <>
+      <JsonLdScript data={homeJsonLd(locale)} />
       <main className="w-full flex-1">
         {/* ヒーローはちょうど 1 画面。プロフィールと作品はその下に続く。
             min-h ではなく h で閉じる (HeroSection 側がブロックを高さ予算で
