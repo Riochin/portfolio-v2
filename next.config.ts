@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import { OG_IMAGE_HOSTS } from "./src/lib/output/images";
 import { SPOTIFY_IMAGE_HOSTS } from "./src/lib/spotify/images";
+import { linkHeaders } from "./src/lib/link-headers";
 
 const nextConfig: NextConfig = {
   // dev のインジケータ (左下の N)。studio が文字数を左下に置くので右下へ。
@@ -20,6 +21,11 @@ const nextConfig: NextConfig = {
         { source: "/articles/:slug/:name", destination: "/studio/image/:slug/:name" },
       ],
     };
+  },
+
+  // エージェント向けの Link ヘッダー (RFC 8288)。中身は lib/link-headers.ts。
+  async headers() {
+    return linkHeaders();
   },
 
   images: {
