@@ -136,7 +136,7 @@ describe("matcher", () => {
     "/studio/upload",
     "/hero-capture/save",
     "/favicon.ico",
-    "/water-normals.png",
+    "/water-normals.webp",
   ])("%s は素通し", (path) => {
     expect(matcher.test(path)).toBe(false);
   });

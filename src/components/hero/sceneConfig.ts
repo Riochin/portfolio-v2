@@ -143,7 +143,7 @@ export const OCEAN = {
   /** 水面の板の一辺。水平線の手前で切れないよう大きく取る */
   size: 20000,
   /** 継ぎ目なくタイルする法線マップ。scripts/generate-water-normals.mjs で生成 */
-  normalMap: "/water-normals.png",
+  normalMap: "/water-normals.webp",
   /** 反射を焼き込むテクスチャの解像度。上げるほど鏡像が精細で重い */
   reflectionSize: 512,
   /** 垂直入射での反射率。下げるほど水そのものの色が出る */
