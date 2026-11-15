@@ -22,14 +22,16 @@ describe("linkValue", () => {
       `</sitemap.xml>; rel="sitemap"`,
       `</llms.txt>; rel="describedby"; type="text/plain"`,
       `</ja/blog/:slug>; rel="alternate"; type="text/markdown"`,
-      `</en/blog/:slug>; rel="alternate"; hreflang="en"`,
+      `<https://riochin.dev/en/blog/:slug>; rel="alternate"; hreflang="en"`,
     ]);
   });
 
   it("トップは接頭辞だけの URL を指す", () => {
     const links = split(linkValue("en", "/"));
     expect(links).toContain(`</en>; rel="alternate"; type="text/markdown"`);
-    expect(links).toContain(`</ja>; rel="alternate"; hreflang="ja"`);
+    expect(links).toContain(
+      `<https://riochin.dev/ja>; rel="alternate"; hreflang="ja"`,
+    );
   });
 });
 
@@ -46,6 +48,16 @@ describe("linkHeaders", () => {
       "/en/output",
       "/en/blog/:slug",
     ]);
+  });
+
+  it("hreflang は絶対 URL で指す (Lighthouse は相対を咎める)", () => {
+    for (const { headers } of rules) {
+      for (const link of split(headers[0].value)) {
+        if (link.includes("hreflang=")) {
+          expect(link).toMatch(/^<https:\/\/riochin\.dev\//);
+        }
+      }
+    }
   });
 
   it("どの値も RFC 8288 の書式で、rel は登録済みのものだけ", () => {
