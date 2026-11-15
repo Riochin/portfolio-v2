@@ -14,7 +14,7 @@ import { setStarHeightScale } from "./starPass";
  * 空と雲がそのまま水に落ちる。波はタイル法線マップを 4 通りの向きと速度で
  * スクロールさせて作るため、手前から水平線まで細かさが自然に詰まる。
  *
- * 法線マップ(/water-normals.png)は、周期がテクスチャ幅を割り切る正弦波だけを
+ * 法線マップ(/water-normals.webp)は、周期がテクスチャ幅を割り切る正弦波だけを
  * 足して作った継ぎ目のないもの。外部アセットには依存しない。
  */
 export function Ocean({

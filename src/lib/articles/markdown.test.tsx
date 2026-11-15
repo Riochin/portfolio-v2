@@ -95,17 +95,17 @@ describe("見出し", () => {
 
 describe("画像", () => {
   it("画像だけの段落は p が外れ、public/ の実寸が載る", async () => {
-    const html = await render("![水面](/water-normals.png)");
+    const html = await render("![水面](/water-normals.webp)");
     // React 19 が img の手前に preload の link を足すので、img だけを見る
     expect(html).not.toContain("<p>");
-    expect(html).toContain('<img src="/water-normals.png" alt="水面" width="512" height="512"/>');
+    expect(html).toContain('<img src="/water-normals.webp" alt="水面" width="512" height="512"/>');
   });
 
   it("studio が書く生の img も data-scale と title を持ったまま届く", async () => {
-    await render('<img src="/water-normals.png" alt="" title="キャプション" data-scale="0.5" />');
+    await render('<img src="/water-normals.webp" alt="" title="キャプション" data-scale="0.5" />');
     const img = received.find((r) => r.tag === "img");
     expect(img?.props).toMatchObject({
-      src: "/water-normals.png",
+      src: "/water-normals.webp",
       title: "キャプション",
       "data-scale": "0.5",
       width: 512,

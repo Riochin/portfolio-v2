@@ -13,7 +13,7 @@ hero:
           - scripts/generate-water-normals.mjs
           - scripts/generate-hero-signature.mjs
           - public/hero-*.webp
-          - public/water-normals.png
+          - public/water-normals.webp
 
 works:
   - changed-files:

@@ -1,4 +1,4 @@
-// public/water-normals.png を作り直すための開発用スクリプト。
+// public/water-normals.webp を作り直すための開発用スクリプト。
 // 継ぎ目なくタイルする水面法線マップを生成する。
 // 格子の添字を周期 L で折り返した値ノイズを重ねるので、端が必ずつながる。
 import sharp from "sharp";
@@ -64,7 +64,12 @@ for (let j = 0; j < N; j++) {
   }
 }
 
+// 全面に細かい凹凸があるので、ロスレスでは PNG 483KB → WebP 252KB までしか
+// 縮まない。非可逆の q90 なら 48KB で、描いたヒーローを等倍で並べても元と
+// 見分けがつかなかった (法線の向きの誤差は平均 1.3°)。q75 まで落とすと
+// 手前の波の影の形が変わり始める。smartSubsample は色差を間引くときの
+// にじみを抑える (法線マップでは RG が傾きそのものなので効く)。
 await sharp(buf, { raw: { width: N, height: N, channels: 3 } })
-  .png({ compressionLevel: 9 })
-  .toFile("public/water-normals.png");
-console.log("wrote public/water-normals.png");
+  .webp({ quality: 90, effort: 6, smartSubsample: true })
+  .toFile("public/water-normals.webp");
+console.log("wrote public/water-normals.webp");
