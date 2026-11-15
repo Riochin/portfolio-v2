@@ -1,3 +1,4 @@
+import { SITE } from "../data/site";
 import { LOCALES, type Locale } from "./i18n/config";
 import { localePath } from "./i18n/paths";
 
@@ -37,8 +38,12 @@ export function linkValue(locale: Locale, path: string): string {
     ...SITE_LINKS,
     // Accept: text/markdown で同じ URL が Markdown を返す。
     `<${self}>; rel="alternate"; type="text/markdown"`,
+    // hreflang だけは絶対 URL にする。Lighthouse の SEO 監査は Link ヘッダーの
+    // hreflang も見ていて、相対 URL だと "Relative href value" で落とす
+    // (HTML の <link hrefLang> は metadataBase で絶対になっている)。
     ...LOCALES.filter((l) => l !== locale).map(
-      (l) => `<${localePath(l, path)}>; rel="alternate"; hreflang="${l}"`,
+      (l) =>
+        `<${SITE.url}${localePath(l, path)}>; rel="alternate"; hreflang="${l}"`,
     ),
   ].join(", ");
 }
