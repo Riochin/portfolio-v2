@@ -20,7 +20,6 @@ export type WorkGridItem = {
     readonly height: number;
     readonly alt: string;
   };
-  readonly stack: readonly string[];
 };
 
 /**

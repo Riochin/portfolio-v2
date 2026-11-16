@@ -46,7 +46,7 @@ export function Tile({
   srLabel?: string;
   /** タイトルの下の 1 行 (期間や公開日)。 */
   meta?: ReactNode;
-  /** meta の下に足すもの (作品の技術チップ)。compact では出さない。 */
+  /** meta の下に足すもの。compact では出さない。 */
   children?: ReactNode;
   /**
    * トップ用。4 件を 1 段に詰めるので、写真とタイトルと meta だけを残し、
