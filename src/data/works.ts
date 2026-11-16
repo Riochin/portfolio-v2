@@ -14,7 +14,7 @@ export const WORKS = {
       en: "LSIB Arcade Map",
     },
     tagline: {
-      ja: "戦場選びをサクッと10秒に ── 全国約770店舗を地図で探せる非公式ゲーセンマップ",
+      ja: "戦場選びをサクッと10秒に — 全国約770店舗を地図で探せる非公式ゲーセンマップ",
       en: "Pick your battleground in ten seconds — an unofficial map of ~770 arcades across Japan",
     },
     summary: [
@@ -27,7 +27,7 @@ export const WORKS = {
         en: "So I thought: wouldn't it be easier with a site that shows venues and cabinet counts at a glance? That's how this site came about. Data is refreshed automatically from the official sites, and user reports are reviewed before being applied.",
       },
       {
-        ja: "公開後も告知と SEO を続けて、公開から5ヶ月が経った11月時点で、毎日100~150人の方に使っていただいています。",
+        ja: "公開後も告知とSEOを続けて、公開から5か月が経った11月時点で、毎日100~150人の方に使っていただいています。",
         en: "I've kept promoting it and working on SEO since launch, and as of November, five months in, 100–150 people use it every day.",
       },
     ],
@@ -89,8 +89,8 @@ export const WORKS = {
         en: "There are many basic inputs and commands to learn, and every suit has its own moves, yet the only way to practice was to go to an actual arcade.",
       },
       {
-        ja: "そこで、スマホにほぼ実寸大のコントローラーを、PC に画面を表示し、2つの端末が通信することで、家でも実際に近い操作感でコマンドを練習できるアプリを開発しました。",
-        en: "So I built an app where your phone shows a nearly life-size controller and your PC shows the game screen. The two devices talk to each other, so you can practice commands at home with a feel close to the real thing.",
+        ja: "実際に近い操作感でコマンドを練習できるようにするため、スマホにほぼ実寸大のコントローラーを、PCにゲーム画面を出し、2つの端末が通信することで家でのトレーニングを可能にしています。",
+        en: "To let you practice commands with a feel close to the real thing, your phone shows a nearly life-size controller and your PC shows the game screen, and the two devices talk to each other so you can train at home.",
       },
     ],
     retro: [],
@@ -139,7 +139,7 @@ export const WORKS = {
         en: "My favorite themes are starry skies, blue skies, and the sea. My favorite colors are purple, navy, pink, and light blue. I packed as much of that atmosphere as I could into this site.",
       },
       {
-        ja: "開くと最初に WebGL の景色が出るので、ぱっと見では誰のサイトか分かりにくいと思います。が、実はそれ自体がこだわりです。自分を前に出しすぎず、「私が大切にしている世界観」と「私がつくってきたもの」をまず見てもらいたいと考えました。そのうえで「どんな人なんだろう？」と興味を持ってくれた方に、[About](/about)や[ブログ](/output)のページも見てもらえたら嬉しいと思っています。",
+        ja: "開くと最初にWebGLの景色が出るので、ぱっと見では誰のサイトか分かりにくいと思います。が、実はそれ自体がこだわりです。自分を前に出しすぎず、「私が大切にしている世界観」と「私がつくってきたもの」をまず見てもらいたいと考えました。そのうえで「どんな人なんだろう？」と興味を持ってくれた方に、[About](/about)や[ブログ](/output)のページも見てもらえたら嬉しいと思っています。",
         en: "The first thing you see is a WebGL scene, so at a glance it's hard to tell whose site this is. That's actually intentional. Instead of putting myself front and center, I wanted visitors to first see the world I care about and the things I've made. Then, if you find yourself wondering what kind of person made it, I'd be glad if you looked at [About](/about) and [the blog](/output) too.",
       },
     ],
@@ -180,7 +180,7 @@ export const WORKS = {
         en: "Published in May 2025, this was the first portfolio I put out under my own name.",
       },
       {
-        ja: "Next.js と Tailwind CSS で、作品と経歴を1ページにまとめ、スクロールに合わせたアニメーションと問い合わせフォームを付けました。",
+        ja: "Next.jsとTailwind CSSで、作品と経歴を1ページにまとめ、スクロールに合わせたアニメーションと問い合わせフォームを付けました。",
         en: "Built with Next.js and Tailwind CSS, it put my works and background on a single page, with scroll-driven animations and a contact form.",
       },
       {
@@ -194,7 +194,7 @@ export const WORKS = {
         en: "After [Exit Prog-8](/works/exit-prog8) got me over my fear of deploying, I thought, \"Then I want a site of my own!\" That's how this started.",
       },
       {
-        ja: "問い合わせフォームは EmailJS で作っていましたが、管理が思ったより面倒でした。それに、問い合わせはそれほど来ないのに、誰でも送信できる入力欄を置いたままにして、何度も送信される危険を抱え続けるのも怖くなりました。そこで今のサイトでは、フォームをやめて[About ページ](/about)にメールアドレスを載せています。",
+        ja: "問い合わせフォームはEmailJSで作っていましたが、管理が思ったより面倒でした。それに、問い合わせはそれほど来ないのに、誰でも送信できる入力欄を置いたままにして、何度も送信される危険を抱え続けるのも怖くなりました。そこで今のサイトでは、フォームをやめて[Aboutページ](/about)にメールアドレスを載せています。",
         en: "The contact form used EmailJS, but it was more of a hassle to manage than I expected. I also got uneasy about keeping a form anyone could submit, with the risk of it being hit over and over, when hardly any messages came in anyway. So on the current site I dropped the form and put my email address on [the About page](/about).",
       },
       {
@@ -227,18 +227,26 @@ export const WORKS = {
     },
     summary: [
       {
-        ja: "身近な人が陰謀論にのめり込んでしまい、どう接すればいいか悩む「支える側」のためのWebアプリです。状況に合わせて、関わり方のヒント、近い状況の記事や本、電話で相談できる窓口を案内します。論破や説得ではなく、ひとりで抱え込まないための最初の一歩を目指しました。",
-        en: "A web app for the people on the supporting side: those whose family or friends have fallen into conspiracy theories and who don't know how to respond. Based on their situation, it suggests ways to engage, articles and books about similar cases, and phone lines where they can talk to someone. The goal isn't to win arguments or change minds, but to be a first step so no one has to carry this alone.",
+        ja: "身近な人が陰謀論にのめり込んでしまい、どう接すればいいか悩む「支える側」のためのWebアプリです。",
+        en: "A web app for the people on the supporting side: those whose family or friends have fallen into conspiracy theories and who don't know how to respond.",
+      },
+      {
+        ja: "フォームで入力された状況に合わせて、関わり方のヒント、近い状況の記事や本、電話で相談できる窓口を案内します。",
+        en: "Based on the situation entered in a form, it suggests ways to engage, articles and books about similar cases, and phone lines where they can talk to someone.",
+      },
+      {
+        ja: "論破や説得の方法を提示するのではなく、悩んでいる人がひとりで抱え込まないための最初の一歩として存在できることを目指しました。",
+        en: "Rather than offering ways to win arguments or change minds, we aimed for it to be a first step that keeps people who are struggling from carrying this alone.",
       },
     ],
     retro: [
       {
-        ja: "Code for Japanが運営するTOMODACHI Boeing Entrepreneurship Seminar 2026の、2ヶ月間のプログラムで開発しました。",
+        ja: "Code for Japanが運営するTOMODACHI Boeing Entrepreneurship Seminar 2026の、2か月間のプログラムで開発しました。",
         en: "Built during the two-month TOMODACHI Boeing Entrepreneurship Seminar 2026 program run by Code for Japan.",
       },
       {
-        ja: "今回は初対面のメンバーとの2ヶ月間で、全員が常にフル稼働できる状態ではありませんでした。その中で、いかにチームビルディングと仕組みづくりをしておくかが鍵だと考えて臨みました。その一環として、GitHub ProjectsとDiscordサーバーを整え、各種ツールのオンボーディングにも力を入れ、これらがうまく噛み合って、プログラムを最後まで走り切ることができました。",
-        en: "We were people meeting for the first time, working together for two months, and not everyone could be fully available all the time. So I went in believing the key was to set up team building and working structures early. As part of that, I set up GitHub Projects and our Discord server and put effort into onboarding everyone to our tools. It all came together, and we made it through the program to the end.",
+        ja: "今回は初対面のメンバーとの2か月間で、全員が常にフル稼働できる状態ではありませんでした。その中で、いかにチームビルディングと仕組みづくりをしておくかが鍵だと考えて臨みました。具体的には、GitHub ProjectsとDiscordサーバーを整え、各種ツールのオンボーディングにも力を入れました。これらがうまく噛み合って、プログラムを最後まで走り切ることができました。",
+        en: "We were people meeting for the first time, working together for two months, and not everyone could be fully available all the time. So I went in believing the key was to set up team building and working structures early. Specifically, I set up GitHub Projects and our Discord server and put effort into onboarding everyone to our tools. It all came together, and we made it through the program to the end.",
       },
       {
         ja: "結果、チームとしてBest Overall Awardを受賞し、個人としても米国研修メンバーに選抜していただきました！",
@@ -293,22 +301,22 @@ export const WORKS = {
         en: "An all-white world where AI and humans have traded places. Players work as agents, clearing tasks handed down by an unseen \"them\".",
       },
       {
-        ja: "タスクはAIエージェントのツールコールになぞらえた Read + Edit・Write・Web Search・Image Generation の4種類。3人はボイスチャットで声をかけ合いながら中央のディレクトリからファイルを取り合い、フェーズごとのタスクを期限内に満たします。満たせなかったプレイヤーは「彼ら」によってデリートされます。",
+        ja: "タスクはAIエージェントのツールコールになぞらえたRead + Edit・Write・Web Search・Image Generationの4種類。3人はボイスチャットで声をかけ合いながら中央のディレクトリからファイルを取り合い、フェーズごとのタスクを期限内に満たします。満たせなかったプレイヤーは「彼ら」によってデリートされます。",
         en: "Tasks come in four kinds modeled on an AI agent's tool calls: Read + Edit, Write, Web Search, and Image Generation. The three players talk over voice chat while competing for files in the shared directory at the center, racing to clear each phase's tasks before the deadline. Anyone who falls short gets deleted by \"them\".",
       },
       {
-        ja: "ゲーム内PCのブラウザには Firefox のエンジン (Gecko) を WebAssembly にしたものを載せ、検索結果がお題に合っているかは Workers AI のモデル（Clef）が判定します。3D は React Three Fiber の WebGPU レンダラーで描いています。",
+        ja: "ゲーム内PCのブラウザにはFirefoxのエンジン(Gecko)をWebAssemblyにしたものを載せ、検索結果がお題に合っているかはWorkers AIのモデル（Clef）が判定します。3DはReact Three FiberのWebGPUレンダラーで描いています。",
         en: "The in-game PC's browser runs Firefox's engine (Gecko) compiled to WebAssembly, and Clef, a Workers AI model, judges whether a search result fits the prompt. The 3D world is drawn with React Three Fiber's WebGPU renderer.",
       },
     ],
     retro: [
       {
-        ja: "圧倒的に技術力の高いメンバーに誘われて出たハッカソンでした。私はこれまで、コンセプトやプレゼン、チームワークなどを武器にハッカソンに出ることが多かったので、メンバーの得意・不得意がピタッとハマるバランスのチームでした。",
+        ja: "圧倒的に技術力の高いメンバーに誘われて、このハッカソンに出ました。私はこれまで、コンセプトやプレゼン、チームワークなどを武器にハッカソンに出ることが多かったので、メンバーの得意・不得意がピタッとハマるバランスのチームでした。",
         en: "I joined this hackathon at the invitation of teammates with overwhelming technical skill. Until then I'd mostly competed with concept, presentation, and teamwork as my strengths, so our strengths and weaknesses fit together perfectly.",
       },
       {
-        ja: "とはいえ、それで実装をしないのではだめだと思い、Go バックエンドの通信部分に責任を持ちました。フロントエンド担当と設計を確認しながら、どのデータを通信中に持つか・持たないかを入念にすり合わせました。このすり合わせのおかげで、メンバー全員がゲームの仕様をよく理解でき、かなり完成度の高い作品ができたと思っています！",
-        en: "Still, I knew it wouldn't do for me not to build anything, so I took ownership of the networking part of the Go backend. Checking the design with our frontend developer, I carefully worked out which data to keep during communication and which not to. Thanks to that, everyone understood the game's spec well, and I think we made a really polished game!",
+        ja: "とはいえ、得意に甘えて何も実装をしないのではだめだと思い、今回はGoバックエンドの通信部分に責任を持ちました。フロントエンド担当と設計を確認しながら、どのデータを通信中に持つか・持たないかを入念にすり合わせました。このすり合わせのおかげで、メンバー全員がゲームの仕様をよく理解でき、かなり完成度の高い作品ができたと思っています！",
+        en: "Still, I knew it wouldn't do to lean on my strengths and not build anything, so this time I took ownership of the networking part of the Go backend. Checking the design with our frontend developer, I carefully worked out which data to keep during communication and which not to. Thanks to that, everyone understood the game's spec well, and I think we made a really polished game!",
       },
     ],
     category: "hackathon",
@@ -357,22 +365,26 @@ export const WORKS = {
         en: "Haggling on a flea-market app is a chore: you have to write the messages, you can't tell how far the other side will go, and it drags on when you just want an answer.",
       },
       {
-        ja: "そこを購入者・出品者それぞれの AI に任せ、1つの購入者 AI が複数の出品者と同時に交渉できるようにしました。",
+        ja: "そこを購入者・出品者それぞれのAIに任せ、1つの購入者AIが複数の出品者と同時に交渉できるようにしました。",
         en: "We hand that off to an AI for the buyer and one for each seller, so a single buyer AI can negotiate with several sellers at once.",
       },
     ],
     retro: [
       {
-        ja: "2日間のハッカソンで、開発経験の少ないメンバーも多かったので、Figma MCP や Claude Design のような使い始めやすいプロトタイピングツールで、チームの認識を合わせられるように意識しました。",
+        ja: "2日間のハッカソンで、開発経験の少ないメンバーも多かったので、Figma MCPやClaude Designのような使い始めやすいプロトタイピングツールで、チームの認識を合わせられるように意識しました。",
         en: "It was a two-day hackathon and many teammates were new to development, so I made a point of using easy-to-pick-up prototyping tools like Figma MCP and Claude Design to keep the team on the same page.",
       },
       {
-        ja: "また、ハッカソン参加回数が多かったこともあり、自然と私が PM のような役回りになったので、最初に「一番楽しいチームにしたい」という目標を共有して、メンバーが発言しやすいようにしました。そのうえでメンバーそれぞれの目標も聞き、方針や開発への向き合い方を決めていきました。",
-        en: "Since I'd been to more hackathons than the others, I naturally ended up in a PM-like role. At the start I shared my goal, \"I want us to be the team having the most fun,\" so everyone would feel free to speak up. Then I asked about each member's goals and we decided our direction and how to approach the build.",
+        ja: "また、ハッカソン経験が多かったこともあり、自然と私がPMのような役回りになりました。",
+        en: "Since I had more hackathon experience than the others, I naturally ended up in a PM-like role.",
       },
       {
-        ja: "最終的に優秀賞をいただいたうえ、メンバーから「初めてのハッカソンだったけど、一緒のチームになれたおかげで楽しかった」と言ってもらえて、やりがいを感じることができました！",
-        en: "We won the Excellence Award, and a teammate told me, \"It was my first hackathon, but it was fun because I was on this team.\" That made it all feel worth it!",
+        ja: "そこで、最初に「一番楽しいチームにしたい」という私の目標をメンバーに共有して、発言しやすいチームになるようにしました。そのうえでメンバーそれぞれの参加目的も聞き、方針や開発への向き合い方を決めていきました。",
+        en: "So at the start I shared my own goal with the team, \"I want us to be the team having the most fun,\" to make it a team where everyone felt free to speak up. Then I asked each member why they had joined, and we decided our direction and how to approach the build.",
+      },
+      {
+        ja: "最終的に優秀賞をいただいたうえ、メンバーから「初めてのハッカソンだったけど、一緒のチームになれたおかげで楽しかった」と言ってもらえて、短い期間でもチームをリードすることに対するやりがいを感じることができました！",
+        en: "We won the Excellence Award, and a teammate told me, \"It was my first hackathon, but it was fun because I was on this team.\" It made leading a team, even for such a short time, feel truly rewarding!",
       },
     ],
     category: "hackathon",
@@ -415,7 +427,7 @@ export const WORKS = {
   nemmy: {
     title: { ja: "Nemmy", en: "Nemmy" },
     tagline: {
-      ja: "せーので、「おやすみなさい」── 友達と一緒に睡眠習慣をつくるSNS",
+      ja: "せーので、「おやすみなさい」 — 友達と一緒に睡眠習慣をつくるSNS",
       en: "Ready, set, \"good night\" — a social app for building sleep habits together with friends",
     },
     summary: [
@@ -428,21 +440,25 @@ export const WORKS = {
         en: "Your lock screen shows how many friends are asleep, and if you miss your bedtime goal you can't see your friends' posts, so everyone gets pulled toward bed together.",
       },
       {
-        ja: "星空の発光は Metal で描き、睡眠データは HealthKit から取得しています。インフラは Terraform で組み、AWS の費用は月450円に収めました。",
+        ja: "星空の発光はMetalで描き、睡眠データはHealthKitから取得しています。インフラはTerraformで組み、AWSの費用は月450円に収めました。",
         en: "The glowing night sky is drawn with Metal, and sleep data comes from HealthKit. The infrastructure is built with Terraform, and we kept AWS costs to ¥450 a month.",
       },
     ],
     retro: [
       {
-        ja: "インターンやハッカソンの経験が豊富で、領域ごとの専門性が高いメンバーに囲まれていたので、実装はある程度メンバーに任せ、チームのアウトプットを最大化するために自分にできることをやろうと決めました。特に力を入れたのは、アプリ全体のコンセプトを練り上げること、チーム内のコミュニケーションを円滑にすること、Discord サーバーを盛り上げること、そしてプレゼンの構成です。",
-        en: "I was surrounded by teammates with plenty of internship and hackathon experience and deep expertise in their own areas, so I left much of the implementation to them and decided to do whatever I could to maximize the team's output. I focused especially on refining the app's overall concept, keeping communication within the team smooth, keeping our Discord server lively, and structuring the presentation.",
+        ja: "このハッカソンでは、インターンやハッカソンの経験が豊富で、領域ごとの専門性が高いメンバーに囲まれていました。",
+        en: "At this hackathon I was surrounded by teammates with plenty of internship and hackathon experience and deep expertise in their own areas.",
       },
       {
-        ja: "2ヶ月にも及ぶハッカソンでしたが、チーム全員が満足できるクオリティのアプリを完成させられました。今でもメンバーで次のハッカソンに出たり旅行の計画を立てたりするほど仲の良いチームになれたことが、とても嬉しいです。",
-        en: "It was a hackathon that stretched over two months, but we finished an app the whole team was happy with. I'm really glad we became close enough that we still enter hackathons and plan trips together.",
+        ja: "チームのアウトプットを最大化するために自分にできることをやろうと決め、中でも「アプリ全体のコンセプトを練り上げること」「チーム内のコミュニケーションを円滑にすること」「プレゼンの伝え方」などに力を入れて取り組みました。FigJamでのアイデア出しやDiscordでの声かけ、Canvaでの資料づくりなどを主導していました。",
+        en: "I decided to do whatever I could to maximize the team's output, focusing in particular on refining the app's overall concept, keeping communication within the team smooth, and how we told our story in the presentation. I led brainstorming in FigJam, kept conversations going on Discord, and put together our slides in Canva.",
       },
       {
-        ja: "完全に余談ですが、[About ページ](/about)のプロフィール写真は、このチームのメンバーと撮ったものです！",
+        ja: "2か月にも及ぶハッカソンでしたが、チーム全員が満足できるクオリティのアプリを完成させられました。ハッカソン後も、同じメンバーで次のハッカソンに出たり旅行の計画を立てたりするほど仲の良いチームになれて、とても嬉しいな〜と思っています。",
+        en: "It was a hackathon that stretched over two months, but we finished an app the whole team was happy with. Even after it ended, we've stayed close enough to enter more hackathons and plan trips together, and that makes me really happy.",
+      },
+      {
+        ja: "完全に余談ですが、[Aboutページ](/about)のプロフィール写真は、このチームのメンバーと撮ったものです！",
         en: "A complete aside: the profile photo on [the About page](/about) was taken with this team!",
       },
     ],
@@ -453,7 +469,7 @@ export const WORKS = {
       start: "2026-07-04",
       end: "2026-08-23",
     },
-    role: { ja: "PM・バックエンド", en: "PM / Backend" },
+    role: { ja: "PM", en: "PM" },
     stack: ["swift", "swiftui", "go", "postgresql", "aws", "terraform"],
     links: {
       slides: "https://speakerdeck.com/riochin/nemmy-the-hack-2026",
@@ -503,22 +519,22 @@ export const WORKS = {
         en: "In remote team development, progress updates often don't happen until someone brings them up, and replies don't come either.",
       },
       {
-        ja: "そこで BeReal の「通知が来たら今すぐ投稿」を持ち込み、ランダムな時間に全員へ通知を飛ばして、1時間以内にコミットや進捗を共有する仕組みにしました。",
+        ja: "そこでBeRealの「通知が来たら今すぐ投稿」を持ち込み、ランダムな時間に全員へ通知を飛ばして、1時間以内にコミットや進捗を共有する仕組みにしました。",
         en: "So we borrowed BeReal's \"post right now when the notification arrives\": everyone gets a notification at a random time and shares their commits or progress within an hour.",
       },
     ],
     retro: [
       {
-        ja: "私はバックエンドとインフラを担当し、Go のバックエンドを Cloudflare の Workers・D1・R2 の上で動かしています。",
+        ja: "私はバックエンドとインフラを担当し、GoのバックエンドをCloudflareのWorkers・D1・R2の上で動かしています。",
         en: "I handled the backend and infrastructure, running the Go backend on Cloudflare Workers, D1, and R2.",
       },
       {
-        ja: "特に、GitHub の commit を起点に通知を出すまでの流れは、アーキテクチャ全体を意識して実装する必要がありました。構想段階から実装まで、図に起こしたり AI と壁打ちしたりを続けて、なんとか技育博の展示までに作り切ることができました。",
+        ja: "特に、GitHubのcommitを起点に通知を出すまでの流れは、アーキテクチャ全体を意識して実装する必要がありました。構想段階から実装まで、図に起こしたりAIと壁打ちしたりを続けて、なんとか技育博の展示までに作り切ることができました。",
         en: "The flow from a GitHub commit to sending a notification in particular required thinking about the whole architecture. I kept drawing diagrams and bouncing ideas off AI from the planning stage through implementation, and managed to finish it in time for the Geek Expo exhibit.",
       },
       {
-        ja: "技育展は私の都合がつかなかったのですが、チームメンバーが頑張ってバトンをつないでくれました。開発チームの中に BeGit; を愛する空気があることを誇らしく思っています。",
-        en: "I couldn't make it to the Gikuten contest, but my teammates worked hard and carried the baton. I'm proud that our team has such love for BeGit;.",
+        ja: "技育展は私の都合がつかなかったのですが、チームメンバーが頑張ってバトンをつないでくれました。私だけではなく開発チーム全体にBeGit;を愛する空気があることに、言いようのない温かさを感じています。",
+        en: "I couldn't make it to the Gikuten contest, but my teammates worked hard and carried the baton. It's not just me: the whole team loves BeGit;, and that gives me a warmth I can't quite put into words.",
       },
     ],
     category: "hackathon",
@@ -581,11 +597,11 @@ export const WORKS = {
     },
     summary: [
       {
-        ja: "「今の SNS は好きなものを強めるのが中心で、まだ知らない熱中に出会う場が少ない」と感じたのが出発点です。",
+        ja: "「今のSNSは好きなものを強めるのが中心で、まだ知らない熱中に出会う場が少ない」と感じたのが出発点です。",
         en: "It started from a feeling that \"today's social media mostly reinforces what you already like, and there are few places to stumble on a passion you don't know yet.\"",
       },
       {
-        ja: "Chrome 拡張で閲覧履歴を集め、embedding と pgvector で関心ごとにまとめて、1つずつ「ステッカー」に起こします。",
+        ja: "Chrome拡張で閲覧履歴を集め、embeddingとpgvectorで関心ごとにまとめて、1つずつ「ステッカー」に起こします。",
         en: "A Chrome extension collects your browsing history, groups it by interest with embeddings and pgvector, and turns each group into a \"sticker.\"",
       },
     ],
@@ -599,7 +615,7 @@ export const WORKS = {
         en: "It was my first hackathon that dug this deep into user needs. The mentors' feedback was often spot-on, and I remember it being really stimulating.",
       },
       {
-        ja: "また、私たちのチームのPMは、事前に目標を、最終日には KPT をメンバー同士で共有し合う進め方を実践していました。ここから学べることが多く、以降のハッカソンやインターンシップで意識しているフレームワークの土台ができたハッカソンでした。",
+        ja: "また、私たちのチームのPMは、事前に目標を、最終日にはKPTをメンバー同士で共有し合う進め方を実践していました。ここから学べることが多く、以降のハッカソンやインターンシップで意識しているフレームワークの土台は、このハッカソンでできたと思います。",
         en: "Our PM also had us share goals at the start and a KPT retrospective on the last day. I learned a lot from that, and this hackathon laid the foundation for the frameworks I keep in mind at hackathons and internships since.",
       },
     ],
@@ -664,22 +680,22 @@ export const WORKS = {
         en: "The national tournament for JoJo's Bizarre Adventure: Last Survivor was at the end of February 2026, and I wanted to have a real-life rush speed contest, so we made this.",
       },
       {
-        ja: "Apple Watch の加速度でパンチを検知し、iOS アプリから WebTransport で Rust 製の同期サーバーに送って、Web 上でバトルを描きます。（第3部のラストシーンを再現！）",
+        ja: "Apple Watchの加速度でパンチを検知し、iOSアプリからWebTransportでRust製の同期サーバーに送って、Web上でバトルを描きます。（第3部のラストシーンを再現！）",
         en: "The Apple Watch's accelerometer detects punches, the iOS app sends them over WebTransport to a sync server written in Rust, and the battle plays out on the web. (Recreating the final scene of Part 3!)",
       },
     ],
     retro: [
       {
-        ja: "Watch との接続が安定せず、Core ML での動きの識別は諦めましたが、加速度だけに絞ったことで最後まで作り切れました！",
-        en: "The connection to the Watch was unstable, so we gave up on recognizing motions with Core ML, but narrowing it down to acceleration alone let us see it through to the end!",
-      },
-      {
         ja: "[OFF](/works/off)から一緒に出ている同じメンバーで、58ハッカソンへの挑戦は[Imacalla](/works/imacalla)、[MokuHub](/works/mokuhub)に続いて3回目でした。このメンバーで最優秀賞を獲得したのは初めてで、とても思い出深い作品になっています。",
         en: "With the same team I've competed with since [OFF](/works/off), this was our third 58 Hackathon after [Imacalla](/works/imacalla) and [MokuHub](/works/mokuhub). It was the first time this team won the Grand Prize, which makes it a really memorable project.",
       },
       {
-        ja: "ライブデモでは思いっきりパンチを繰り出し、キャラになりきってラッシュバトルをしました。当初思い描いていた瞬間をメンバーで実現できたことも感慨深かったです。",
-        en: "In the live demo we threw punches with everything we had and fought rush battles fully in character. Making the moment we'd pictured from the start real as a team was moving too.",
+        ja: "watchOSとモバイルの接続が安定せず、Core MLでの動きの識別は諦めましたが、加速度だけに絞ったことで最後まで作り切れました！",
+        en: "The connection between watchOS and the phone was unstable, so we gave up on recognizing motions with Core ML, but narrowing it down to acceleration alone let us see it through to the end!",
+      },
+      {
+        ja: "結果、ライブデモでは思いっきりパンチを繰り出し、キャラになりきってラッシュバトルを実演。当初思い描いていた瞬間をメンバーで実現できたことも感慨深かったです。",
+        en: "In the end, we threw punches with everything we had in the live demo and fought rush battles fully in character. Making the moment we'd pictured from the start real as a team was moving too.",
       },
     ],
     category: "hackathon",
@@ -726,31 +742,31 @@ export const WORKS = {
   hinan: {
     title: { ja: "HiNan!", en: "HiNan!" },
     tagline: {
-      ja: "歩いて避難訓練を習慣にする、避難所バッジ集め",
-      en: "Collect shelter badges and make walking evacuation drills a habit",
+      ja: "歩いて避難訓練を習慣にする、バッジ集めアプリ",
+      en: "A badge-collecting app that makes walking evacuation drills a habit",
     },
     summary: [
       {
-        ja: "避難訓練は、机の上で説明を読んで終わりになりがちです。",
-        en: "Evacuation drills tend to end with reading instructions at a desk.",
+        ja: "避難訓練は、学校や職場で「やらされる」体験に留まりがちです。",
+        en: "Evacuation drills tend to stay something you're made to do at school or work.",
       },
       {
-        ja: "そこで毎日 AI が「いま何が起きたか」という災害シナリオを出し、それに合わせて近くの避難所まで実際に歩いて向かうアプリにしました。",
-        en: "So every day an AI presents a disaster scenario of what just happened, and you actually walk to a nearby shelter in response.",
+        ja: "そこで、毎日AIが「いま何が起きたか」という災害シナリオを出し、これに合わせて近くの避難所まで実際に歩いて向かうまでをアプリにしました。",
+        en: "So we built an app where every day an AI presents a disaster scenario of what just happened, and you actually walk to a nearby shelter in response.",
       },
       {
-        ja: "たどり着くとバッジがたまっていくので、ゲーム感覚で続けられます。",
-        en: "You collect badges as you reach shelters, so it keeps going like a game.",
+        ja: "たどり着くと避難所ごとにオリジナルなバッジがたまっていくので、コレクション感覚で続けることができます。",
+        en: "Each shelter you reach adds its own original badge, so you can keep at it like building a collection.",
       },
     ],
     retro: [
       {
-        ja: "このハッカソンのチームメンバーは全員国籍が違い、ミーティングやドキュメントはすべて英語でした。テーマを「避難訓練」に決めたのも、全員が共通して課題を感じられるものだったからです。",
-        en: "Everyone on this team was from a different country, and all our meetings and documents were in English. We chose evacuation drills as the theme because it was a problem everyone could relate to.",
+        ja: "このハッカソンのチームメンバーは全員国籍が違い、1か月間のミーティングやドキュメントはすべて英語で行われていました。テーマを「避難訓練」に決めたのも、全員が共通して課題を感じられるものだったからです。",
+        en: "Everyone on this team was from a different country, and for the whole month all our meetings and documents were in English. We chose evacuation drills as the theme because it was a problem everyone could relate to.",
       },
       {
-        ja: "言語が違ってもチームでアプリ開発ができる、ということを実感した象徴的な経験になりました！",
-        en: "It was a defining experience that showed me a team can build an app together even across languages!",
+        ja: "言語が違って苦労することもありましたが、「それでも技術は普遍的で、チームでのアプリ開発はできる」、ということを実感した象徴的な経験になりました！",
+        en: "The language gap made things hard at times, but it was a defining experience that showed me technology is universal and a team can still build an app together!",
       },
     ],
     category: "hackathon",
@@ -807,7 +823,7 @@ export const WORKS = {
   postcard: {
     title: { ja: "Postcard", en: "Postcard" },
     tagline: {
-      ja: "物流データが「風」に！  — 飛ばされた投稿をキャッチするSNS",
+      ja: "物流データが「風」に！ — 飛ばされた投稿をキャッチするSNS",
       en: "Logistics data becomes \"wind\"! — a social app where you catch posts blown your way",
     },
     summary: [
@@ -822,7 +838,7 @@ export const WORKS = {
     ],
     retro: [
       {
-        ja: "個人的には、初めて AWS と Terraform に挑戦し、ECS を使ったデプロイを経験できました。",
+        ja: "個人的には、初めてAWSとTerraformに挑戦し、ECSを使ったデプロイを経験できました。",
         en: "Personally, it was my first time trying AWS and Terraform, and I got to deploy with ECS.",
       },
       {
@@ -830,8 +846,12 @@ export const WORKS = {
         en: "Our team of four was one person I'd teamed up with in advance plus two members matched on the spot, and I remember finding it hard to split the work. Until then I'd usually joined ad-hoc teams as the one being taught, but with more hackathons behind me, I couldn't keep calling myself a beginner.",
       },
       {
-        ja: "この経験から、チーム開発では明確な方針を示してメンバーにタスクを振るマネージャー役がいたほうが、負担が偏らず、やりがいを感じやすいのではないか？と考えるようになりました。",
-        en: "This experience got me thinking that in team development, having a manager who sets a clear direction and hands out tasks might keep the load from falling unevenly and make the work feel more rewarding.",
+        ja: "しかし、当時の私にはまだその意識があまりなく、ハッカソンの期間中に即席のメンバーに十分にタスクを割り振ったり声をかけたりできていなかったように思います。",
+        en: "But back then I wasn't really aware of that yet, and I don't think I did enough during the hackathon to hand out tasks to or check in with the members who'd joined on the spot.",
+      },
+      {
+        ja: "この経験から、チーム開発では経験のある人が方針を示してサポートし、タスクを割り振ることで、負担が偏らず、初めて参加するメンバーでもやりがいを感じられるチームになるのではないか？と考えるようになりました。",
+        en: "This experience got me thinking that in team development, if someone experienced sets the direction, offers support, and hands out tasks, the load won't fall unevenly, and even first-time members can find the work rewarding.",
       },
     ],
     category: "hackathon",
@@ -873,30 +893,30 @@ export const WORKS = {
   gitris: {
     title: { ja: "GITRIS", en: "GITRIS" },
     tagline: {
-      ja: "GitHub × TETRIS  — 日々の『積み上げ』を『積み上げ』て高得点を狙おう！",
+      ja: "GitHub × TETRIS — 日々の『積み上げ』を『積み上げ』て高得点を狙おう！",
       en: "GitHub × TETRIS — stack up your daily stacking for a high score!",
     },
     summary: [
       {
-        ja: "テトリスの盤面って GitHub の草に似ている！",
-        en: "A Tetris board looks like a GitHub contribution graph!",
+        ja: ">> テトリスの盤面ってGitHubの草に似ている！ <<",
+        en: ">> A Tetris board looks like a GitHub contribution graph! <<",
       },
       {
-        ja: ".......という思いつきから、日々の積み上げ（Contribution）を切り出して、テトリミノとして積むゲームにしました！",
-        en: "That passing thought turned into a game where your daily contributions are cut out and stacked as tetrominoes!",
+        ja: ".......という思いつきから、日々の開発者としての積み上げ（GitHubの草/Contribution）を切り出して、テトリミノとして積むゲームにしました！",
+        en: "That passing thought turned into a game where your day-to-day work as a developer (your GitHub contributions) is cut out and stacked as tetrominoes!",
       },
       {
-        ja: "「『積み上げ』を『積み上げ』ろ」という言葉どおり、Contribution が多い日のブロックほど消したときに高得点になるので、エンジニアが圧倒的に有利な対戦ができます。",
-        en: "True to \"stack up your stacking,\" blocks from days with more contributions score higher when cleared, so engineers have an overwhelming advantage in battles.",
+        ja: "「『積み上げ』を『積み上げ』ろ」という言葉どおり、GitHubのContributionが多い日のブロックほど消したときに高得点になるので、エンジニアが圧倒的に有利な対戦が成立します。",
+        en: "True to \"stack up your stacking,\" blocks from days with more GitHub contributions score higher when cleared, making for battles where engineers have an overwhelming advantage.",
       },
     ],
     retro: [
       {
-        ja: "私はバックエンドを担当し、Go と WebSocket で対戦サーバーを作りました。",
-        en: "I handled the backend and built the battle server with Go and WebSocket.",
+        ja: "私はバックエンドを担当し、主にGitHub APIからのContributionデータの取得、GoとWebSocketで対戦サーバーの実装を行いました。",
+        en: "I handled the backend, mainly fetching contribution data from the GitHub API and building the battle server with Go and WebSocket.",
       },
       {
-        ja: "開発のマイルストーンから issue を自動で切る GitHub Actions も作り、Webhook で Discord サーバーとつないで確認しながら進めたことで、少人数でも計画的に開発を進めることができました。",
+        ja: "開発のマイルストーンからissueを自動で切るGitHub Actionsも作り、WebhookでDiscordサーバーとつないで確認しながら進めたことで、少人数でも計画的に開発を進めることができました。",
         en: "I also built a GitHub Actions workflow that automatically opens issues from our milestones, and connected it to our Discord server with a webhook so we could keep track as we went. That let even our small team develop on schedule.",
       },
     ],
@@ -956,17 +976,17 @@ export const WORKS = {
         en: "There are tools to make your own work log visible, but I felt there were few that let people in a community see and appreciate each other's effort.",
       },
       {
-        ja: "そこで Discord Activity でコミットをリアルタイムに共有し、アプリで記録を残せるようにしました。",
+        ja: "そこでDiscord Activityでコミットをリアルタイムに共有し、アプリで記録を残せるようにしました。",
         en: "So we share commits in real time through a Discord Activity and keep a record in the app.",
       },
       {
-        ja: "API サーバーを作らずに済むよう、Discord の制限をプロキシ経由の認証で回避し、維持費0円で動く構成にしています。",
+        ja: "APIサーバーを作らずに済むよう、Discordの制限をプロキシ経由の認証で回避し、維持費0円で動く構成にしています。",
         en: "To avoid running an API server, we worked around Discord's restrictions with authentication through a proxy, so it runs at zero maintenance cost.",
       },
     ],
     retro: [
       {
-        ja: "私は主に Discord Activity の実装を担当し、情報量が少なく操作しやすい UI にすることを心がけました。",
+        ja: "私は主にDiscord Activityの実装を担当し、情報量が少なく操作しやすいUIにすることを心がけました。",
         en: "I mainly implemented the Discord Activity, aiming for a UI that shows little information and is easy to use.",
       },
       {
@@ -974,8 +994,8 @@ export const WORKS = {
         en: "This was my third project with this team, after [OFF](/works/off) and [Imacalla](/works/imacalla). Before that I mostly took tasks from others and helped with implementation, but I remember this hackathon being the first time I clearly owned a part (the frontend).",
       },
       {
-        ja: "一方で、Git の管理を AI に任せきりにしていたところ、force push したコードを勝手に merge され、大事件を引き起こしてしまいました。AI の出力に責任を持つ意識が欠けていたと気づかされ、良い教訓になりました。",
-        en: "On the other hand, I'd left Git management entirely to AI, and it merged force-pushed code on its own, causing a major incident. It made me realize I lacked a sense of responsibility for AI output, and it was a good lesson.",
+        ja: "一方で、Gitの管理をAIに任せきりにしていたところ、force pushしたコードを勝手にmergeされ、かつその修復をメンバーにさせる......という大事件を引き起こしてしまいました。AIの出力に責任を持つ意識が欠けていたと気づかされ、良い教訓になりました。ほんまごめん。",
+        en: "On the other hand, I'd left Git management entirely to AI, and it merged force-pushed code on its own, which led to a major incident where my teammates had to clean up the mess... It made me realize I lacked a sense of responsibility for AI output, and it was a good lesson. Really sorry, everyone.",
       },
     ],
     category: "hackathon",
@@ -1016,17 +1036,17 @@ export const WORKS = {
     },
     summary: [
       {
-        ja: "『8番出口』の「異変を見つけたら引き返す」仕組みを、Progate 風のプログラミング学習画面に持ち込みました。",
+        ja: "『8番出口』の「異変を見つけたら引き返す」仕組みを、Progate風のプログラミング学習画面に持ち込みました。",
         en: "We brought the \"turn back when you spot an anomaly\" mechanic from The Exit 8 into a Progate-style programming lesson screen.",
       },
       {
-        ja: "書いたコードは WebContainer のサンドボックスの中で実行するので、ブラウザ上でも安全に動かせます。ゲームとしての面白さだけでなく、ちゃんと学べる問題にすることにも力を入れました。",
+        ja: "書いたコードはWebContainerのサンドボックスの中で実行するので、ブラウザ上でも安全に動かせます。ゲームとしての面白さだけでなく、ちゃんと学べる問題にすることにも力を入れました。",
         en: "Code you write runs inside a WebContainer sandbox, so it's safe to run in the browser. Beyond making it fun as a game, we also worked to make the problems genuinely educational.",
       },
     ],
     retro: [
       {
-        ja: "この回で初めてデプロイに挑戦しました。Vercel のアカウント作成からデプロイまで2時間ほどかかりましたが、なんとかハッカソンの期間内にやり切ることができました。",
+        ja: "この回で初めてデプロイに挑戦しました。Vercelのアカウント作成からデプロイまで2時間ほどかかりましたが、なんとかハッカソンの期間内にやり切ることができました。",
         en: "This was my first time deploying. It took about two hours from creating a Vercel account to deploying, but I managed to get it done within the hackathon.",
       },
       {
@@ -1071,14 +1091,22 @@ export const WORKS = {
         en: "We built it out of an everyday complaint: the campus cafeteria is packed whenever you go.",
       },
       {
-        ja: "入口と出口で QR コードを読み取って在室人数を数えるので、行く前にいまどれくらい混んでいるかを確かめられます。",
+        ja: "入口と出口でQRコードを読み取って在室人数を数えるので、行く前にいまどれくらい混んでいるかを確かめられます。",
         en: "QR codes scanned at the entrance and exit count how many people are inside, so you can check how crowded it is before you go.",
       },
     ],
     retro: [
       {
-        ja: "私はバックエンド開発を担当し、FastAPI で構築したサーバーを Docker コンテナ上に載せました。Docker もバックエンドも担当するのは初めてでしたが、この回を通して勉強する機会になったと思っています。",
-        en: "I handled backend development and ran a server built with FastAPI in a Docker container. It was my first time with both Docker and the backend, and I think this hackathon gave me a chance to learn them.",
+        ja: "私はバックエンド開発を担当し、FastAPIで構築したサーバーをDockerコンテナ上に載せました。Dockerもバックエンドも担当するのは初めてでしたが、この回を通して勉強することができました。",
+        en: "I handled backend development and ran a server built with FastAPI in a Docker container. It was my first time with both Docker and the backend, and this hackathon let me learn them.",
+      },
+      {
+        ja: "この頃はMVPを意識した開発ができておらず、デモの際に見せたい画面やしたい説明がとっ散らかってしまったことを覚えています。",
+        en: "Back then I wasn't building with an MVP in mind, and I remember the screens and explanations we wanted to show in the demo ending up all over the place.",
+      },
+      {
+        ja: "「何をデモで見せるか」≒「何をプロダクトの一番の価値とするか」という部分への意識は、おそらくこの頃から少しずつ育っていったような気がしています。",
+        en: "I feel like my awareness of \"what to show in the demo,\" which is roughly \"what to treat as the product's core value,\" probably started growing little by little around this time.",
       },
     ],
     category: "hackathon",
@@ -1126,14 +1154,18 @@ export const WORKS = {
         en: "I wanted a status display to get rid of that awkward \"is it okay to call right now?\" hesitation when you want to talk to someone. The name Imacalla is a double meaning of the Japanese \"imakara\" (\"from now\") and \"I'm a caller.\"",
       },
       {
-        ja: "アプリを起動するとすぐにオンライン中のフレンド一覧が表示されるので、暇な人どうしで気軽に電話できます。Hono の RPC でフロントとサーバーの型をそろえ、通話は LiveKit で組みました。",
+        ja: "アプリを起動するとすぐにオンライン中のフレンド一覧が表示されるので、暇な人どうしで気軽に電話できます。HonoのRPCでフロントとサーバーの型をそろえ、通話はLiveKitで組みました。",
         en: "Open the app and you immediately see which friends are online, so bored people can call each other casually. We kept the frontend and server types in sync with Hono RPC and built calling on LiveKit.",
       },
     ],
     retro: [
       {
-        ja: "私は React Native を使ったクライアント実装を担当し、この回で初めて React を勉強しました。後からデータを渡しやすい構造を意識してコンポーネントを実装し、チームメンバーから褒めてもらえたことがとても嬉しかったと記憶しています。",
-        en: "I implemented the client with React Native and learned React for the first time at this hackathon. I built components with a structure that made it easy to pass data in later, and I remember being really happy when teammates praised it.",
+        ja: "[OFF](/works/off)の開発で出会ったメンバーを誘い、大阪で開催の58ハッカソンに参加しました。",
+        en: "I invited teammates I'd met while building [OFF](/works/off) to join the 58 Hackathon held in Osaka.",
+      },
+      {
+        ja: "私はReact Nativeを使ったクライアント実装を担当し、この回で初めてReactを勉強しました。後からデータを渡しやすい構造を意識してコンポーネントを実装し、尊敬するチームメンバーから褒めてもらえたことがとても嬉しかったと記憶しています。",
+        en: "I implemented the client with React Native and learned React for the first time at this hackathon. I built components with a structure that made it easy to pass data in later, and I remember being really happy when teammates I look up to praised it.",
       },
       {
         ja: "一方で、肝心の通話機能がハッカソン中のデモで動かないという事態が発生してしまい、苦い思い出も残るハッカソンでした。",
@@ -1180,18 +1212,22 @@ export const WORKS = {
         en: "On this site you can post apology letters, cheer each other on with \"Don't worry about it!\", and turn posted letters into templates for each other.",
       },
       {
-        ja: "謝罪文を作成するときやテンプレートを利用するときには、AI がユーザーの状況や謝る相手との間柄、文章のカジュアルさに合わせて本文を添削してくれます。これにより、テンプレートの使い回しにならない謝罪文が書けます。",
+        ja: "謝罪文を作成するときやテンプレートを利用するときには、AIがユーザーの状況や謝る相手との間柄、文章のカジュアルさに合わせて本文を添削してくれます。これにより、テンプレートの使い回しにならない謝罪文が書けます。",
         en: "When you write a letter or use a template, AI reviews the text to fit your situation, your relationship with the person you're apologizing to, and how casual it should be. That way you get an apology that isn't just a recycled template.",
       },
     ],
     retro: [
       {
-        ja: "私は原案を出し、デザイン、全体のデバッグ、PM などを担当しました。はじめてのハッカソン（[OFF](/works/off)）で経験した役割分担を意識し、進捗管理のスプレッドシートを独自に作ったり、全体のやる気を保つための声かけや作業会を主導したりして、メンバーが楽しく開発を進められるようにしました。",
-        en: "I came up with the original idea and handled design, overall debugging, and PM, among other things. Keeping in mind the division of roles I experienced at my first hackathon ([OFF](/works/off)), I made my own progress-tracking spreadsheet, led pep talks and work sessions to keep everyone motivated, and made sure the team enjoyed building.",
+        ja: "私は原案を出し、デザイン、全体のデバッグ、PMなどを担当しました。",
+        en: "I came up with the original idea and handled design, overall debugging, and PM, among other things.",
       },
       {
-        ja: "結果的にハッカソン人生で初めての最優秀賞をいただき、たくさんのやりがいと楽しさ、そして達成感を味わえたハッカソンになりました。",
-        en: "In the end we won the first Grand Prize of my hackathon life, and it became a hackathon full of reward, fun, and a sense of accomplishment.",
+        ja: "はじめてのハッカソン（[OFF](/works/off)）で経験した役割分担を意識したり、進捗管理のスプレッドシートを独自に作ったり、全体のやる気を保つための声かけや作業会を主導したりして、メンバーが楽しく開発を進められるようにしました。",
+        en: "Keeping in mind the division of roles I experienced at my first hackathon ([OFF](/works/off)), I made my own progress-tracking spreadsheet, led pep talks and work sessions to keep everyone motivated, and made sure the team enjoyed building.",
+      },
+      {
+        ja: "結果的に人生初の最優秀賞をいただき、たくさんのやりがいと楽しさ、そして達成感を味わえたハッカソンになりました。",
+        en: "In the end we won the first Grand Prize of my life, and it became a hackathon full of reward, fun, and a sense of accomplishment.",
       },
     ],
     category: "hackathon",
@@ -1254,22 +1290,22 @@ export const WORKS = {
         en: "Information about bargain sales only reaches people who happen to walk by or who are in the know. So instead of scraping, we made it user-posted, hoping to narrow the information gap between regions.",
       },
       {
-        ja: "アプリは React Native（Expo）、バックエンドは FastAPI と DynamoDB で作り、EKS 上に ArgoCD で自動デプロイしている・・・らしい、です。（後述）",
+        ja: "アプリはReact Native（Expo）、バックエンドはFastAPIとDynamoDBで作り、EKS上にArgoCDで自動デプロイしている・・・らしい、です。（後述）",
         en: "The app is built with React Native (Expo), the backend with FastAPI and DynamoDB, and it's auto-deployed to EKS with ArgoCD... or so I'm told. (More on that below.)",
       },
     ],
     retro: [
       {
-        ja: "OFF は、私にとって初めてのハッカソンで、初めての開発経験でした。正直、この開発期間の私は、commit コマンドを練習したり、フロントエンド・API・flutter・ArgoCD などの言葉を調べたりすることで精一杯でした。",
-        en: "OFF was my first hackathon and my first development experience. Honestly, during this hackathon I was doing all I could just to practice the commit command and look up words like frontend, API, Flutter, and ArgoCD.",
+        ja: "OFFは、私にとって初めてのハッカソンで、初めての開発経験でした。正直、この開発期間の私は、commitコマンドを練習したり、「フロントエンド」「デプロイ」「API」「Flutter」「ArgoCD」など、次々と登場する未知の言葉を調べたりすることで精一杯でした。",
+        en: "OFF was my first hackathon and my first development experience. Honestly, during this hackathon I was doing all I could just to practice the commit command and look up the unfamiliar words that kept coming up, like \"frontend,\" \"deploy,\" \"API,\" \"Flutter,\" and \"ArgoCD.\"",
       },
       {
         ja: "チームには開発のベテランのメンバーがいて、上に書いた技術選定から実装までを担っていたのは、ほとんどその人たちです。このハッカソンで彼らとチームメンバーとして出会い、専門用語や開発の進め方を教えてもらえたことが、今の私につながっていると思っています。",
         en: "The team had veteran developers, and they were the ones who did almost everything above, from choosing the tech stack to implementing it. Meeting them as teammates at this hackathon and having them teach me the jargon and how development works is what led to who I am today.",
       },
       {
-        ja: "チームメンバーには、感謝してもしきれない気持ちです。",
-        en: "I can't thank my teammates enough.",
+        ja: "チームメンバーには、今でもめちゃくちゃ感謝しています。",
+        en: "I'm still incredibly grateful to my teammates.",
       },
     ],
     category: "hackathon",
