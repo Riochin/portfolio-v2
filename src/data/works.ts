@@ -193,7 +193,7 @@ export const WORKS = {
         en: "After [Exit Prog-8](/works/exit-prog8) got me over my fear of deploying, I thought, \"Then I want a site of my own!\" That's how this started.",
       },
       {
-        ja: "問い合わせフォームは EmailJS で作っていましたが、管理が思ったより面倒でした。それに、問い合わせはそれほど来ないのに、誰でも送信できる入力欄を置いたままにして、何度も送信される危険を抱え続けるのも怖くなりました。そこで今のサイトでは、フォームをやめて [About ページ](/about)にメールアドレスを載せています。",
+        ja: "問い合わせフォームは EmailJS で作っていましたが、管理が思ったより面倒でした。それに、問い合わせはそれほど来ないのに、誰でも送信できる入力欄を置いたままにして、何度も送信される危険を抱え続けるのも怖くなりました。そこで今のサイトでは、フォームをやめて[About ページ](/about)にメールアドレスを載せています。",
         en: "The contact form used EmailJS, but it was more of a hassle to manage than I expected. I also got uneasy about keeping a form anyone could submit, with the risk of it being hit over and over, when hardly any messages came in anyway. So on the current site I dropped the form and put my email address on [the About page](/about).",
       },
       {
@@ -301,10 +301,6 @@ export const WORKS = {
       },
     ],
     retro: [
-      {
-        ja: "私は Go のバックエンドでのゲーム処理を WebSocket で実装し、最終発表の展示・プレゼン演出にも力を入れました。",
-        en: "I implemented the game logic on the Go backend over WebSocket, and also put a lot into the exhibit and staging for the final presentation.",
-      },
       {
         ja: "圧倒的に技術力の高いメンバーに誘われて出たハッカソンでした。私はこれまで、コンセプトやプレゼン、チームワークなどを武器にハッカソンに出ることが多かったので、メンバーの得意・不得意がピタッとハマるバランスのチームでした。",
         en: "I joined this hackathon at the invitation of teammates with overwhelming technical skill. Until then I'd mostly competed with concept, presentation, and teamwork as my strengths, so our strengths and weaknesses fit together perfectly.",
@@ -602,7 +598,7 @@ export const WORKS = {
         en: "It was my first hackathon that dug this deep into user needs. The mentors' feedback was often spot-on, and I remember it being really stimulating.",
       },
       {
-        ja: "また、私たちのチームのPMは、メンバー同士で事前に目標を、最終日には KPT を共有し合う進め方を実践していました。ここから学べることが多く、以降のハッカソンやインターンシップで意識しているフレームワークの土台ができたハッカソンでした。",
+        ja: "また、私たちのチームのPMは、事前に目標を、最終日には KPT をメンバー同士で共有し合う進め方を実践していました。ここから学べることが多く、以降のハッカソンやインターンシップで意識しているフレームワークの土台ができたハッカソンでした。",
         en: "Our PM also had us share goals at the start and a KPT retrospective on the last day. I learned a lot from that, and this hackathon laid the foundation for the frameworks I keep in mind at hackathons and internships since.",
       },
     ],
@@ -677,7 +673,7 @@ export const WORKS = {
         en: "The connection to the Watch was unstable, so we gave up on recognizing motions with Core ML, but narrowing it down to acceleration alone let us see it through to the end!",
       },
       {
-        ja: "[OFF](/works/off) から一緒に出ている同じメンバーで、58ハッカソンへの挑戦は [Imacalla](/works/imacalla)、[MokuHub](/works/mokuhub) に続いて3回目でした。このメンバーで最優秀賞を獲得したのは初めてで、とても思い出深い作品になっています。",
+        ja: "[OFF](/works/off)から一緒に出ている同じメンバーで、58ハッカソンへの挑戦は[Imacalla](/works/imacalla)、[MokuHub](/works/mokuhub)に続いて3回目でした。このメンバーで最優秀賞を獲得したのは初めてで、とても思い出深い作品になっています。",
         en: "With the same team I've competed with since [OFF](/works/off), this was our third 58 Hackathon after [Imacalla](/works/imacalla) and [MokuHub](/works/mokuhub). It was the first time this team won the Grand Prize, which makes it a really memorable project.",
       },
       {
@@ -973,7 +969,7 @@ export const WORKS = {
         en: "I mainly implemented the Discord Activity, aiming for a UI that shows little information and is easy to use.",
       },
       {
-        ja: "このメンバーで開発するのは [OFF](/works/off)、[Imacalla](/works/imacalla) に続いて3回目です。それまでは仕事をもらって補助的に実装することが多かったのですが、このハッカソンで初めて、自分の担当（フロントエンド）をはっきり持てたと記憶しています。",
+        ja: "このメンバーで開発するのは[OFF](/works/off)、[Imacalla](/works/imacalla)に続いて3回目です。それまでは仕事をもらって補助的に実装することが多かったのですが、このハッカソンで初めて、自分の担当（フロントエンド）をはっきり持てたと記憶しています。",
         en: "This was my third project with this team, after [OFF](/works/off) and [Imacalla](/works/imacalla). Before that I mostly took tasks from others and helped with implementation, but I remember this hackathon being the first time I clearly owned a part (the frontend).",
       },
       {

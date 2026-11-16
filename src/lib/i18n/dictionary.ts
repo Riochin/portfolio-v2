@@ -66,8 +66,11 @@ export const DICT = {
     /** 詳細ページの本文の 2 つの節 (WorkEntry.summary / retro)。 */
     summary: { ja: "概要", en: "Overview" },
     retro: { ja: "ふりかえり", en: "Looking back" },
-    /** 個人開発の詳細ページのメタ行の先頭。ハッカソンならイベント名が来る位置。 */
-    personal: { ja: "個人開発", en: "Personal project" },
+    /** 技術スタックと同じ見出しで並べる基本情報 (lib/work-meta.ts)。 */
+    event: { ja: "イベント", en: "Event" },
+    team: { ja: "チーム", en: "Team" },
+    role: { ja: "担当", en: "Role" },
+    period: { ja: "期間", en: "Period" },
     related: { ja: "関連する経験", en: "Related experience" },
     /** 上部の戻るリンク。blog.back と同じく、ページ名ではなく中身で呼ぶ。 */
     back: { ja: "作品一覧に戻る", en: "Back to works" },

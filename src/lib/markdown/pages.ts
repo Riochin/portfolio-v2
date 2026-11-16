@@ -11,7 +11,7 @@ import { ABOUT } from "@/data/about";
 import { NAV_ITEMS, SITE } from "@/data/site";
 import type { Work } from "@/data/types";
 import { getArticleBySlug } from "@/lib/articles";
-import { workMetaParts } from "@/lib/work-meta";
+import { workFacts } from "@/lib/work-meta";
 import { isSitePath, splitInlineLinks } from "@/lib/inline-links";
 import { formatPeriod, formatYearMonth, formatYearMonthDay } from "@/lib/date";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -198,13 +198,14 @@ function work(locale: Locale, t: Translator, slug: string): string | undefined {
   return blocks(
     `# ${t(entry.title)}`,
     t(entry.tagline),
-    workMetaParts(entry, locale, t)
-      .map((part) => `- ${part}`)
-      .join("\n"),
     `## ${t(DICT.works.summary)}`,
     ...entry.summary.map((paragraph) => paragraphText(locale, t(paragraph))),
     entry.retro.length > 0 && `## ${t(DICT.works.retro)}`,
     ...entry.retro.map((paragraph) => paragraphText(locale, t(paragraph))),
+    ...workFacts(entry, locale, t).flatMap((fact) => [
+      `## ${fact.label}`,
+      fact.value,
+    ]),
     `## ${t(DICT.works.stack)}`,
     getSkills(entry.stack)
       .map((skill) => `- ${skill.label}`)

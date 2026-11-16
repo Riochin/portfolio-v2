@@ -539,14 +539,21 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   margin-top: 0.375rem;
 }
 
-/* 文中のコード。地の文より一段小さくして、面で浮かせる。 */
+/* 文中のコード。地の文より一段小さくして、面で浮かせる。
+   長い識別子も行末で途中から折り返す (break-all)。1 語が入りきるときは
+   丸ごと次の行へ送る overflow-wrap: break-word では、前の行の右端が空くため。
+   ブロックの中では pre が折り返さないので、この指定は効かない。
+   折り返した行ごとに枠と余白を閉じる (box-decoration-break: clone)。
+   指定しないと、切れ目の側だけ枠が開いた箱が 2 つ並ぶ。 */
 .article-body code {
   border-radius: var(--radius-xl);
   background: var(--surface);
   border: 1px solid var(--border);
   padding: 0.125em 0.375em;
   font-size: 0.875em;
-  overflow-wrap: break-word;
+  word-break: break-all;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 /* コードブロック。

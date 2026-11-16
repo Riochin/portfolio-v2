@@ -1,4 +1,4 @@
-import { Fragment, ViewTransition } from "react";
+import { ViewTransition } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
@@ -10,7 +10,7 @@ import { BackLink } from "@/components/layout/BackLink";
 import { PageShell } from "@/components/layout/PageShell";
 import { InlineText } from "@/components/works/InlineText";
 import { workImageTransitionName } from "@/components/works/workImageTransition";
-import { workMetaParts } from "@/lib/work-meta";
+import { workFacts } from "@/lib/work-meta";
 import {
   getExperienceBySlug,
   getSkills,
@@ -43,6 +43,15 @@ export async function generateMetadata({
     description: work.tagline,
   });
 }
+
+/**
+ * 見出しは 2 段に分ける。概要とふりかえりは本文の節なので、ブログ本文の h2
+ * (globals.css の .article-body h2) と同じく一回り大きくして下に線を引く。
+ * イベントや技術スタックは「ラベルと値」なので、小さく薄い見出しで軽く見せる。
+ */
+const SECTION_HEADING =
+  "border-b border-border pb-[0.4rem] text-lg leading-normal font-bold";
+const LABEL_HEADING = "text-sm font-bold text-muted-foreground";
 
 const LINK_ORDER = [
   "demo",
@@ -115,20 +124,7 @@ export default async function WorkDetailPage({
         )}
 
         <h1 className="text-2xl font-bold">{t(work.title)}</h1>
-        {/* 折り返すのは区切りの位置だけにする。イベント名は長いものがあるので
-            先頭だけは中でも折り返してよい。日付と「（約5週間）」が
-            行をまたいで切れると読みにくいため。 */}
-        <p className="mt-1 text-sm text-muted-foreground">
-          {workMetaParts(work, locale, t).map((part, i) => (
-            <Fragment key={part}>
-              {i > 0 && " · "}
-              <span className={i === 0 ? undefined : "whitespace-nowrap"}>
-                {part}
-              </span>
-            </Fragment>
-          ))}
-        </p>
-        <p className="mt-4 leading-relaxed">{t(work.tagline)}</p>
+        <p className="mt-2 leading-relaxed">{t(work.tagline)}</p>
 
         {(
           [
@@ -138,9 +134,12 @@ export default async function WorkDetailPage({
         ).map(
           ([key, paragraphs]) =>
             paragraphs.length > 0 && (
-              <section key={key} className="mt-8">
-                <h2 className="text-sm font-bold">{t(DICT.works[key])}</h2>
-                <div className="mt-2 space-y-4 leading-relaxed">
+              <section key={key} className="mt-10">
+                <h2 className={SECTION_HEADING}>{t(DICT.works[key])}</h2>
+                {/* 和文と英数字の間の空きはブラウザに任せる (text-autospace)。
+                    リンクの前後に半角空白を書くと、下線の切れ目で単語が浮いて
+                    見えるため。Safari は初期値が no-autospace なので明示する。 */}
+                <div className="mt-4 space-y-4 leading-relaxed [text-autospace:normal]">
                   {paragraphs.map((paragraph) => (
                     <p key={paragraph.en}>
                       <InlineText text={t(paragraph)} locale={locale} />
@@ -151,8 +150,16 @@ export default async function WorkDetailPage({
             ),
         )}
 
+        {/* イベント・チーム・担当・期間。技術スタックや受賞歴と同じ見出しで並べる。 */}
+        {workFacts(work, locale, t).map((fact) => (
+          <section key={fact.key} className="mt-8">
+            <h2 className={LABEL_HEADING}>{fact.label}</h2>
+            <p className="mt-2">{fact.value}</p>
+          </section>
+        ))}
+
         <section className="mt-8">
-          <h2 className="text-sm font-bold">{t(DICT.works.stack)}</h2>
+          <h2 className={LABEL_HEADING}>{t(DICT.works.stack)}</h2>
           <div className="mt-2 flex flex-wrap gap-2">
             {getSkills(work.stack).map((skill) => (
               <span
@@ -167,7 +174,7 @@ export default async function WorkDetailPage({
 
         {work.awards && work.awards.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-sm font-bold">{t(DICT.works.awards)}</h2>
+            <h2 className={LABEL_HEADING}>{t(DICT.works.awards)}</h2>
             <ul className="mt-2 space-y-1.5">
               {work.awards.map((award) => (
                 <li
