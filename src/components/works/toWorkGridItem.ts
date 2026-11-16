@@ -1,13 +1,9 @@
 import type { WorkGridItem } from "./WorkGrid";
-import { getSkills } from "@/data";
 import type { Work } from "@/data/types";
 import { formatPeriod } from "@/lib/date";
 import { localePath } from "@/lib/i18n/paths";
 import type { Locale } from "@/lib/i18n/config";
 import type { Translator } from "@/lib/i18n/types";
-
-/** 一覧のタイルに出す技術チップの上限。 */
-const STACK_PREVIEW = 3;
 
 /**
  * 作品をタイル用のプレーンなデータに解決する。Client Component に渡す前の
@@ -29,6 +25,5 @@ export function toWorkGridItem(
       height: work.image.height,
       alt: t(work.image.alt),
     },
-    stack: getSkills(work.stack.slice(0, STACK_PREVIEW)).map((s) => s.label),
   };
 }

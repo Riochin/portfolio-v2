@@ -18,7 +18,7 @@ export function WorkTile({
   work: WorkGridItem;
   /** ファーストビューに入るタイルだけ true (WorkGrid の priorityCount を参照) */
   priority?: boolean;
-  /** トップの Featured works 用。期間と技術スタックを出さない (Tile の compact)。 */
+  /** トップの Featured works 用。期間を出さない (Tile の compact)。 */
   compact?: boolean;
 }) {
   return (
@@ -30,17 +30,6 @@ export function WorkTile({
       meta={compact ? undefined : work.period}
       compact={compact}
       priority={priority}
-    >
-      <p className="mt-1.5 flex flex-wrap gap-1.5 text-xs text-muted-foreground">
-        {work.stack.map((label) => (
-          <span
-            key={label}
-            className="rounded-xl border border-border px-2 py-0.5"
-          >
-            {label}
-          </span>
-        ))}
-      </p>
-    </Tile>
+    />
   );
 }
