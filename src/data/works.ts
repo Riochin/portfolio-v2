@@ -1209,12 +1209,12 @@ export const WORKS = {
         "https://speakerdeck.com/riochin/gomennasai-dot-com-waffle-college-zu-ye-hatukason",
     },
     image: {
-      src: "/works/gomen-nasai.webp",
+      src: "/works/gomen-nasai-cover.webp",
       width: 1200,
-      height: 883,
+      height: 675,
       alt: {
-        ja: "ごめんなさい.com のスクリーンショット",
-        en: "Screenshot of Sorry.com",
+        ja: "ごめんなさい.com の発表資料の表紙。「まったく新しい謝罪体験」",
+        en: "Title slide of the Sorry.com presentation: \"An all-new apology experience\"",
       },
     },
     awards: [
