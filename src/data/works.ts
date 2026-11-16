@@ -302,10 +302,6 @@ export const WORKS = {
     ],
     retro: [
       {
-        ja: "私は Go のバックエンドでのゲーム処理を WebSocket で実装し、最終発表の展示・プレゼン演出にも力を入れました。",
-        en: "I implemented the game logic on the Go backend over WebSocket, and also put a lot into the exhibit and staging for the final presentation.",
-      },
-      {
         ja: "圧倒的に技術力の高いメンバーに誘われて出たハッカソンでした。私はこれまで、コンセプトやプレゼン、チームワークなどを武器にハッカソンに出ることが多かったので、メンバーの得意・不得意がピタッとハマるバランスのチームでした。",
         en: "I joined this hackathon at the invitation of teammates with overwhelming technical skill. Until then I'd mostly competed with concept, presentation, and teamwork as my strengths, so our strengths and weaknesses fit together perfectly.",
       },
