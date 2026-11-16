@@ -1,4 +1,4 @@
-import { Fragment, ViewTransition } from "react";
+import { ViewTransition } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
@@ -10,7 +10,7 @@ import { BackLink } from "@/components/layout/BackLink";
 import { PageShell } from "@/components/layout/PageShell";
 import { InlineText } from "@/components/works/InlineText";
 import { workImageTransitionName } from "@/components/works/workImageTransition";
-import { workMetaParts } from "@/lib/work-meta";
+import { workFacts } from "@/lib/work-meta";
 import {
   getExperienceBySlug,
   getSkills,
@@ -115,20 +115,7 @@ export default async function WorkDetailPage({
         )}
 
         <h1 className="text-2xl font-bold">{t(work.title)}</h1>
-        {/* 折り返すのは区切りの位置だけにする。イベント名は長いものがあるので
-            先頭だけは中でも折り返してよい。日付と「（約5週間）」が
-            行をまたいで切れると読みにくいため。 */}
-        <p className="mt-1 text-sm text-muted-foreground">
-          {workMetaParts(work, locale, t).map((part, i) => (
-            <Fragment key={part}>
-              {i > 0 && " · "}
-              <span className={i === 0 ? undefined : "whitespace-nowrap"}>
-                {part}
-              </span>
-            </Fragment>
-          ))}
-        </p>
-        <p className="mt-4 leading-relaxed">{t(work.tagline)}</p>
+        <p className="mt-2 leading-relaxed">{t(work.tagline)}</p>
 
         {(
           [
@@ -153,6 +140,14 @@ export default async function WorkDetailPage({
               </section>
             ),
         )}
+
+        {/* イベント・チーム・担当・期間。技術スタックや受賞歴と同じ見出しで並べる。 */}
+        {workFacts(work, locale, t).map((fact) => (
+          <section key={fact.key} className="mt-8">
+            <h2 className="text-sm font-bold">{fact.label}</h2>
+            <p className="mt-2">{fact.value}</p>
+          </section>
+        ))}
 
         <section className="mt-8">
           <h2 className="text-sm font-bold">{t(DICT.works.stack)}</h2>
