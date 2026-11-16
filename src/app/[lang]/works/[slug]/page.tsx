@@ -44,6 +44,15 @@ export async function generateMetadata({
   });
 }
 
+/**
+ * 見出しは 2 段に分ける。概要とふりかえりは本文の節なので、ブログ本文の h2
+ * (globals.css の .article-body h2) と同じく一回り大きくして下に線を引く。
+ * イベントや技術スタックは「ラベルと値」なので、小さく薄い見出しで軽く見せる。
+ */
+const SECTION_HEADING =
+  "border-b border-border pb-[0.4rem] text-lg leading-normal font-bold";
+const LABEL_HEADING = "text-sm font-bold text-muted-foreground";
+
 const LINK_ORDER = [
   "demo",
   "repo",
@@ -125,12 +134,12 @@ export default async function WorkDetailPage({
         ).map(
           ([key, paragraphs]) =>
             paragraphs.length > 0 && (
-              <section key={key} className="mt-8">
-                <h2 className="text-sm font-bold">{t(DICT.works[key])}</h2>
+              <section key={key} className="mt-10">
+                <h2 className={SECTION_HEADING}>{t(DICT.works[key])}</h2>
                 {/* 和文と英数字の間の空きはブラウザに任せる (text-autospace)。
                     リンクの前後に半角空白を書くと、下線の切れ目で単語が浮いて
                     見えるため。Safari は初期値が no-autospace なので明示する。 */}
-                <div className="mt-2 space-y-4 leading-relaxed [text-autospace:normal]">
+                <div className="mt-4 space-y-4 leading-relaxed [text-autospace:normal]">
                   {paragraphs.map((paragraph) => (
                     <p key={paragraph.en}>
                       <InlineText text={t(paragraph)} locale={locale} />
@@ -144,13 +153,13 @@ export default async function WorkDetailPage({
         {/* イベント・チーム・担当・期間。技術スタックや受賞歴と同じ見出しで並べる。 */}
         {workFacts(work, locale, t).map((fact) => (
           <section key={fact.key} className="mt-8">
-            <h2 className="text-sm font-bold">{fact.label}</h2>
+            <h2 className={LABEL_HEADING}>{fact.label}</h2>
             <p className="mt-2">{fact.value}</p>
           </section>
         ))}
 
         <section className="mt-8">
-          <h2 className="text-sm font-bold">{t(DICT.works.stack)}</h2>
+          <h2 className={LABEL_HEADING}>{t(DICT.works.stack)}</h2>
           <div className="mt-2 flex flex-wrap gap-2">
             {getSkills(work.stack).map((skill) => (
               <span
@@ -165,7 +174,7 @@ export default async function WorkDetailPage({
 
         {work.awards && work.awards.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-sm font-bold">{t(DICT.works.awards)}</h2>
+            <h2 className={LABEL_HEADING}>{t(DICT.works.awards)}</h2>
             <ul className="mt-2 space-y-1.5">
               {work.awards.map((award) => (
                 <li
