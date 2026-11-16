@@ -140,7 +140,10 @@ export default async function WorkDetailPage({
             paragraphs.length > 0 && (
               <section key={key} className="mt-8">
                 <h2 className="text-sm font-bold">{t(DICT.works[key])}</h2>
-                <div className="mt-2 space-y-4 leading-relaxed">
+                {/* 和文と英数字の間の空きはブラウザに任せる (text-autospace)。
+                    リンクの前後に半角空白を書くと、下線の切れ目で単語が浮いて
+                    見えるため。Safari は初期値が no-autospace なので明示する。 */}
+                <div className="mt-2 space-y-4 leading-relaxed [text-autospace:normal]">
                   {paragraphs.map((paragraph) => (
                     <p key={paragraph.en}>
                       <InlineText text={t(paragraph)} locale={locale} />

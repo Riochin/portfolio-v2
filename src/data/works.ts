@@ -193,7 +193,7 @@ export const WORKS = {
         en: "After [Exit Prog-8](/works/exit-prog8) got me over my fear of deploying, I thought, \"Then I want a site of my own!\" That's how this started.",
       },
       {
-        ja: "問い合わせフォームは EmailJS で作っていましたが、管理が思ったより面倒でした。それに、問い合わせはそれほど来ないのに、誰でも送信できる入力欄を置いたままにして、何度も送信される危険を抱え続けるのも怖くなりました。そこで今のサイトでは、フォームをやめて [About ページ](/about)にメールアドレスを載せています。",
+        ja: "問い合わせフォームは EmailJS で作っていましたが、管理が思ったより面倒でした。それに、問い合わせはそれほど来ないのに、誰でも送信できる入力欄を置いたままにして、何度も送信される危険を抱え続けるのも怖くなりました。そこで今のサイトでは、フォームをやめて[About ページ](/about)にメールアドレスを載せています。",
         en: "The contact form used EmailJS, but it was more of a hassle to manage than I expected. I also got uneasy about keeping a form anyone could submit, with the risk of it being hit over and over, when hardly any messages came in anyway. So on the current site I dropped the form and put my email address on [the About page](/about).",
       },
       {
@@ -677,7 +677,7 @@ export const WORKS = {
         en: "The connection to the Watch was unstable, so we gave up on recognizing motions with Core ML, but narrowing it down to acceleration alone let us see it through to the end!",
       },
       {
-        ja: "[OFF](/works/off) から一緒に出ている同じメンバーで、58ハッカソンへの挑戦は [Imacalla](/works/imacalla)、[MokuHub](/works/mokuhub) に続いて3回目でした。このメンバーで最優秀賞を獲得したのは初めてで、とても思い出深い作品になっています。",
+        ja: "[OFF](/works/off)から一緒に出ている同じメンバーで、58ハッカソンへの挑戦は[Imacalla](/works/imacalla)、[MokuHub](/works/mokuhub)に続いて3回目でした。このメンバーで最優秀賞を獲得したのは初めてで、とても思い出深い作品になっています。",
         en: "With the same team I've competed with since [OFF](/works/off), this was our third 58 Hackathon after [Imacalla](/works/imacalla) and [MokuHub](/works/mokuhub). It was the first time this team won the Grand Prize, which makes it a really memorable project.",
       },
       {
@@ -973,7 +973,7 @@ export const WORKS = {
         en: "I mainly implemented the Discord Activity, aiming for a UI that shows little information and is easy to use.",
       },
       {
-        ja: "このメンバーで開発するのは [OFF](/works/off)、[Imacalla](/works/imacalla) に続いて3回目です。それまでは仕事をもらって補助的に実装することが多かったのですが、このハッカソンで初めて、自分の担当（フロントエンド）をはっきり持てたと記憶しています。",
+        ja: "このメンバーで開発するのは[OFF](/works/off)、[Imacalla](/works/imacalla)に続いて3回目です。それまでは仕事をもらって補助的に実装することが多かったのですが、このハッカソンで初めて、自分の担当（フロントエンド）をはっきり持てたと記憶しています。",
         en: "This was my third project with this team, after [OFF](/works/off) and [Imacalla](/works/imacalla). Before that I mostly took tasks from others and helped with implementation, but I remember this hackathon being the first time I clearly owned a part (the frontend).",
       },
       {
