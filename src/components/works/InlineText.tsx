@@ -8,6 +8,14 @@ const LINK_CLASS =
   "text-accent underline underline-offset-[0.2em] transition-opacity hover:opacity-70";
 
 /**
+ * 日本語の段落では、リンクの英字も途中で折り返してよいことにする。
+ * 「Imacalla」のような語は丸ごと次の行へ送られ、前の行の右端が空いてしまうため。
+ * 英語の段落で単語が途中で切れると読みにくいので、日本語だけに当てる。
+ */
+const linkClass = (locale: Locale) =>
+  locale === "ja" ? `${LINK_CLASS} break-all` : LINK_CLASS;
+
+/**
  * 作品の段落。`[文字](/works/off)` だけをリンクにして、ほかはそのまま出す。
  * サイト内はロケールを前に足して next/link で、外部は別タブで開く
  * (トップの道のりの href と同じ扱い)。
@@ -20,7 +28,7 @@ export function InlineText({ text, locale }: { text: string; locale: Locale }) {
         <Link
           key={i}
           href={localePath(locale, segment.href)}
-          className={LINK_CLASS}
+          className={linkClass(locale)}
         >
           {segment.text}
         </Link>
@@ -32,7 +40,7 @@ export function InlineText({ text, locale }: { text: string; locale: Locale }) {
         href={segment.href}
         target="_blank"
         rel="noopener noreferrer"
-        className={LINK_CLASS}
+        className={linkClass(locale)}
       >
         {segment.text}
         <ExternalLink
