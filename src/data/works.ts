@@ -598,7 +598,7 @@ export const WORKS = {
         en: "It was my first hackathon that dug this deep into user needs. The mentors' feedback was often spot-on, and I remember it being really stimulating.",
       },
       {
-        ja: "また、私たちのチームのPMは、メンバー同士で事前に目標を、最終日には KPT を共有し合う進め方を実践していました。ここから学べることが多く、以降のハッカソンやインターンシップで意識しているフレームワークの土台ができたハッカソンでした。",
+        ja: "また、私たちのチームのPMは、事前に目標を、最終日には KPT をメンバー同士で共有し合う進め方を実践していました。ここから学べることが多く、以降のハッカソンやインターンシップで意識しているフレームワークの土台ができたハッカソンでした。",
         en: "Our PM also had us share goals at the start and a KPT retrospective on the last day. I learned a lot from that, and this hackathon laid the foundation for the frameworks I keep in mind at hackathons and internships since.",
       },
     ],
