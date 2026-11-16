@@ -47,7 +47,6 @@ export const WORKS = {
     ],
     category: "personal",
     period: { start: "2026-03", end: null },
-    platforms: ["web"],
     stack: [
       "typescript",
       "nextjs",
@@ -97,7 +96,6 @@ export const WORKS = {
     retro: [],
     category: "personal",
     period: { start: "2026-04", end: null },
-    platforms: ["web"],
     stack: ["typescript", "nextjs", "turso", "drizzle", "authjs", "react"],
     image: {
       src: "/works/exvs-command-trainer.webp",
@@ -146,7 +144,6 @@ export const WORKS = {
     ],
     category: "personal",
     period: { start: "2026-09", end: null },
-    platforms: ["web"],
     stack: [
       "typescript",
       "nextjs",
@@ -206,7 +203,6 @@ export const WORKS = {
     ],
     category: "personal",
     period: { start: "2025-05", end: "2026-06" },
-    platforms: ["web"],
     stack: ["typescript", "nextjs", "react", "tailwindcss", "framer-motion"],
     image: {
       src: "/works/portfolio-v1.webp",
@@ -256,7 +252,6 @@ export const WORKS = {
       end: "2026-11-07",
     },
     role: { ja: "PM・エンジニア", en: "PM / Engineer" },
-    platforms: ["web"],
     stack: ["react", "tailwindcss", "cloudflare"],
     links: {
       demo: "https://yorido.app",
@@ -327,7 +322,6 @@ export const WORKS = {
       end: "2026-10-17",
     },
     role: { ja: "バックエンド", en: "Backend" },
-    platforms: ["web"],
     stack: ["go", "typescript", "react", "threejs", "websocket", "terraform"],
     links: {
       repo: "https://github.com/jogi-hackathon/iubeo",
@@ -392,7 +386,6 @@ export const WORKS = {
       end: "2026-09-01",
     },
     role: { ja: "PM・エンジニア", en: "PM / Engineer" },
-    platforms: ["web"],
     stack: ["typescript", "nextjs", "react"],
     links: {
       demo: "https://mercari-ai-hack-teamg.vercel.app/",
@@ -464,7 +457,6 @@ export const WORKS = {
       end: "2026-08-23",
     },
     role: { ja: "PM・バックエンド", en: "PM / Backend" },
-    platforms: ["ios"],
     stack: ["swift", "swiftui", "go", "postgresql", "aws", "terraform"],
     links: {
       slides: "https://speakerdeck.com/riochin/nemmy-the-hack-2026",
@@ -540,7 +532,6 @@ export const WORKS = {
       end: null,
     },
     role: { ja: "バックエンド・インフラ", en: "Backend / Infrastructure" },
-    platforms: ["ios"],
     stack: ["swift", "swiftui", "go", "github-oauth", "docker", "terraform"],
     links: {
       repo: "https://github.com/geekhackathon-vol3/BeGit",
@@ -623,7 +614,6 @@ export const WORKS = {
       end: "2026-05-26",
     },
     role: { ja: "フロントエンド", en: "Frontend" },
-    platforms: ["chrome-extension", "web"],
     stack: [
       "typescript",
       "nextjs",
@@ -703,7 +693,6 @@ export const WORKS = {
       end: "2026-03-01",
     },
     role: { ja: "フロントエンド", en: "Frontend" },
-    platforms: ["apple-watch", "ios", "web"],
     stack: [
       "swift",
       "rust",
@@ -775,7 +764,6 @@ export const WORKS = {
       end: "2025-11-09",
     },
     role: { ja: "PM・バックエンド", en: "PM / Backend" },
-    platforms: ["ios"],
     stack: ["swift", "swiftui", "supabase", "gemini-api"],
     links: { repo: "https://github.com/jphacks/tk_a_2505" },
     image: {
@@ -857,7 +845,6 @@ export const WORKS = {
       end: "2025-09-14",
     },
     role: { ja: "バックエンド・インフラ", en: "Backend / Infrastructure" },
-    platforms: ["web"],
     stack: ["nextjs", "fastapi", "aws", "terraform", "ecr"],
     links: {
       repo: "https://github.com/Riochin/Postcard",
@@ -924,7 +911,6 @@ export const WORKS = {
       end: "2025-06-22",
     },
     role: { ja: "バックエンド", en: "Backend" },
-    platforms: ["web"],
     stack: ["typescript", "react", "supabase", "go", "websocket"],
     links: {
       repo: "https://github.com/progate-hackathon-strawberry-flavor",
@@ -1003,7 +989,6 @@ export const WORKS = {
       end: "2025-05-18",
     },
     role: { ja: "フロントエンド", en: "Frontend" },
-    platforms: ["discord", "web"],
     stack: ["typescript", "react", "discord"],
     links: {
       repo: "https://github.com/orgs/progate-hackathon-enpower/repositories",
@@ -1060,7 +1045,6 @@ export const WORKS = {
       end: "2025-04-28",
     },
     role: { ja: "フロントエンド", en: "Frontend" },
-    platforms: ["web"],
     stack: ["typescript", "react", "supabase"],
     links: {
       repo: "https://github.com/2504-progate-hanami/exit-prog8",
@@ -1108,7 +1092,6 @@ export const WORKS = {
       end: "2025-02-21",
     },
     role: { ja: "バックエンド", en: "Backend" },
-    platforms: ["web"],
     stack: ["fastapi", "react", "firebase", "docker", "postgresql"],
     links: { repo: "https://github.com/Riochin/LunchJAM" },
     image: {
@@ -1168,7 +1151,6 @@ export const WORKS = {
       end: "2025-02-16",
     },
     role: { ja: "フロントエンド", en: "Frontend" },
-    platforms: ["ios"],
     stack: ["typescript", "hono", "react", "gcp", "docker", "mysql"],
     links: {
       repo: "https://github.com/yomi4486/progate-andere-hackathon",
@@ -1223,7 +1205,6 @@ export const WORKS = {
       end: "2025-01-18",
     },
     role: { ja: "PM・盛り上げ係", en: "PM / Team cheerleader" },
-    platforms: ["web"],
     stack: ["html", "css", "javascript", "python", "flask"],
     links: {
       repo: "https://github.com/Riochin/Apology_work",
@@ -1301,7 +1282,6 @@ export const WORKS = {
       start: "2024-11-27",
       end: "2024-12-07",
     },
-    platforms: ["ios"],
     stack: ["python", "fastapi", "aws", "dynamodb"],
     links: {
       repo: "https://github.com/progate-hackathon-party",

@@ -205,10 +205,6 @@ function work(locale: Locale, t: Translator, slug: string): string | undefined {
     ...entry.summary.map((paragraph) => paragraphText(locale, t(paragraph))),
     entry.retro.length > 0 && `## ${t(DICT.works.retro)}`,
     ...entry.retro.map((paragraph) => paragraphText(locale, t(paragraph))),
-    entry.platforms.length > 0 && `## ${t(DICT.works.platforms)}`,
-    entry.platforms
-      .map((platform) => `- ${t(DICT.platforms[platform])}`)
-      .join("\n"),
     `## ${t(DICT.works.stack)}`,
     getSkills(entry.stack)
       .map((skill) => `- ${skill.label}`)

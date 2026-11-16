@@ -55,18 +55,6 @@ export type WorkLinks = {
 };
 
 /**
- * 作品が動く場所。ひとことに「Webアプリ」「iOSアプリ」と書くと作品ごとに
- * 言い方が揺れるので、決まった語のタグとして持つ。表示名は DICT.platforms。
- */
-export type Platform =
-  | "web"
-  | "ios"
-  | "android"
-  | "apple-watch"
-  | "chrome-extension"
-  | "discord";
-
-/**
  * ハッカソンの開催情報。ハッカソンは 2 日から 2 か月まで長さの幅が大きく、
  * 月単位の期間では「どれくらいの期間で作ったか」が伝わらないので日まで持つ。
  * `end: null` は終わったあとも開発を続けている作品。
@@ -96,7 +84,6 @@ type WorkEntryBase = {
    * インフラ / フルスタックの語で書く (英語は "PM / Backend")。個人開発は持たない。
    */
   readonly role?: Localized<string>;
-  readonly platforms: readonly Platform[];
   readonly stack: readonly SkillSlug[];
   readonly links: WorkLinks;
   readonly image?: ImageRef;

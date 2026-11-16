@@ -44,9 +44,6 @@ export async function generateMetadata({
   });
 }
 
-/** 動く場所と技術スタックのタグ。同じ枠線のタグで並べる。 */
-const TAG_CLASS = "rounded-xl border border-border px-3 py-0.5 text-xs";
-
 const LINK_ORDER = [
   "demo",
   "repo",
@@ -154,24 +151,14 @@ export default async function WorkDetailPage({
             ),
         )}
 
-        {work.platforms.length > 0 && (
-          <section className="mt-8">
-            <h2 className="text-sm font-bold">{t(DICT.works.platforms)}</h2>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {work.platforms.map((platform) => (
-                <span key={platform} className={TAG_CLASS}>
-                  {t(DICT.platforms[platform])}
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
-
         <section className="mt-8">
           <h2 className="text-sm font-bold">{t(DICT.works.stack)}</h2>
           <div className="mt-2 flex flex-wrap gap-2">
             {getSkills(work.stack).map((skill) => (
-              <span key={skill.slug} className={TAG_CLASS}>
+              <span
+                key={skill.slug}
+                className="rounded-xl border border-border px-3 py-0.5 text-xs"
+              >
                 {skill.label}
               </span>
             ))}

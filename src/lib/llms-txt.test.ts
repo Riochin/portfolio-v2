@@ -19,7 +19,6 @@ const work: Work = {
     end: "2025-06-02",
   },
   period: { start: "2025-06", end: "2025-06" },
-  platforms: [],
   stack: [],
   links: {},
   awards: [
