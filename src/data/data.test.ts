@@ -11,6 +11,7 @@ import {
   getWorks,
 } from "@/data";
 import { SKILLS } from "@/data/skills";
+import { isSitePath, splitInlineLinks } from "@/lib/inline-links";
 import type { ImageRef } from "@/data/types";
 
 /**
@@ -69,5 +70,47 @@ describe("作品", () => {
       visited.push(w.slug);
     }
     expect(visited.sort()).toEqual(works.map((w) => w.slug).sort());
+  });
+});
+
+describe("作品の本文", () => {
+  const works = getWorks();
+  const slugs = new Set(works.map((w) => w.slug));
+  // ロケールの接頭辞を付けずに書くサイト内のページ。
+  const PAGES = new Set(["/", "/about", "/blog", "/output", "/works", "/experience"]);
+
+  const links = works.flatMap((w) =>
+    [...w.summary, ...w.retro].flatMap((paragraph) =>
+      [paragraph.ja, paragraph.en].flatMap((text) =>
+        splitInlineLinks(text).flatMap((s) =>
+          s.kind === "link" ? [[w.slug, s.href] as const] : [],
+        ),
+      ),
+    ),
+  );
+
+  it.each(links.filter(([, href]) => isSitePath(href)))(
+    "%s のサイト内リンク %s の行き先がある",
+    (_, href) => {
+      const work = /^\/works\/([^/]+)$/.exec(href);
+      expect(work ? slugs.has(work[1]) : PAGES.has(href)).toBe(true);
+    },
+  );
+
+  it("日英で同じリンクを持つ", () => {
+    for (const w of works) {
+      for (const paragraph of [...w.summary, ...w.retro]) {
+        const hrefs = (text: string) =>
+          splitInlineLinks(text).flatMap((s) => (s.kind === "link" ? [s.href] : []));
+        expect(hrefs(paragraph.en), w.slug).toEqual(hrefs(paragraph.ja));
+      }
+    }
+  });
+
+  it("ハッカソンの終わりは始まりより前にならない", () => {
+    for (const w of works) {
+      if (w.category !== "hackathon" || w.hackathon.end === null) continue;
+      expect(w.hackathon.end >= w.hackathon.start, w.slug).toBe(true);
+    }
   });
 });

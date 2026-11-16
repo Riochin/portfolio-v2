@@ -4,10 +4,14 @@ import {
   academicYear,
   comparePeriodDesc,
   compareStartDesc,
+  daySpan,
+  formatDayPeriod,
+  formatDuration,
   formatPeriod,
   formatYearMonth,
   formatYearMonthDay,
   periodEndKey,
+  toMonthPeriod,
   yearOf,
   type Period,
 } from "@/lib/date";
@@ -82,5 +86,42 @@ describe("academicYear", () => {
 
   it("1〜3 月入学は前の年度から数える", () => {
     expect(academicYear("2025-01", new Date(2025, 3, 1))).toBe(2);
+  });
+});
+
+describe("日単位の期間 (ハッカソン)", () => {
+  it("日数は両端を含めて数える", () => {
+    expect(daySpan("2026-08-31", "2026-09-01")).toBe(2);
+    expect(daySpan("2024-12-13", "2025-01-18")).toBe(37);
+  });
+
+  it.each([
+    [2, "2日間", "2 days"],
+    [1, "1日間", "1 day"],
+    [8, "約1週間", "about 1 week"],
+    [51, "約7週間", "about 7 weeks"],
+    [60, "約2か月", "about 2 months"],
+  ])("%i 日は %s / %s", (days, ja, en) => {
+    expect(formatDuration(days, "ja")).toBe(ja);
+    expect(formatDuration(days, "en")).toBe(en);
+  });
+
+  it("同じ年なら終わりの年を省き、長さを括弧で添える", () => {
+    expect(formatDayPeriod("2026-07-04", "2026-08-23", "ja")).toBe("2026.07.04 – 08.23（約7週間）");
+    expect(formatDayPeriod("2026-07-04", "2026-08-23", "en")).toBe("2026.07.04 – 08.23 (about 7 weeks)");
+  });
+
+  it("年をまたぐときは終わりにも年を付ける", () => {
+    expect(formatDayPeriod("2024-12-13", "2025-01-18", "ja")).toBe("2024.12.13 – 2025.01.18（約5週間）");
+  });
+
+  it("開発中 (終わりが null) は長さを出さない", () => {
+    expect(formatDayPeriod("2026-05-18", null, "ja")).toBe("2026.05.18 – 現在");
+    expect(formatDayPeriod("2026-05-18", null, "en")).toBe("2026.05.18 – Present");
+  });
+
+  it("月単位の期間に丸める", () => {
+    expect(toMonthPeriod("2024-12-13", "2025-01-18")).toEqual(p("2024-12", "2025-01"));
+    expect(toMonthPeriod("2026-05-18", null)).toEqual(p("2026-05", null));
   });
 });
