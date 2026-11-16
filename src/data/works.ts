@@ -74,7 +74,7 @@ export const WORKS = {
   },
 
   "exvs-command-trainer": {
-    title: { ja: "EXVSコマンド道場", en: "EXVS Command Dojo" },
+    title: { ja: "EXVS2 コマンドトレーナー", en: "EXVS2 Command Trainer" },
     tagline: {
       ja: "スマホがコントローラーになる、『機動戦士ガンダム EXVS2』のコマンド練習ツール",
       en: "A command trainer for Mobile Suit Gundam EXVS2 that turns your phone into the controller",
@@ -98,17 +98,18 @@ export const WORKS = {
     period: { start: "2026-04", end: null },
     stack: ["typescript", "nextjs", "turso", "drizzle", "authjs", "react"],
     image: {
-      src: "/works/exvs-command-trainer.webp",
-      width: 884,
-      height: 590,
+      src: "/works/exvs2-command-trainer.webp",
+      width: 1200,
+      height: 900,
       alt: {
-        ja: "EXVSコマンド道場 のスクリーンショット",
-        en: "Screenshot of EXVS Command Dojo",
+        ja: "EXVS2 コマンドトレーナーを、ノート PC の画面とスマホのコントローラーで動かしている様子",
+        en: "EXVS2 Command Trainer running with the game on a laptop screen and the controller on a phone",
       },
     },
     links: {
       repo: "https://github.com/Riochin/exvs-command-trainer",
       demo: "https://exvs-command-trainer.vercel.app",
+      article: "https://protopedia.net/prototype/10219",
     },
   },
 
