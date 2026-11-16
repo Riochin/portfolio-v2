@@ -11,6 +11,8 @@ import { ABOUT } from "@/data/about";
 import { NAV_ITEMS, SITE } from "@/data/site";
 import type { Work } from "@/data/types";
 import { getArticleBySlug } from "@/lib/articles";
+import { workMetaParts } from "@/lib/work-meta";
+import { isSitePath, splitInlineLinks } from "@/lib/inline-links";
 import { formatPeriod, formatYearMonth, formatYearMonthDay } from "@/lib/date";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { DICT } from "@/lib/i18n/dictionary";
@@ -52,6 +54,20 @@ function escapeText(text: string): string {
 
 function link(text: string, href: string): string {
   return `[${escapeText(text)}](${href})`;
+}
+
+/** 作品の段落。文中の `[文字](/works/off)` はサイト内でも絶対 URL にする。 */
+function paragraphText(locale: Locale, text: string): string {
+  return splitInlineLinks(text)
+    .map((segment) =>
+      segment.kind === "text"
+        ? segment.text
+        : link(
+            segment.text,
+            isSitePath(segment.href) ? url(locale, segment.href) : segment.href,
+          ),
+    )
+    .join("");
 }
 
 /** 空行区切りでブロックをつなぐ。undefined / 空は落とす。 */
@@ -182,10 +198,17 @@ function work(locale: Locale, t: Translator, slug: string): string | undefined {
   return blocks(
     `# ${t(entry.title)}`,
     t(entry.tagline),
-    `- ${formatPeriod(entry.period, locale)}\n- ${t(DICT.workCategories[entry.category])}`,
-    ...entry.body.map((paragraph) => t(paragraph)),
-    entry.role && `## ${t(DICT.works.role)}`,
-    entry.role && t(entry.role),
+    workMetaParts(entry, locale, t)
+      .map((part) => `- ${part}`)
+      .join("\n"),
+    `## ${t(DICT.works.summary)}`,
+    ...entry.summary.map((paragraph) => paragraphText(locale, t(paragraph))),
+    entry.retro.length > 0 && `## ${t(DICT.works.retro)}`,
+    ...entry.retro.map((paragraph) => paragraphText(locale, t(paragraph))),
+    entry.platforms.length > 0 && `## ${t(DICT.works.platforms)}`,
+    entry.platforms
+      .map((platform) => `- ${t(DICT.platforms[platform])}`)
+      .join("\n"),
     `## ${t(DICT.works.stack)}`,
     getSkills(entry.stack)
       .map((skill) => `- ${skill.label}`)

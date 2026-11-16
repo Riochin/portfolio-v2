@@ -1,5 +1,5 @@
 import type { Localized } from "@/lib/i18n/types";
-import type { Day, Period, YearMonth } from "@/lib/date";
+import type { Day, Period, YearMonth, YearMonthDay } from "@/lib/date";
 import type { SkillSlug } from "./skills";
 import type { ExperienceSlug } from "./experience";
 
@@ -54,19 +54,49 @@ export type WorkLinks = {
   readonly slides?: string;
 };
 
-/** 作品の記述用シェイプ。slug はレコードのキーから来るので持たない。 */
-export type WorkEntry = {
+/**
+ * 作品が動く場所。ひとことに「Webアプリ」「iOSアプリ」と書くと作品ごとに
+ * 言い方が揺れるので、決まった語のタグとして持つ。表示名は DICT.platforms。
+ */
+export type Platform =
+  | "web"
+  | "ios"
+  | "android"
+  | "apple-watch"
+  | "chrome-extension"
+  | "discord";
+
+/**
+ * ハッカソンの開催情報。ハッカソンは 2 日から 2 か月まで長さの幅が大きく、
+ * 月単位の期間では「どれくらいの期間で作ったか」が伝わらないので日まで持つ。
+ * `end: null` は終わったあとも開発を続けている作品。
+ */
+export type Hackathon = {
+  readonly event: Localized<string>;
+  readonly teamSize: number;
+  readonly start: YearMonthDay;
+  readonly end: YearMonthDay | null;
+};
+
+type WorkEntryBase = {
   readonly title: Localized<string>;
   /** 受賞一覧のように行が詰まる場所で使う短縮形。無ければ title を使う。 */
   readonly shortTitle?: Localized<string>;
-  /** 一覧で見せる 1 行説明 (旧 description)。 */
+  /** 一覧で見せる 1 行説明。最後は「何をするものか」の語で締める。 */
   readonly tagline: Localized<string>;
-  /** 詳細ページの本文 (旧 longDescription)。段落ごとに両言語を持つ。 */
-  readonly body: readonly Localized<string>[];
-  /** 必須。作品を足すときに個人制作かハッカソンかを必ず決めさせる。 */
-  readonly category: WorkCategory;
-  readonly period: Period;
+  /**
+   * 詳細ページの「概要」(何を、なぜ、どう作ったか)。段落ごとに両言語を持つ。
+   * 段落の中には `[文字](/works/off)` の形でリンクを書ける (lib/inline-links.ts)。
+   */
+  readonly summary: readonly Localized<string>[];
+  /** 「ふりかえり」(担当、チーム、学んだこと、思い出)。無い作品は空配列。 */
+  readonly retro: readonly Localized<string>[];
+  /**
+   * 担当。区切りは「・」、PM を先頭に、領域はフロントエンド / バックエンド /
+   * インフラ / フルスタックの語で書く (英語は "PM / Backend")。個人開発は持たない。
+   */
   readonly role?: Localized<string>;
+  readonly platforms: readonly Platform[];
   readonly stack: readonly SkillSlug[];
   readonly links: WorkLinks;
   readonly image?: ImageRef;
@@ -75,7 +105,22 @@ export type WorkEntry = {
   readonly featured?: boolean;
 };
 
-export type Work = WorkEntry & { readonly slug: string };
+/**
+ * 作品の記述用シェイプ。slug はレコードのキーから来るので持たない。
+ * category は必須で、作品を足すときに個人制作かハッカソンかを必ず決めさせる。
+ * ハッカソンは日付を hackathon に持ち、月単位の period はアクセサが導く
+ * (同じ期間を 2 か所に書いてずれないように)。
+ */
+export type WorkEntry = WorkEntryBase &
+  (
+    | { readonly category: "personal"; readonly period: Period }
+    | { readonly category: "hackathon"; readonly hackathon: Hackathon }
+  );
+
+export type Work = WorkEntry & {
+  readonly slug: string;
+  readonly period: Period;
+};
 
 export type ExperienceKind = "education" | "internship" | "program";
 

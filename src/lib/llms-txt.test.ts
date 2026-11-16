@@ -9,9 +9,17 @@ const work: Work = {
   slug: "sample",
   title: { ja: "サンプル", en: "Sample [beta]" },
   tagline: { ja: "説明", en: "A sample\nproject" },
-  body: [],
+  summary: [],
+  retro: [],
   category: "hackathon",
+  hackathon: {
+    event: { ja: "ハッカソン", en: "Some Hack" },
+    teamSize: 3,
+    start: "2025-06-01",
+    end: "2025-06-02",
+  },
   period: { start: "2025-06", end: "2025-06" },
+  platforms: [],
   stack: [],
   links: {},
   awards: [

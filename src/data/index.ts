@@ -1,7 +1,12 @@
 import { HOME_WORKS, WORKS, type WorkSlug } from "./works";
 import { EXPERIENCES, type ExperienceSlug } from "./experience";
 import { SKILLS, type Skill, type SkillSlug } from "./skills";
-import { compareStartDesc, comparePeriodDesc, yearOf } from "@/lib/date";
+import {
+  compareStartDesc,
+  comparePeriodDesc,
+  toMonthPeriod,
+  yearOf,
+} from "@/lib/date";
 import { neighborsAt, type Neighbors } from "@/lib/neighbors";
 import type { Year } from "@/lib/date";
 import type {
@@ -10,6 +15,7 @@ import type {
   Experience,
   Work,
   WorkCategory,
+  WorkEntry,
 } from "./types";
 
 /**
@@ -22,8 +28,19 @@ import type {
  * ロケールの解決は描画側で t() を使って行う。
  */
 
+/** ハッカソンは日付だけを持つので、並び替えと一覧に使う月単位の期間をここで導く。 */
+function toWork(slug: string, entry: WorkEntry): Work {
+  return entry.category === "hackathon"
+    ? {
+        slug,
+        ...entry,
+        period: toMonthPeriod(entry.hackathon.start, entry.hackathon.end),
+      }
+    : { slug, ...entry };
+}
+
 const ALL_WORKS: readonly Work[] = Object.entries(WORKS)
-  .map(([slug, entry]) => ({ slug, ...entry }))
+  .map(([slug, entry]) => toWork(slug, entry))
   .sort((a, b) => comparePeriodDesc(a.period, b.period));
 
 /** 開始年で見出しを立てるので、Works の終了日基準ではなく開始日の新しい順。 */

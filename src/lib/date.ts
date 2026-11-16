@@ -116,6 +116,71 @@ export function formatPeriod(period: Period, locale: Locale): string {
   return `${start} – ${formatYearMonth(period.end)}`;
 }
 
+/** "2026-07-04" -> "2026-07" */
+export const yearMonthOf = (value: YearMonthDay): YearMonth =>
+  value.slice(0, 7) as YearMonth;
+
+/** 日単位の期間を、月単位の Period に丸める (並び替えと一覧の表示用)。 */
+export function toMonthPeriod(
+  start: YearMonthDay,
+  end: YearMonthDay | null,
+): Period {
+  return { start: yearMonthOf(start), end: end && yearMonthOf(end) };
+}
+
+/** new Date() の文字列解釈を通さずに、UTC の日数に直す。 */
+function dayNumber(value: YearMonthDay): number {
+  const [y, m, d] = value.split("-").map(Number);
+  return Date.UTC(y, m - 1, d) / 86_400_000;
+}
+
+/** 両端を含む日数。"2026-08-31" から "2026-09-01" は 2 日。 */
+export function daySpan(start: YearMonthDay, end: YearMonthDay): number {
+  return dayNumber(end) - dayNumber(start) + 1;
+}
+
+/**
+ * 期間の長さの目安。ハッカソンは 2 日から 2 か月まであるので、
+ * 1 週間に満たなければ日数、2 か月未満は週、それ以上は月で丸める。
+ */
+export function formatDuration(days: number, locale: Locale): string {
+  if (days <= 6) {
+    return locale === "ja" ? `${days}日間` : `${days} day${days === 1 ? "" : "s"}`;
+  }
+  if (days < 60) {
+    const weeks = Math.round(days / 7);
+    return locale === "ja"
+      ? `約${weeks}週間`
+      : `about ${weeks} week${weeks === 1 ? "" : "s"}`;
+  }
+  const months = Math.round(days / 30);
+  return locale === "ja" ? `約${months}か月` : `about ${months} months`;
+}
+
+/**
+ * "2026-07-04" ～ "2026-08-23" -> "2026.07.04 – 08.23（約7週間）"
+ *
+ * 区切りとゼロ埋めは formatYearMonthDay と同じ。終わりが同じ年なら年を省く。
+ * 終わりが null (今も開発中) なら長さは出さない。
+ */
+export function formatDayPeriod(
+  start: YearMonthDay,
+  end: YearMonthDay | null,
+  locale: Locale,
+): string {
+  const from = formatYearMonthDay(start);
+  if (end === null) return `${from} – ${PRESENT[locale]}`;
+  const duration = formatDuration(daySpan(start, end), locale);
+  const withDuration = (range: string) =>
+    locale === "ja" ? `${range}（${duration}）` : `${range} (${duration})`;
+  if (end === start) return withDuration(from);
+  const to =
+    end.slice(0, 4) === start.slice(0, 4)
+      ? formatYearMonthDay(end).slice(5)
+      : formatYearMonthDay(end);
+  return withDuration(`${from} – ${to}`);
+}
+
 /**
  * 日本の学年 (4 月始まり)。`start` は入学年月。
  *

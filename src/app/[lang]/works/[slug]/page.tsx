@@ -1,4 +1,4 @@
-import { ViewTransition } from "react";
+import { Fragment, ViewTransition } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
@@ -8,7 +8,9 @@ import {
 } from "@/components/layout/DetailPager";
 import { BackLink } from "@/components/layout/BackLink";
 import { PageShell } from "@/components/layout/PageShell";
+import { InlineText } from "@/components/works/InlineText";
 import { workImageTransitionName } from "@/components/works/workImageTransition";
+import { workMetaParts } from "@/lib/work-meta";
 import {
   getExperienceBySlug,
   getSkills,
@@ -17,7 +19,7 @@ import {
   getWorkSlugs,
 } from "@/data";
 import type { WorkLinks } from "@/data/types";
-import { formatPeriod, formatYearMonth } from "@/lib/date";
+import { formatYearMonth } from "@/lib/date";
 import { DICT } from "@/lib/i18n/dictionary";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { localePath } from "@/lib/i18n/paths";
@@ -41,6 +43,9 @@ export async function generateMetadata({
     description: work.tagline,
   });
 }
+
+/** 動く場所と技術スタックのタグ。同じ枠線のタグで並べる。 */
+const TAG_CLASS = "rounded-xl border border-border px-3 py-0.5 text-xs";
 
 const LINK_ORDER = [
   "demo",
@@ -113,21 +118,52 @@ export default async function WorkDetailPage({
         )}
 
         <h1 className="text-2xl font-bold">{t(work.title)}</h1>
+        {/* 折り返すのは区切りの位置だけにする。イベント名は長いものがあるので
+            先頭だけは中でも折り返してよい。日付と「（約5週間）」が
+            行をまたいで切れると読みにくいため。 */}
         <p className="mt-1 text-sm text-muted-foreground">
-          {formatPeriod(work.period, locale)}
+          {workMetaParts(work, locale, t).map((part, i) => (
+            <Fragment key={part}>
+              {i > 0 && " · "}
+              <span className={i === 0 ? undefined : "whitespace-nowrap"}>
+                {part}
+              </span>
+            </Fragment>
+          ))}
         </p>
         <p className="mt-4 leading-relaxed">{t(work.tagline)}</p>
 
-        <div className="mt-6 space-y-4 leading-relaxed">
-          {work.body.map((paragraph) => (
-            <p key={paragraph.en}>{t(paragraph)}</p>
-          ))}
-        </div>
+        {(
+          [
+            ["summary", work.summary],
+            ["retro", work.retro],
+          ] as const
+        ).map(
+          ([key, paragraphs]) =>
+            paragraphs.length > 0 && (
+              <section key={key} className="mt-8">
+                <h2 className="text-sm font-bold">{t(DICT.works[key])}</h2>
+                <div className="mt-2 space-y-4 leading-relaxed">
+                  {paragraphs.map((paragraph) => (
+                    <p key={paragraph.en}>
+                      <InlineText text={t(paragraph)} locale={locale} />
+                    </p>
+                  ))}
+                </div>
+              </section>
+            ),
+        )}
 
-        {work.role && (
+        {work.platforms.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-sm font-bold">{t(DICT.works.role)}</h2>
-            <p className="mt-2">{t(work.role)}</p>
+            <h2 className="text-sm font-bold">{t(DICT.works.platforms)}</h2>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {work.platforms.map((platform) => (
+                <span key={platform} className={TAG_CLASS}>
+                  {t(DICT.platforms[platform])}
+                </span>
+              ))}
+            </div>
           </section>
         )}
 
@@ -135,10 +171,7 @@ export default async function WorkDetailPage({
           <h2 className="text-sm font-bold">{t(DICT.works.stack)}</h2>
           <div className="mt-2 flex flex-wrap gap-2">
             {getSkills(work.stack).map((skill) => (
-              <span
-                key={skill.slug}
-                className="rounded-xl border border-border px-3 py-0.5 text-xs"
-              >
+              <span key={skill.slug} className={TAG_CLASS}>
                 {skill.label}
               </span>
             ))}

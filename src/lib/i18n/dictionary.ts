@@ -63,7 +63,12 @@ export const DICT = {
   works: {
     awards: { ja: "受賞歴", en: "Awards" },
     stack: { ja: "技術スタック", en: "Stack" },
-    role: { ja: "担当", en: "Role" },
+    /** 詳細ページの本文の 2 つの節 (WorkEntry.summary / retro)。 */
+    summary: { ja: "概要", en: "Overview" },
+    retro: { ja: "ふりかえり", en: "Looking back" },
+    platforms: { ja: "動く場所", en: "Platforms" },
+    /** 個人開発の詳細ページのメタ行の先頭。ハッカソンならイベント名が来る位置。 */
+    personal: { ja: "個人開発", en: "Personal project" },
     related: { ja: "関連する経験", en: "Related experience" },
     /** 上部の戻るリンク。blog.back と同じく、ページ名ではなく中身で呼ぶ。 */
     back: { ja: "作品一覧に戻る", en: "Back to works" },
@@ -88,6 +93,15 @@ export const DICT = {
    * 作品の出自の見出し。キーは WorkCategory と同じにしてあるので、
    * カテゴリを増やすと参照側 (works/page.tsx) の索引で型エラーになる。
    */
+  /** 作品が動く場所のタグ。キーは Platform と同じ。 */
+  platforms: {
+    web: { ja: "Web", en: "Web" },
+    ios: { ja: "iOS", en: "iOS" },
+    android: { ja: "Android", en: "Android" },
+    "apple-watch": { ja: "Apple Watch", en: "Apple Watch" },
+    "chrome-extension": { ja: "Chrome拡張", en: "Chrome extension" },
+    discord: { ja: "Discord", en: "Discord" },
+  },
   workCategories: {
     personal: { ja: "個人で開発した作品", en: "Built on my own" },
     hackathon: { ja: "ハッカソンで開発した作品", en: "Built at hackathons" },
