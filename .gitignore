@@ -50,3 +50,6 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# 自己紹介ムービーの制作物 (リポジトリには入れない)
+/movie/
