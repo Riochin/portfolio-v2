@@ -40,7 +40,10 @@ let pending: {
   release: () => void;
 } | null = null;
 
-/** 手で名前を付けた要素。遷移が終わったら外す。 */
+/** いちばん新しい自前の遷移。後片付けはこれが終わったときにまとめて行う。 */
+let active: ViewTransition | null = null;
+
+/** 手で名前を付けた要素。active が終わったら外す。 */
 const named = new Set<HTMLElement>();
 
 function findImage(slug: string): HTMLElement | null {
@@ -57,8 +60,12 @@ function setName(el: HTMLElement) {
 
 function clearNames() {
   for (const el of named) {
-    el.style.viewTransitionName = "";
-    el.style.removeProperty("view-transition-class");
+    // React の遷移が割り込むと、React が自分の名前で上書きしている。
+    // それを消すと React のモーフが片側を失うので、自分の名前のときだけ外す。
+    if (el.style.viewTransitionName === MANUAL_NAME) {
+      el.style.viewTransitionName = "";
+      el.style.removeProperty("view-transition-class");
+    }
   }
   named.clear();
 }
@@ -104,6 +111,7 @@ export function startWorkBackMorph(
       }),
   );
 
+  active = transition;
   pending = {
     slug,
     transition,
@@ -115,6 +123,8 @@ export function startWorkBackMorph(
   };
 
   transition.finished.finally(() => {
+    if (active !== transition) return;
+    active = null;
     delete root.dataset.manualVt;
     clearNames();
   });
