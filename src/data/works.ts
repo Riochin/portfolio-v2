@@ -522,15 +522,19 @@ export const WORKS = {
         ja: "そこでBeRealの「通知が来たら今すぐ投稿」を持ち込み、ランダムな時間に全員へ通知を飛ばして、1時間以内にコミットや進捗を共有する仕組みにしました。",
         en: "So we borrowed BeReal's \"post right now when the notification arrives\": everyone gets a notification at a random time and shares their commits or progress within an hour.",
       },
+      {
+        ja: "バックエンドはGoで書き、CloudflareのWorkers・D1・R2の上で動かしています。",
+        en: "The backend is written in Go and runs on Cloudflare Workers, D1, and R2.",
+      },
     ],
     retro: [
       {
-        ja: "私はバックエンドとインフラを担当し、GoのバックエンドをCloudflareのWorkers・D1・R2の上で動かしています。",
-        en: "I handled the backend and infrastructure, running the Go backend on Cloudflare Workers, D1, and R2.",
+        ja: "GitHubのcommitを起点に「Nice Commit!」と通知を出すまでの流れは、アーキテクチャ全体を意識して実装する必要がありました。構想段階から実装まで、図に起こしたりAIと壁打ちしたりを続けて担当しました。",
+        en: "The flow from a GitHub commit to a \"Nice Commit!\" notification required thinking about the whole architecture. I owned it from the planning stage through implementation, drawing diagrams and bouncing ideas off AI along the way.",
       },
       {
-        ja: "特に、GitHubのcommitを起点に通知を出すまでの流れは、アーキテクチャ全体を意識して実装する必要がありました。構想段階から実装まで、図に起こしたりAIと壁打ちしたりを続けて、なんとか技育博の展示までに作り切ることができました。",
-        en: "The flow from a GitHub commit to sending a notification in particular required thinking about the whole architecture. I kept drawing diagrams and bouncing ideas off AI from the planning stage through implementation, and managed to finish it in time for the Geek Expo exhibit.",
+        ja: "Apple Developer Programの購読がなかなか反映されず、ハッカソン期間中には動かし切ることができていなかったのですが、なんとか技育博の展示までに動くようにし、会場で通知を楽しんでもらうことができました。",
+        en: "Our Apple Developer Program membership took a long time to go through, so we couldn't get it fully working during the hackathon. We managed to get it running in time for the Geek Expo exhibit, and visitors got to enjoy the notifications at the venue.",
       },
       {
         ja: "技育展は私の都合がつかなかったのですが、チームメンバーが頑張ってバトンをつないでくれました。私だけではなく開発チーム全体にBeGit;を愛する空気があることに、言いようのない温かさを感じています。",
@@ -909,15 +913,19 @@ export const WORKS = {
         ja: "「『積み上げ』を『積み上げ』ろ」という言葉どおり、GitHubのContributionが多い日のブロックほど消したときに高得点になるので、エンジニアが圧倒的に有利な対戦が成立します。",
         en: "True to \"stack up your stacking,\" blocks from days with more GitHub contributions score higher when cleared, making for battles where engineers have an overwhelming advantage.",
       },
+      {
+        ja: "盤面に使うContributionのデータはGitHub APIから取得し、対戦サーバーはGoとWebSocketで作っています。",
+        en: "The contribution data on the board comes from the GitHub API, and the battle server is built with Go and WebSocket.",
+      },
     ],
     retro: [
       {
-        ja: "私はバックエンドを担当し、主にGitHub APIからのContributionデータの取得、GoとWebSocketで対戦サーバーの実装を行いました。",
-        en: "I handled the backend, mainly fetching contribution data from the GitHub API and building the battle server with Go and WebSocket.",
+        ja: "開発のマイルストーンからissueを自動で切るGitHub Actionsを作り、WebhookでDiscordサーバーとつないで確認しながら進めたことで、10日間かつ少人数でも計画的に開発を進めることができました。",
+        en: "I built a GitHub Actions workflow that automatically opens issues from our milestones, and connected it to our Discord server with a webhook so we could keep track as we went. That let our small team develop on schedule, even in just ten days.",
       },
       {
-        ja: "開発のマイルストーンからissueを自動で切るGitHub Actionsも作り、WebhookでDiscordサーバーとつないで確認しながら進めたことで、少人数でも計画的に開発を進めることができました。",
-        en: "I also built a GitHub Actions workflow that automatically opens issues from our milestones, and connected it to our Discord server with a webhook so we could keep track as we went. That let even our small team develop on schedule.",
+        ja: "参加にあたり、リアルタイム性の高いライブデモをすることが今回の個人目標でした。WebSocket実装を担当する中で、通信が重くなると対戦が途中で止まる問題に長いこと直面していたのですが、詰まった送信を確実に送り切るよりも捨てるようにしたり、通信中に送るデータを減らしたりといったチューニングを行うことで、最後まで安定して対戦デモができるようにしました！",
+        en: "My personal goal going in was a live demo that felt truly real-time. While building the WebSocket side, I was stuck for a long time on battles freezing midway whenever the connection got heavy. By tuning things, such as dropping backed-up messages instead of insisting on delivering them and cutting down the data sent over the connection, I got the battle demo running stably all the way through!",
       },
     ],
     category: "hackathon",
@@ -986,16 +994,12 @@ export const WORKS = {
     ],
     retro: [
       {
-        ja: "私は主にDiscord Activityの実装を担当し、情報量が少なく操作しやすいUIにすることを心がけました。",
-        en: "I mainly implemented the Discord Activity, aiming for a UI that shows little information and is easy to use.",
+        ja: "このメンバーで開発するのは[OFF](/works/off)、[Imacalla](/works/imacalla)に続いて3回目です。それまでは仕事をもらって補助的に実装することが多かったのですが、このハッカソンで初めて、自分の担当（フロントエンド）をはっきり持てたと記憶しています。担当したDiscord Activityでは、情報量が少なく操作しやすいUIにすることを心がけました。",
+        en: "This was my third project with this team, after [OFF](/works/off) and [Imacalla](/works/imacalla). Before that I mostly took tasks from others and helped with implementation, but I remember this hackathon being the first time I clearly owned a part (the frontend). In the Discord Activity I built, I aimed for a UI that shows little information and is easy to use.",
       },
       {
-        ja: "このメンバーで開発するのは[OFF](/works/off)、[Imacalla](/works/imacalla)に続いて3回目です。それまでは仕事をもらって補助的に実装することが多かったのですが、このハッカソンで初めて、自分の担当（フロントエンド）をはっきり持てたと記憶しています。",
-        en: "This was my third project with this team, after [OFF](/works/off) and [Imacalla](/works/imacalla). Before that I mostly took tasks from others and helped with implementation, but I remember this hackathon being the first time I clearly owned a part (the frontend).",
-      },
-      {
-        ja: "一方で、Gitの管理をAIに任せきりにしていたところ、force pushしたコードを勝手にmergeされ、かつその修復をメンバーにさせる......という大事件を引き起こしてしまいました。AIの出力に責任を持つ意識が欠けていたと気づかされ、良い教訓になりました。ほんまごめん。",
-        en: "On the other hand, I'd left Git management entirely to AI, and it merged force-pushed code on its own, which led to a major incident where my teammates had to clean up the mess... It made me realize I lacked a sense of responsibility for AI output, and it was a good lesson. Really sorry, everyone.",
+        ja: "一方で、Gitコマンドの利用をAIに任せきりにしていたところ、force pushしたコードを勝手にmergeされ、かつその修復をメンバーにさせる......という大事件を引き起こしてしまいました。AIの行動に責任を持つ意識が欠けていたと気づかされ、良い教訓になりました。ほんまごめん。",
+        en: "On the other hand, I'd left running Git commands entirely to AI, and it merged force-pushed code on its own, which led to a major incident where my teammates had to clean up the mess... It made me realize I lacked a sense of responsibility for what AI does on my behalf, and it was a good lesson. Really sorry, everyone.",
       },
     ],
     category: "hackathon",
@@ -1097,16 +1101,16 @@ export const WORKS = {
     ],
     retro: [
       {
-        ja: "私はバックエンド開発を担当し、FastAPIで構築したサーバーをDockerコンテナ上に載せました。Dockerもバックエンドも担当するのは初めてでしたが、この回を通して勉強することができました。",
-        en: "I handled backend development and ran a server built with FastAPI in a Docker container. It was my first time with both Docker and the backend, and this hackathon let me learn them.",
+        ja: "DockerもFastAPIでのバックエンド開発も初めてでしたが、この回を通して勉強することができました。",
+        en: "It was my first time with both Docker and backend development in FastAPI, and this hackathon let me learn them.",
       },
       {
         ja: "この頃はMVPを意識した開発ができておらず、デモの際に見せたい画面やしたい説明がとっ散らかってしまったことを覚えています。",
         en: "Back then I wasn't building with an MVP in mind, and I remember the screens and explanations we wanted to show in the demo ending up all over the place.",
       },
       {
-        ja: "「何をデモで見せるか」≒「何をプロダクトの一番の価値とするか」という部分への意識は、おそらくこの頃から少しずつ育っていったような気がしています。",
-        en: "I feel like my awareness of \"what to show in the demo,\" which is roughly \"what to treat as the product's core value,\" probably started growing little by little around this time.",
+        ja: "「何をデモで見せるか」≒「何をプロダクトの一番の価値とするか」という部分への意識は、この頃から少しずつ育っていったような気がしています。",
+        en: "I feel like my awareness of \"what to show in the demo,\" which is roughly \"what to treat as the product's core value,\" started growing little by little around this time.",
       },
     ],
     category: "hackathon",
@@ -1218,16 +1222,16 @@ export const WORKS = {
     ],
     retro: [
       {
-        ja: "私は原案を出し、デザイン、全体のデバッグ、PMなどを担当しました。",
-        en: "I came up with the original idea and handled design, overall debugging, and PM, among other things.",
+        ja: "原案を出し、デザインや全体のデバッグも受け持ちました。",
+        en: "I came up with the original idea and also took on design and overall debugging.",
       },
       {
-        ja: "はじめてのハッカソン（[OFF](/works/off)）で経験した役割分担を意識したり、進捗管理のスプレッドシートを独自に作ったり、全体のやる気を保つための声かけや作業会を主導したりして、メンバーが楽しく開発を進められるようにしました。",
-        en: "Keeping in mind the division of roles I experienced at my first hackathon ([OFF](/works/off)), I made my own progress-tracking spreadsheet, led pep talks and work sessions to keep everyone motivated, and made sure the team enjoyed building.",
+        ja: "進め方では、はじめてのハッカソン（[OFF](/works/off)）で経験した役割分担を意識したり、進捗管理のスプレッドシートを独自に作ったり、全体のやる気を保つための声かけや作業会を主導したりして、メンバーが楽しく開発を進められるようにしました。",
+        en: "As for how we worked, keeping in mind the division of roles I experienced at my first hackathon ([OFF](/works/off)), I made my own progress-tracking spreadsheet, led pep talks and work sessions to keep everyone motivated, and made sure the team enjoyed building.",
       },
       {
-        ja: "結果的に人生初の最優秀賞をいただき、たくさんのやりがいと楽しさ、そして達成感を味わえたハッカソンになりました。",
-        en: "In the end we won the first Grand Prize of my life, and it became a hackathon full of reward, fun, and a sense of accomplishment.",
+        ja: "結果的に人生初の最優秀賞をいただき、たくさんのやりがいと楽しさ、そして達成感を味わえたハッカソンになりました！！",
+        en: "In the end we won the first Grand Prize of my life, and it became a hackathon full of reward, fun, and a sense of accomplishment!!",
       },
     ],
     category: "hackathon",
