@@ -133,7 +133,13 @@ export function attachWorkBackMorph(onTilesPage: boolean): void {
   if (!p || !onTilesPage) return;
   pending = null;
   const tile = findImage(p.slug);
-  if (tile) setName(tile);
+  if (tile) {
+    setName(tile);
+  } else {
+    // 畳まれていてタイルが無い (6 件目以降)、トップに載っていない作品など。
+    // 相手がいないと詳細の画像だけがその場でフェードするので、遷移ごとやめる。
+    p.transition.skipTransition();
+  }
   p.release();
 }
 
