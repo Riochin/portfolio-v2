@@ -3,6 +3,11 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { stripLocale } from "@/lib/i18n/paths";
+import {
+  attachWorkBackMorph,
+  startWorkBackMorph,
+  yieldWorkBackMorph,
+} from "@/components/works/workBackMorph";
 
 /**
  * ブラウザの「戻る/進む」でも画像モーフを走らせるための橋渡し。
@@ -13,6 +18,10 @@ import { stripLocale } from "@/lib/i18n/paths";
  * ハードカットで入れ替わる (vercel/next.js#94369)。そこでこの組の移動に
  * 限って popstate を横取りし、同じ URL への router.replace() ── リンクを押した
  * ときと同じ経路 ── としてやり直す。
+ *
+ * 作品の詳細 -> 一覧・トップだけは React のモーフに乗せない。詳細をスクロール
+ * して画像が画面の外に出ていると React はペアを作らないので、名前を手で付けて
+ * 自前で遷移を始める (works/workBackMorph)。
  *
  * ついでに「どこから来たか」(arrivedFrom) も控える。こちらは works に限らず
  * 詳細ページの「戻る」(BackLink) が全ページで使う。
@@ -60,6 +69,13 @@ if (typeof window !== "undefined") {
 
 function isWorkDetail(path: string): boolean {
   return path.startsWith("/works/");
+}
+
+/** 作品の詳細 -> タイルのあるページの移動なら、その作品の slug。 */
+function workBackSlug(from: string, to: string): string | null {
+  const a = stripLocale(from);
+  if (!isWorkDetail(a) || !hasWorkTiles(stripLocale(to))) return null;
+  return a.slice("/works/".length) || null;
 }
 
 /** 作品のタイルを並べていて、詳細と画像モーフのペアを持つページ。
@@ -133,6 +149,9 @@ export function MorphHistoryBridge() {
       window.scrollTo(0, pendingScroll.current);
       pendingScroll.current = null;
     }
+    // 詳細から戻ってきたなら、タイルに手で名前を付けて自前の遷移を進める。
+    // スクロールを戻したあとでないと、戻す前の位置へモーフしてしまう。
+    attachWorkBackMorph(hasWorkTiles(stripLocale(pathname)));
   }, [pathname]);
 
   /* --- ブラウザの履歴スクロール復元を、位置を自分で戻すページ (ownsScroll) でだけ止める ---
@@ -183,6 +202,9 @@ export function MorphHistoryBridge() {
 
   useEffect(() => {
     takeOver = (href) => {
+      // 自前の戻りが一覧を待っている最中に次の履歴移動が来たら、先に譲る。
+      yieldWorkBackMorph();
+
       const to = new URL(href).pathname;
       const saved = scrollByPath.get(to);
 
@@ -196,6 +218,16 @@ export function MorphHistoryBridge() {
       // 自前の replace は DOM の差し替えが 1 テンポ遅れるぶん、位置を戻せないと
       // 「読んでいた場所に帰る」が壊れる。モーフを諦めて Next の復元に任せる。
       if (saved === undefined || !isMorphPair(currentPath, to)) return false;
+
+      const slug = currentPath && workBackSlug(currentPath, to);
+      if (
+        slug &&
+        startWorkBackMorph(slug, (transitionTypes) =>
+          router.replace(href, { scroll: false, transitionTypes }),
+        )
+      ) {
+        return true;
+      }
 
       router.replace(href, { scroll: false });
       return true;

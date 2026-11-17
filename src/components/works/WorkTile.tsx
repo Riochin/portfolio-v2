@@ -1,6 +1,9 @@
 import { Tile } from "@/components/tiles/Tile";
 import type { WorkGridItem } from "./WorkGrid";
-import { workImageTransitionName } from "./workImageTransition";
+import {
+  WORK_IMAGE_SHARE,
+  workImageTransitionName,
+} from "./workImageTransition";
 
 /**
  * 作品のタイル 1 枚。Works の一覧 (WorkGrid) とトップの Featured works が
@@ -9,6 +12,8 @@ import { workImageTransitionName } from "./workImageTransition";
  * 写真には詳細ページの hero と同じ name を付けるので、クリック時に画像が
  * そのまま拡大するモーフになる。戻るときは同じモーフが逆再生される
  * (ブラウザの戻るボタンも MorphHistoryBridge が同じ経路に乗せる)。
+ * ただしブラウザの戻るだけは React のペアを切り、名前を手で付ける
+ * (WORK_IMAGE_SHARE と workBackMorph)。
  */
 export function WorkTile({
   work,
@@ -25,6 +30,7 @@ export function WorkTile({
     <Tile
       href={work.href}
       transitionName={workImageTransitionName(work.slug)}
+      share={WORK_IMAGE_SHARE}
       image={work.image}
       title={work.title}
       meta={compact ? undefined : work.period}

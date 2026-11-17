@@ -1,6 +1,6 @@
 "use client";
 
-import { ViewTransition, type ReactNode } from "react";
+import { ViewTransition, type ReactNode, type ViewTransitionClass } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
@@ -25,6 +25,7 @@ export function Tile({
   href,
   external = false,
   transitionName,
+  share = "morph",
   image,
   aspectClass = "aspect-[16/9]",
   title,
@@ -38,6 +39,8 @@ export function Tile({
   /** 外部サイトへのリンク。別タブで開き、タイトルの後ろに外部リンクの印を付ける。 */
   external?: boolean;
   transitionName: string;
+  /** ViewTransition の share。作品のタイルは戻りの型で切り替える (WORK_IMAGE_SHARE)。 */
+  share?: ViewTransitionClass;
   image?: { readonly src: string; readonly alt: string };
   /** 写真の枠の縦横比 (Tailwind のクラス名まるごと)。 */
   aspectClass?: string;
@@ -67,8 +70,10 @@ export function Tile({
 
   const body = (
     <>
-      <ViewTransition name={transitionName} share="morph" default="none">
+      <ViewTransition name={transitionName} share={share} default="none">
+        {/* data-vt-name は、名前を手で付けるときにこの枠を探す目印 (workBackMorph) */}
         <div
+          data-vt-name={transitionName}
           className={`photo-frame relative ${aspectClass} overflow-hidden rounded-xl bg-gradient-to-br from-accent/25 to-accent/5`}
         >
           {image && (
