@@ -72,6 +72,14 @@ export function startWorkBackMorph(
   const hero = findImage(slug);
   if (hero) setName(hero);
 
+  // 自前の遷移のあいだは root を撮らない (globals.css の html[data-manual-vt])。
+  // root が参加者だと、遷移中のクリックが html に落ちて消える。詳細の本文が
+  // クロスフェードで透けて残るのも防げる。
+  // インライン style ではなく属性 + CSS にする。React は自分の遷移の後片付けで
+  // <html> のインラインの view-transition-name を書き戻すので、消されてしまう。
+  const root = document.documentElement;
+  root.dataset.manualVt = "";
+
   let resolveUpdate: (() => void) | null = null;
 
   const transition = document.startViewTransition(
@@ -92,7 +100,10 @@ export function startWorkBackMorph(
     release: () => resolveUpdate?.(),
   };
 
-  transition.finished.finally(clearNames);
+  transition.finished.finally(() => {
+    delete root.dataset.manualVt;
+    clearNames();
+  });
   // 中断や skip の reject はここで受けておく (未処理の reject にしない)。
   transition.ready.catch(() => {});
   return true;
