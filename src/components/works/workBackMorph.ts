@@ -25,10 +25,14 @@ import {
 /** 手で付ける名前。React が付ける work-image-* とは別の値にする (重複させない)。 */
 const MANUAL_NAME = "work-back-morph";
 
-/** 一覧が来なかったときの保険。過ぎたら update を終える。 */
-const UPDATE_FALLBACK_MS = 2000;
+/**
+ * 一覧を待つ上限。過ぎたら遷移を諦め、一覧は届いた時点でパッと切り替える。
+ * ルーターキャッシュが切れていると一覧の RSC を取りに行き、そのあいだ自前の
+ * update が終わらず画面が固まる (2 秒近く固まることがあった)。
+ */
+const UPDATE_TIMEOUT_MS = 300;
 
-/** 一覧が描かれるのを待っている遷移。attach か保険の時間切れで捨てる。 */
+/** 一覧が描かれるのを待っている遷移。attach か時間切れで捨てる。 */
 let pending: {
   slug: string;
   transition: ViewTransition;
@@ -81,15 +85,18 @@ export function startWorkBackMorph(
   root.dataset.manualVt = "";
 
   let resolveUpdate: (() => void) | null = null;
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
   const transition = document.startViewTransition(
     () =>
       new Promise<void>((resolve) => {
         resolveUpdate = resolve;
-        setTimeout(() => {
-          if (pending?.transition === transition) pending = null;
+        timer = setTimeout(() => {
+          if (pending?.transition !== transition) return;
+          pending = null;
+          transition.skipTransition();
           resolve();
-        }, UPDATE_FALLBACK_MS);
+        }, UPDATE_TIMEOUT_MS);
         go([WORK_BACK_TRANSITION_TYPE]);
       }),
   );
@@ -97,7 +104,10 @@ export function startWorkBackMorph(
   pending = {
     slug,
     transition,
-    release: () => resolveUpdate?.(),
+    release: () => {
+      clearTimeout(timer);
+      resolveUpdate?.();
+    },
   };
 
   transition.finished.finally(() => {
