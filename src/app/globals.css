@@ -416,6 +416,24 @@ html[data-manual-vt]:not([data-vt="theme"]) {
   view-transition-name: none;
 }
 
+/* モーフ中の画像は ::view-transition の上に描かれるので、ページ側に残った
+   ヘッダーはその下敷きになる。詳細をスクロールしてから戻ると、上から降りて
+   くる画像がモバイルのヘッダーを覆って通り過ぎる。ヘッダーにも名前を付けて
+   同じ層に上げ、モーフより上に重ねる。React の遷移 (root を撮る) と上の
+   自前の遷移 (root を撮らない) のどちらでも効く。
+   テーマ切替ではヘッダーも円形リベールに含めたいので名前を付けない。
+   名前を持つ要素は backdrop-filter の参照先 (背後のピクセル) を失うので、
+   ぼかしは group 自身にかけ直す。 */
+html:not([data-vt="theme"]) .site-header {
+  view-transition-name: site-header;
+}
+
+::view-transition-group(site-header) {
+  z-index: 2;
+  animation: none;
+  backdrop-filter: blur(12px);
+}
+
 /* 拡大中のピクセル補間のアラを目立たせないための軽いブラー */
 ::view-transition-image-pair(.morph) {
   animation-name: morph-blur;
