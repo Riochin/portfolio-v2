@@ -71,6 +71,8 @@ describe("alternates", () => {
     expect(alternates("en", "/works")).toEqual({
       canonical: "/en/works",
       languages: { ja: "/ja/works", en: "/en/works", "x-default": "/ja/works" },
+      // どのページからもフィードが見つかるよう、ロケールに関係なく同じ RSS を指す。
+      types: { "application/rss+xml": "/feed.xml" },
     });
   });
 
