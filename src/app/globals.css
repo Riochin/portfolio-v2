@@ -410,8 +410,9 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
    この遷移のあいだは root を撮らない。root が参加者になるとページ全体の
    ヒットテストが外れて、遷移中のクリックが消える。詳細の本文がクロスフェードで
    透けて残るのも防げる。インライン style では React の後片付けに消されるので、
-   属性 + CSS で付ける。 */
-html[data-manual-vt] {
+   属性 + CSS で付ける。テーマ切替 (data-vt="theme") が割り込んだときは root の
+   スナップショットが要るので外す。 */
+html[data-manual-vt]:not([data-vt="theme"]) {
   view-transition-name: none;
 }
 
