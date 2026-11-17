@@ -1,6 +1,5 @@
 import { renderOgImage, ogSize, ogContentType, ogAlt } from "@/lib/og";
-import { DICT } from "@/lib/i18n/dictionary";
-import { isLocale, DEFAULT_LOCALE, LOCALES } from "@/lib/i18n/config";
+import { LOCALES } from "@/lib/i18n/config";
 
 export const size = ogSize;
 export const contentType = ogContentType;
@@ -11,15 +10,9 @@ export function generateStaticParams() {
 }
 
 /**
- * 画像ルートは Route Handler 扱いで next/root-params が使えないが、
- * params はルートセグメントから下まで解決されるので lang はここで受け取れる。
+ * 表紙と同じ 1 枚を返す。ファイルを消して親の画像に任せないのは、
+ * page の metadata が openGraph を丸ごと上書きするため。
  */
-export default async function OgImage({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}) {
-  const { lang } = await params;
-  const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
-  return renderOgImage({ title: DICT.pages.works[locale] });
+export default function OgImage() {
+  return renderOgImage();
 }

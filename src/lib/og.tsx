@@ -11,19 +11,17 @@ export const ogContentType = "image/png";
 /** OG 画像の alt。画像ルートの `alt` export に使う。 */
 export const ogAlt = SITE.brand;
 
-/** globals.css のライトモードのトークンと同じ値。OG は常にライトで焼く。 */
+/** globals.css のライトモードのトークンと同じ値。記事の OG の白いカードに使う。 */
 const COLOR = {
-  background: "#fbf3f5",
   surface: "#ffffff",
   foreground: "#171717",
   mutedForeground: "#6b6560",
-  accent: "#3d8fd9",
 } as const;
 
 /** ダークモードのアクセント (天の川の紫)。記事の OG のワードマークに使う。 */
 const ACCENT_DARK = "#bd93e8";
 
-/** ダークモードの地色 (夜空の紺)。記事の OG の枠に使う。 */
+/** ダークモードの地色 (夜空の紺)。表紙の OG の地と、記事の OG の枠に使う。 */
 const BACKGROUND_DARK = "#070d1e";
 
 const FONT_CURSIVE = "Alex Brush";
@@ -77,31 +75,63 @@ function loadGoogleFont(family: string, text: string, weight?: number) {
 }
 
 /**
- * 全ページ共通の OG 画像。ライト背景に筆記体のワードマークを 1 つ置くだけで、
- * 下層ページはアクセントの罫線の下にページ名 / 作品名が入る。
+ * 表紙の OG の背景。ダークモードのヒーロー (public/hero-dark.webp) を
+ * 1200 幅に縮め、水平線が上から 250px に来るよう 1200x470 で切り出したもの。
+ *
+ * 空の部分だけ星を太らせてある ── そのままだと X のタイムライン (幅 500px 前後)
+ * に縮んだとき星が消えて、天の川しか残らないため。海のきらめきにまで掛けると
+ * 粒っぽくなるので、水平線より上に限っている。作り直すときは ffmpeg で:
+ *
+ *   ffmpeg -i hero-dark.png -filter_complex "scale=1200:675:flags=lanczos,
+ *     crop=1200:470:0:122,split[a][b];[b]crop=1200:248:0:0,split[s1][s2];
+ *     [s2]dilation,gblur=sigma=0.9,eq=brightness=0.02:contrast=1.25[d];
+ *     [s1][d]blend=all_mode=lighten:all_opacity=0.7[sky];
+ *     [a]crop=1200:222:0:248[sea];[sky][sea]vstack" -q:v 3 og-hero-night.jpg
+ *
+ * JPEG にしてあるのは satori が webp を読めないため。
  */
-export async function renderOgImage({ title }: { title?: string } = {}) {
-  // サブセットに要る文字を書体ごとに集める。ワードマークは筆記体、それ以外は和文書体。
-  const sansText = `${SITE.name}${title ?? ""}`;
-  const [cursive, sans] = await Promise.all([
+const NIGHT_BACKGROUND_FILE = "og-hero-night.jpg";
+const NIGHT_BACKGROUND_HEIGHT = 470;
+/** 絵の下端から上へこのぶんを使って、夜空の紺へ溶かす。 */
+const NIGHT_BACKGROUND_FADE = 170;
+
+/** public/ の画像をディスクから data URI で読む。読めなければ null。 */
+async function loadPublicImage(file: string, mime: string): Promise<string | null> {
+  try {
+    const { readFile } = await import("node:fs/promises");
+    const { join } = await import("node:path");
+    const bytes = await readFile(join(process.cwd(), "public", file));
+    return `data:${mime};base64,${bytes.toString("base64")}`;
+  } catch (error) {
+    console.warn(`[og] ${file} を読めませんでした`, error);
+    return null;
+  }
+}
+
+/**
+ * 記事以外の全ページで共通の OG 画像。ヒーローの夜の海を上側に敷き、手前に
+ * 向かって夜空の紺へ溶かして、その下にワードマークを置く。下層ページもページ名を
+ * 入れずにこの 1 枚を使う。
+ *
+ * 枠に入れた「窓」にしないのは、サムネイルの大きさでは枠が紺の空に溶けて
+ * 見えないうえ、絵の面積だけが減るため。文字を空に置かないのは天の川に被るため。
+ */
+export async function renderOgImage() {
+  const [cursive, background] = await Promise.all([
     loadGoogleFont(FONT_CURSIVE, SITE.wordmark),
-    loadGoogleFont(FONT_SANS, sansText),
+    loadPublicImage(NIGHT_BACKGROUND_FILE, "image/jpeg"),
   ]);
 
-  const fonts = [
-    cursive && {
-      name: FONT_CURSIVE,
-      data: cursive,
-      weight: 400 as const,
-      style: "normal" as const,
-    },
-    sans && {
-      name: FONT_SANS,
-      data: sans,
-      weight: 500 as const,
-      style: "normal" as const,
-    },
-  ].filter((font) => font !== null);
+  const fonts = cursive
+    ? [
+        {
+          name: FONT_CURSIVE,
+          data: cursive,
+          weight: 400 as const,
+          style: "normal" as const,
+        },
+      ]
+    : [];
 
   return new ImageResponse(
     (
@@ -110,62 +140,47 @@ export async function renderOgImage({ title }: { title?: string } = {}) {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          background: COLOR.background,
-          color: COLOR.foreground,
-          fontFamily: FONT_SANS,
+          position: "relative",
+          background: BACKGROUND_DARK,
         }}
       >
+        {background && (
+          <img
+            src={background}
+            width={ogSize.width}
+            height={NIGHT_BACKGROUND_HEIGHT}
+            alt=""
+            style={{ position: "absolute", left: 0, top: 0 }}
+          />
+        )}
+        {/* 絵の下端を紺へ溶かす。境目を直線で切ると水平線と平行な線が
+            2 本並んで硬く見えるので、海が手前に向かって暗くなるように消す。 */}
         <div
           style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: NIGHT_BACKGROUND_HEIGHT - NIGHT_BACKGROUND_FADE,
+            bottom: 0,
+            display: "flex",
+            background: `linear-gradient(180deg, rgba(7, 13, 30, 0) 0px, ${BACKGROUND_DARK} ${NIGHT_BACKGROUND_FADE}px, ${BACKGROUND_DARK} 100%)`,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 44,
+            display: "flex",
+            justifyContent: "center",
             fontFamily: FONT_CURSIVE,
-            // 筆記体は字面が小さいので、この寸法でようやく他と釣り合う。
-            fontSize: 176,
-            // ディセンダ (Riochin の並びには無いが .dev の余白) が切れないぶんの逃げ。
+            fontSize: 80,
             lineHeight: 1.2,
-            color: COLOR.foreground,
+            color: "#ffffff",
           }}
         >
           {SITE.wordmark}
-        </div>
-
-        <div
-          style={{
-            width: 120,
-            height: 3,
-            marginTop: 24,
-            borderRadius: 999,
-            background: COLOR.accent,
-          }}
-        />
-
-        {title && (
-          <div
-            style={{
-              marginTop: 40,
-              // 長い作品名でも端に付かないよう、折り返して中央に積む。
-              maxWidth: 920,
-              textAlign: "center",
-              lineHeight: 1.35,
-              fontSize: 52,
-              color: COLOR.foreground,
-            }}
-          >
-            {title}
-          </div>
-        )}
-
-        <div
-          style={{
-            marginTop: title ? 20 : 40,
-            fontSize: 28,
-            letterSpacing: "0.18em",
-            color: COLOR.mutedForeground,
-          }}
-        >
-          {SITE.name}
         </div>
       </div>
     ),
@@ -183,16 +198,8 @@ export async function renderOgImage({ title }: { title?: string } = {}) {
  * profile.webp ではなく PNG の複製を読む。satori は webp を解せず、
  * 渡すと "not iterable" で落ちる。表示は 64px なので 128px あれば足りる。
  */
-async function loadAvatar(): Promise<string | null> {
-  try {
-    const { readFile } = await import("node:fs/promises");
-    const { join } = await import("node:path");
-    const bytes = await readFile(join(process.cwd(), "public", AVATAR_FILE));
-    return `data:image/png;base64,${bytes.toString("base64")}`;
-  } catch (error) {
-    console.warn("[og] アイコンを読めませんでした", error);
-    return null;
-  }
+function loadAvatar(): Promise<string | null> {
+  return loadPublicImage(AVATAR_FILE, "image/png");
 }
 
 const AVATAR_FILE = "profile-og.png";
