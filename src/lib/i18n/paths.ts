@@ -25,13 +25,26 @@ export function localeFromPathname(pathname: string): Locale {
   return isLocale(first) ? first : DEFAULT_LOCALE;
 }
 
-/** Metadata.alternates 用。canonical と hreflang をまとめて作る。 */
+/** 自前記事の RSS (app/feed.xml/route.ts)。ロケール接頭辞は付かない。 */
+export const FEED_PATH = "/feed.xml";
+
+/**
+ * Metadata.alternates 用。canonical と hreflang をまとめて作る。
+ *
+ * RSS のリンクもここで足す。ページの alternates はレイアウトのものを
+ * 丸ごと置き換える (浅いマージ) ので、レイアウトにだけ書くと
+ * buildPageMetadata を使うページから消える。どのページの URL を
+ * Findy などに渡してもフィードが見つかるよう、全ページに載せる。
+ */
 export function alternates(locale: Locale, path: string) {
   return {
     canonical: localePath(locale, path),
     languages: {
       ...Object.fromEntries(LOCALES.map((l) => [l, localePath(l, path)])),
       "x-default": localePath(DEFAULT_LOCALE, path),
+    },
+    types: {
+      "application/rss+xml": FEED_PATH,
     },
   };
 }
