@@ -9,7 +9,10 @@ import {
 import { BackLink } from "@/components/layout/BackLink";
 import { PageShell } from "@/components/layout/PageShell";
 import { InlineText } from "@/components/works/InlineText";
-import { workImageTransitionName } from "@/components/works/workImageTransition";
+import {
+  WORK_IMAGE_SHARE,
+  workImageTransitionName,
+} from "@/components/works/workImageTransition";
 import { workFacts } from "@/lib/work-meta";
 import {
   getExperienceBySlug,
@@ -101,15 +104,20 @@ export default async function WorkDetailPage({
         {work.image && (
           // 一覧タイルと同じ name。一覧から来たときは画像がそのまま拡大し、
           // 戻るときは同じモーフが逆再生される (ブラウザの戻るボタンも
-          // MorphHistoryBridge が同じ経路に乗せる)。
+          // MorphHistoryBridge が同じ経路に乗せる)。ブラウザの戻るだけは
+          // React のペアを切って名前を手で付ける (WORK_IMAGE_SHARE)。
+          // スクロールして画像が画面の外に出ていると、React はペアを作らないため。
           <ViewTransition
             name={workImageTransitionName(work.slug)}
-            share="morph"
+            share={WORK_IMAGE_SHARE}
             default="none"
           >
             {/* 一覧タイルと同じ 16:9 の枠。作品ごとに元画像の比が違う
-                (正方形もある) ので、枠を固定して object-cover で埋める。 */}
-            <div className="photo-frame relative mb-8 aspect-[16/9] overflow-hidden rounded-xl bg-gradient-to-br from-accent/25 to-accent/5">
+                (正方形もある) ので、枠を固定して object-cover で埋める。
+                data-vt-name は名前を手で付けるときの目印 (workBackMorph)。 */}
+            <div
+              data-vt-name={workImageTransitionName(work.slug)}
+              className="photo-frame relative mb-8 aspect-[16/9] overflow-hidden rounded-xl bg-gradient-to-br from-accent/25 to-accent/5">
               <Image
                 src={work.image.src}
                 alt={t(work.image.alt)}
