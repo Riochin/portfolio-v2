@@ -569,12 +569,17 @@ html[data-manual-vt]:not([data-vt="theme"]) {
 }
 
 /* コードブロック。
-   長い行は折り返さずに横スクロールさせる ── 折るとインデントが崩れて読めない。 */
+   長い行は折り返さずに横スクロールさせる ── 折るとインデントが崩れて読めない。
+
+   文字は 14px に固定し、--text-sm (16px。補助テキスト用) には繋がない。
+   等幅は同じ px でも地の文より大きく・幅広に見えるので、16px だと本文と
+   同じ大きさなのにひと回り大きく見え、1 行に入る字数も減る。14px は文中の
+   コード (0.875em = 14px) と同じ大きさ。 */
 .article-body pre {
   overflow-x: auto;
   border-radius: var(--radius-xl);
   padding: 1rem;
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
   line-height: 1.7;
 }
 
