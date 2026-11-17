@@ -1,6 +1,6 @@
 import { renderOgImage, ogSize, ogContentType, ogAlt } from "@/lib/og";
-import { getWorkBySlug, getWorkSlugs } from "@/data";
-import { isLocale, DEFAULT_LOCALE, LOCALES } from "@/lib/i18n/config";
+import { getWorkSlugs } from "@/data";
+import { LOCALES } from "@/lib/i18n/config";
 
 export const size = ogSize;
 export const contentType = ogContentType;
@@ -13,17 +13,9 @@ export function generateStaticParams() {
 }
 
 /**
- * 画像ルートは Route Handler 扱いで next/root-params が使えないが、
- * params はルートセグメントから下まで解決されるので lang / slug ともにここで取れる。
+ * 表紙と同じ 1 枚を返す。ファイルを消して親の画像に任せないのは、
+ * page の metadata が openGraph を丸ごと上書きするため。
  */
-export default async function OgImage({
-  params,
-}: {
-  params: Promise<{ lang: string; slug: string }>;
-}) {
-  const { lang, slug } = await params;
-  const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
-  const work = getWorkBySlug(slug);
-
-  return renderOgImage({ title: work && work.title[locale] });
+export default function OgImage() {
+  return renderOgImage();
 }
