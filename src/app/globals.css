@@ -413,6 +413,23 @@ html[data-vt="theme"] .chrome-toggle-out .theme-icon {
   }
 }
 
+/* モーフ中の画像は ::view-transition-group として root のスナップショットより
+   上に描かれる。ヘッダーは root に焼き込まれたままだと、詳細から一覧へ戻る
+   ときに上から降ってくるサムネイルの下敷きになる。ヘッダーにも名前を付けて
+   root から切り出し、モーフより上に重ねる。
+   テーマ切替ではヘッダーも円形リベールに含めたいので名前を付けない。
+   名前を持つ要素は backdrop-filter の参照先 (背後のピクセル) を失うので、
+   ぼかしはスナップショットの外側 ── group 自身 ── にかけ直す。 */
+html:not([data-vt="theme"]) .site-header {
+  view-transition-name: site-header;
+}
+
+::view-transition-group(site-header) {
+  z-index: 2;
+  animation: none;
+  backdrop-filter: blur(12px);
+}
+
 /* 遷移中のオーバーレイがクリックを吸ってしまうのを防ぐ */
 ::view-transition {
   pointer-events: none;
