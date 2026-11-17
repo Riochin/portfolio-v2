@@ -32,11 +32,11 @@ const MANUAL_NAME = "work-back-morph";
  */
 const UPDATE_TIMEOUT_MS = 300;
 
-/** 一覧が描かれるのを待っている遷移。attach か時間切れで捨てる。 */
+/** 一覧が描かれるのを待っている遷移。attach か yield か時間切れで捨てる。 */
 let pending: {
   slug: string;
   transition: ViewTransition;
-  /** update を終える。 */
+  /** update を終える。callback がまだ呼ばれていなければ、呼ばれたときに終える。 */
   release: () => void;
 } | null = null;
 
@@ -84,6 +84,7 @@ export function startWorkBackMorph(
   const root = document.documentElement;
   root.dataset.manualVt = "";
 
+  let cancelled = false;
   let resolveUpdate: (() => void) | null = null;
   let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -91,6 +92,8 @@ export function startWorkBackMorph(
     () =>
       new Promise<void>((resolve) => {
         resolveUpdate = resolve;
+        // 旧スナップショットを撮るまでのあいだに譲っていたら、もう戻らない。
+        if (cancelled) return resolve();
         timer = setTimeout(() => {
           if (pending?.transition !== transition) return;
           pending = null;
@@ -106,6 +109,7 @@ export function startWorkBackMorph(
     transition,
     release: () => {
       clearTimeout(timer);
+      cancelled = true;
       resolveUpdate?.();
     },
   };
@@ -130,5 +134,17 @@ export function attachWorkBackMorph(onTilesPage: boolean): void {
   pending = null;
   const tile = findImage(p.slug);
   if (tile) setName(tile);
+  p.release();
+}
+
+/**
+ * 一覧を待っている最中に次の履歴移動が来たら、自前の遷移をやめて譲る。
+ * 放っておくと来ない一覧を待ち続け、そのあいだ画面が固まる。
+ */
+export function yieldWorkBackMorph(): void {
+  const p = pending;
+  if (!p) return;
+  pending = null;
+  p.transition.skipTransition();
   p.release();
 }

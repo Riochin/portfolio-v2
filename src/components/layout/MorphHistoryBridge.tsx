@@ -6,6 +6,7 @@ import { stripLocale } from "@/lib/i18n/paths";
 import {
   attachWorkBackMorph,
   startWorkBackMorph,
+  yieldWorkBackMorph,
 } from "@/components/works/workBackMorph";
 
 /**
@@ -201,6 +202,9 @@ export function MorphHistoryBridge() {
 
   useEffect(() => {
     takeOver = (href) => {
+      // 自前の戻りが一覧を待っている最中に次の履歴移動が来たら、先に譲る。
+      yieldWorkBackMorph();
+
       const to = new URL(href).pathname;
       const saved = scrollByPath.get(to);
 
