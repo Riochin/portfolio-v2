@@ -50,10 +50,26 @@ function readEnv(): Row[] {
   ];
 }
 
-type Form = "callback" | "object+types";
+// push-during: Next の遷移と同じく、update の中で URL を書き換える
+// push-after:  アニメが終わってから URL を書き換える
+type Form = "callback" | "object+types" | "push-during" | "push-after";
 
 function now() {
   return Math.round(performance.now());
+}
+
+function viewport() {
+  const vv = window.visualViewport;
+  return `inner ${window.innerHeight} / vv ${vv ? Math.round(vv.height) : "-"}`;
+}
+
+let pushCount = 0;
+
+function pushUrl() {
+  pushCount += 1;
+  const url = new URL(window.location.href);
+  url.searchParams.set("vt", String(pushCount));
+  window.history.pushState(window.history.state, "", url);
 }
 
 export function VtDiagnostics() {
@@ -71,6 +87,7 @@ export function VtDiagnostics() {
       const t0 = now();
       const at = () => `+${now() - t0}ms`;
       push(`--- ${form} ---`);
+      push(`開始時 ${viewport()}`);
 
       if (typeof document.startViewTransition !== "function") {
         push("startViewTransition がない → 即時切替");
@@ -78,22 +95,62 @@ export function VtDiagnostics() {
         return;
       }
 
+      // 遷移の前後 2 秒に起きた表示領域の変化を拾う。X の下のシートが
+      // 伸び縮みすると、ここに resize が並ぶ
+      const onResize = () => push(`  resize ${at()} ${viewport()}`);
+      window.addEventListener("resize", onResize);
+      window.visualViewport?.addEventListener("resize", onResize);
+      const stopWatching = () => {
+        window.removeEventListener("resize", onResize);
+        window.visualViewport?.removeEventListener("resize", onResize);
+      };
+
       const update = () => {
         flushSync(() => setMoved((m) => !m));
+        if (form === "push-during") {
+          pushUrl();
+          push(`pushState (update 内) ${at()}`);
+        }
       };
 
       let transition: ViewTransition;
       try {
         transition =
-          form === "callback"
-            ? document.startViewTransition(update)
-            : document.startViewTransition({ update, types: ["debug"] });
+          form === "object+types"
+            ? document.startViewTransition({ update, types: ["debug"] })
+            : document.startViewTransition(update);
       } catch (e) {
         push(`呼び出しで throw: ${describe(e)}`);
         setMoved((m) => !m);
+        stopWatching();
         return;
       }
       push(`呼び出し OK ${at()}`);
+
+      let readyAt: number | null = null;
+      transition.ready.then(
+        () => {
+          readyAt = now();
+        },
+        () => {},
+      );
+      transition.finished.finally(() => {
+        // ready から 800ms (四角のアニメの長さ) 経たずに終わったら打ち切り
+        if (readyAt !== null) {
+          const ran = now() - readyAt;
+          push(
+            ran < 700
+              ? `→ アニメは ${ran}ms で打ち切られた`
+              : `→ アニメは最後まで走った (${ran}ms)`,
+          );
+        }
+        push(`終了時 ${viewport()}`);
+        if (form === "push-after") {
+          pushUrl();
+          push(`pushState (finished 後) ${at()}`);
+        }
+        setTimeout(stopWatching, 2000);
+      });
 
       transition.updateCallbackDone.then(
         () => push(`updateCallbackDone: resolved ${at()}`),
@@ -175,6 +232,18 @@ export function VtDiagnostics() {
           onClick={() => run("object+types")}
         >
           {"startViewTransition({ update, types })"}
+        </button>
+      </div>
+
+      <p className="mb-2 text-xs text-muted-foreground">
+        URL の書き換え (pushState) をどこでするか。X では下のシートが短いときに押す (戻ると短くなる)
+      </p>
+      <div className="mb-4 flex flex-wrap gap-2">
+        <button type="button" className={button} onClick={() => run("push-during")}>
+          pushState: 遷移の中で
+        </button>
+        <button type="button" className={button} onClick={() => run("push-after")}>
+          pushState: アニメの後で
         </button>
       </div>
 
